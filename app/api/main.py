@@ -62,6 +62,7 @@ class QueryRequest(BaseModel):
     """What the user sends."""
     query: str = Field(..., max_length=2000, description="The question to ask")
     mode: str = Field("auto", description="Mode: 'compliance', 'career', or 'auto'")
+    simplify: bool = Field(False, description="ELI12 mode — explain like a 12-year-old")
 
 class CareerAnalyzeRequest(BaseModel):
     """Resume analysis request — NEVER stored."""
@@ -285,4 +286,204 @@ async def list_sources():
     return {
         "stats": rag_engine.stats,
         "sources": list(set(c.source for c in rag_engine.chunks)),
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# KILLER FEATURE 1: ELI12 — "Explain Like I'm 12" (Zara Mode)
+# Borrowed from: Cognitive Load Reduction challenge
+# Takes any answer and re-explains in simple, calm, grade-6 language
+# ══════════════════════════════════════════════════════════════════════════════
+
+class SimplifyRequest(BaseModel):
+    text: str = Field(..., max_length=4000, description="Complex text to simplify")
+    reading_level: str = Field("grade6", description="Target: grade3, grade6, grade9, adult")
+
+@app.post("/api/simplify")
+async def simplify(req: SimplifyRequest):
+    """
+    KILLER FEATURE: Explain Like Zara (ELI12)
+    Transforms complex compliance/career text into plain language.
+    Adjustable reading levels. Calm, supportive, non-anxiety-inducing.
+    """
+    level_prompts = {
+        "grade3": "Explain this to an 8-year-old. Use very simple words. Short sentences. No jargon.",
+        "grade6": "Explain this to a 12-year-old student named Zara. Use simple everyday words. Be friendly and encouraging.",
+        "grade9": "Explain this to a high school student. Keep it clear but you can use some technical terms if you explain them.",
+        "adult": "Simplify this for a non-technical adult. Remove jargon but keep accuracy.",
+    }
+
+    system_prompt = f"""You are a kind, patient teacher who makes complex things simple.
+Rules:
+1. {level_prompts.get(req.reading_level, level_prompts["grade6"])}
+2. Use bullet points and numbered steps.
+3. Use analogies and everyday examples.
+4. Keep a calm, supportive, encouraging tone.
+5. Never use anxiety-inducing language (no "you must", "failure", "penalty").
+6. End with a simple one-sentence summary.
+
+Return JSON:
+{{"simplified": "your plain language explanation", "reading_level": "{req.reading_level}", "word_count": 0, "summary": "one sentence"}}"""
+
+    result = await ai_provider.generate(system_prompt, f"Simplify this:\n\n{req.text}")
+    parsed = AIProvider.extract_json(result["text"])
+
+    return {
+        "simplified": parsed.get("simplified", result["text"]),
+        "original_length": len(req.text),
+        "simplified_length": len(parsed.get("simplified", result["text"])),
+        "reading_level": req.reading_level,
+        "summary": parsed.get("summary", ""),
+        "provider": result["provider"],
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# KILLER FEATURE 2: "Why These Sources?" — Explainability Panel
+# Borrowed from: Lab Notebook AI Assistant challenge
+# Shows WHY the RAG selected specific document chunks
+# ══════════════════════════════════════════════════════════════════════════════
+
+@app.post("/api/explain")
+async def explain_retrieval(req: QueryRequest):
+    """
+    KILLER FEATURE: Retrieval Explainability
+    Shows exactly WHY specific sources were selected for a query.
+    Displays keyword overlap, relevance reasoning, and search strategy.
+    """
+    doc_type = None if req.mode == "auto" else req.mode
+    retrieval = rag_engine.retrieve(req.query, doc_type=doc_type, top_k=10)
+
+    explanations = []
+    query_terms = set(req.query.lower().split())
+
+    for chunk in retrieval["chunks"]:
+        chunk_terms = set(chunk.content.lower().split())
+        overlap = query_terms & chunk_terms
+        unique_to_source = chunk_terms - query_terms
+
+        explanations.append({
+            "source": chunk.source,
+            "section": chunk.section,
+            "relevance_score": chunk.relevance_score,
+            "why_selected": f"Matched {len(overlap)} query terms: {', '.join(list(overlap)[:10])}",
+            "matching_terms": list(overlap)[:15],
+            "key_terms_in_source": list(unique_to_source)[:10],
+            "content_preview": chunk.content[:300],
+            "doc_type": chunk.doc_type,
+        })
+
+    # Explain the search strategy
+    strategy = {
+        "search_method": "TF-IDF with cosine similarity (local) / Azure AI Search (production)",
+        "index_size": rag_engine.stats["total_chunks"],
+        "top_k_requested": 10,
+        "results_above_threshold": len(retrieval["chunks"]),
+        "min_relevance_threshold": 0.3,
+        "doc_type_filter": doc_type or "all",
+        "retrieval_time_ms": retrieval["retrieval_time_ms"],
+    }
+
+    return {
+        "query": req.query,
+        "strategy": strategy,
+        "explanations": explanations,
+        "total_sources_checked": rag_engine.stats["total_chunks"],
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# KILLER FEATURE 3: Responsible AI Card
+# Referenced in 4/5 hackathon challenges — Microsoft's own framework
+# Returns our full RAI compliance posture
+# ══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/responsible-ai")
+async def responsible_ai():
+    """
+    KILLER FEATURE: Responsible AI Transparency Card
+    Shows our full RAI compliance posture aligned to Microsoft's framework.
+    """
+    return {
+        "responsible_ai_card": {
+            "project": "GovRAG V3 — Grounded Knowledge Assistant",
+            "version": settings.APP_VERSION,
+            "principles": {
+                "fairness": {
+                    "status": "implemented",
+                    "measures": [
+                        "No demographic data collected or used",
+                        "Uniform treatment regardless of query language or topic",
+                        "Career advice grounded in objective market data, not assumptions",
+                        "195 countries supported equally",
+                    ]
+                },
+                "reliability_safety": {
+                    "status": "implemented",
+                    "measures": [
+                        "3-gate safety pipeline (input → relevance → confidence)",
+                        "Faithfulness verification on every response",
+                        "Answers below 40% confidence are BLOCKED",
+                        "Multi-AI fallback chain (Gemini → Grok) for resilience",
+                        "Prompt injection detection and blocking",
+                    ]
+                },
+                "privacy_security": {
+                    "status": "implemented",
+                    "measures": [
+                        "ZERO data storage — no database, no persistence",
+                        "User data exists only in-memory during active request",
+                        "Refresh/close = all user data permanently gone",
+                        "PII detection in queries (SSN, credit card, email, phone)",
+                        "PII scanning in AI responses before delivery",
+                        "Audit logs contain METRICS only, never user content",
+                        "API keys in Azure Key Vault (production)",
+                    ]
+                },
+                "inclusiveness": {
+                    "status": "implemented",
+                    "measures": [
+                        "ELI12 mode — adjustable reading levels (grade 3 to adult)",
+                        "Calm, supportive, non-anxiety-inducing language",
+                        "No login required — accessible to everyone",
+                        "Free for all 8 billion humans",
+                        "WCAG 2.2 considerations in UI design",
+                    ]
+                },
+                "transparency": {
+                    "status": "implemented",
+                    "measures": [
+                        "Every answer cites source documents with [Source N]",
+                        "'Why These Sources?' explainability panel",
+                        "Real-time faithfulness score (0-100%) shown to user",
+                        "Confidence score visible on every response",
+                        "Full audit trail accessible via /api/metrics",
+                        "Open source code on GitHub",
+                    ]
+                },
+                "accountability": {
+                    "status": "implemented",
+                    "measures": [
+                        "Audit trail on every query (timestamp, confidence, latency)",
+                        "Safety verdicts logged: ALLOW, WARN, BLOCK",
+                        "Azure Monitor integration for production observability",
+                        "Human-in-the-loop: users can verify sources directly",
+                    ]
+                },
+            },
+            "hallucination_mitigation": {
+                "strategy": "Retrieval-Augmented Generation with 3-layer verification",
+                "target_faithfulness": ">90%",
+                "target_hallucination_rate": "<5%",
+                "measurement": "Automated faithfulness scoring on every response",
+            },
+            "data_practices": {
+                "storage": "NONE — zero data persistence",
+                "retention": "0 seconds — data lives only during active HTTP request",
+                "encryption": "TLS 1.2 in transit, no data at rest (nothing to encrypt)",
+                "gdpr_compliant": True,
+                "hipaa_consideration": "No PHI stored or processed beyond request scope",
+            },
+            "microsoft_rai_toolbox_alignment": "https://github.com/microsoft/responsible-ai-toolbox",
+        }
     }
