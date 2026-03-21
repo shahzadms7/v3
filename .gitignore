@@ -1,0 +1,28 @@
+# Environment (NEVER commit secrets)
+.env
+.env.local
+.env.production
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Azure
+.azure/
+
+# Data (large files — download separately)
+# data/career/MASTER_CAREER_REFERENCE.md
