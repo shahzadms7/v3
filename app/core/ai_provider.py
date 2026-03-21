@@ -15,6 +15,8 @@ WHY multiple providers?
 import json
 import asyncio
 import httpx
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 import google.generativeai as genai
 from .config import settings
 
