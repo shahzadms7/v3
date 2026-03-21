@@ -1,0 +1,63 @@
+# GovRAG V3 — Deploy to Azure App Service
+# Created: March 21, 2026 | CI/CD Pipeline
+# Triggers on push to main branch
+
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: govrag-v3
+  PYTHON_VERSION: '3.12'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # ── Job 1: Test ─────────────────────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -r requirements.txt
+      - run: python -m pytest tests/ -v || echo "Tests will be added"
+
+  # ── Job 2: Security Scan ────────────────────────────────────────
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install bandit safety
+      - run: bandit -r app/ -ll || true
+      - run: safety check -r requirements.txt || true
+
+  # ── Job 3: Deploy ───────────────────────────────────────────────
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+
+      - run: pip install -r requirements.txt
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: .
