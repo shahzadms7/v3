@@ -2,7 +2,10 @@
 # Created: March 21, 2026 | Microsoft Hackathon
 # 100% Python | Zero cost | Fast startup on Azure
 
-# --- Web Framework ---
+# --- Azure Functions ---
+azure-functions
+
+# --- Web Framework (local dev) ---
 fastapi>=0.115.0
 uvicorn>=0.32.0
 

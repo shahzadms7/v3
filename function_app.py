@@ -77,24 +77,53 @@ def _search(query, top_k=5, doc_type=None):
 
 
 def _call_ai(system, user):
+    import logging
     import warnings
     warnings.filterwarnings("ignore")
-    import google.generativeai as genai
+    errors = []
+
+    # Try Gemini
     keys = [os.environ.get("GEMINI_API_KEY", ""), os.environ.get("GEMINI_API_KEY_2", "")]
-    for key in keys:
+    for ki, key in enumerate(keys):
         if not key:
             continue
-        genai.configure(api_key=key)
-        for model in ["gemini-2.0-flash", "gemini-1.5-flash"]:
-            try:
-                m = genai.GenerativeModel(model)
-                r = m.generate_content(f"{system}\n\n{user}",
-                    generation_config=genai.GenerationConfig(temperature=0.3, max_output_tokens=4096))
-                if r.text:
-                    return {"text": r.text, "provider": "Gemini", "model": model}
-            except:
-                continue
-    return {"text": "AI temporarily unavailable", "provider": "none", "model": "none"}
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=key)
+            for model in ["gemini-2.0-flash", "gemini-1.5-flash"]:
+                try:
+                    m = genai.GenerativeModel(model)
+                    r = m.generate_content(f"{system}\n\n{user}",
+                        generation_config=genai.GenerationConfig(temperature=0.3, max_output_tokens=4096))
+                    if r.text:
+                        return {"text": r.text, "provider": f"Gemini-Key{ki+1}", "model": model}
+                except Exception as e:
+                    errors.append(f"Gemini-{ki+1}/{model}: {str(e)[:80]}")
+                    continue
+        except Exception as e:
+            errors.append(f"Gemini import: {str(e)[:80]}")
+
+    # Try Grok (OpenAI-compatible)
+    grok_key = os.environ.get("GROK_API_KEY", "")
+    if grok_key:
+        try:
+            import httpx
+            resp = httpx.post("https://api.x.ai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {grok_key}", "Content-Type": "application/json"},
+                json={"model": "grok-beta", "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user}
+                ], "temperature": 0.3, "max_tokens": 4096},
+                timeout=55.0)
+            if resp.status_code == 200:
+                text = resp.json()["choices"][0]["message"]["content"]
+                return {"text": text, "provider": "Grok", "model": "grok-beta"}
+            errors.append(f"Grok: HTTP {resp.status_code}")
+        except Exception as e:
+            errors.append(f"Grok: {str(e)[:80]}")
+
+    logging.error(f"[GovRAG] All AI providers failed: {errors}")
+    return {"text": f"AI temporarily unavailable. Errors: {'; '.join(errors)}", "provider": "none", "model": "none"}
 
 
 def _parse_json(text):
@@ -136,54 +165,61 @@ def health(req: func.HttpRequest) -> func.HttpResponse:
 # ══════════════════════════════════════════════════════════════════════════════
 @app.route("query", methods=["POST"])
 def query(req: func.HttpRequest) -> func.HttpResponse:
+    import logging
     start = time.time()
     try:
-        body = req.get_json()
-    except:
-        return func.HttpResponse(json.dumps({"error": "Invalid JSON"}), status_code=400, mimetype="application/json")
+        try:
+            body = req.get_json()
+        except:
+            return func.HttpResponse(json.dumps({"error": "Invalid JSON"}), status_code=400, mimetype="application/json")
 
-    q = (body.get("query") or "")[:2000].strip()
-    mode = body.get("mode", "auto")
-    if not q:
-        return func.HttpResponse(json.dumps({"error": "Query required"}), status_code=400, mimetype="application/json")
+        q = (body.get("query") or "")[:2000].strip()
+        mode = body.get("mode", "auto")
+        if not q:
+            return func.HttpResponse(json.dumps({"error": "Query required"}), status_code=400, mimetype="application/json")
 
-    # Search
-    doc_type = None if mode == "auto" else mode
-    results = _search(q, top_k=5, doc_type=doc_type)
-    if not results:
-        return func.HttpResponse(json.dumps({"answer": "No relevant documents found.",
-            "grounded": False, "confidence": 0, "sources": []}), mimetype="application/json")
+        # Search
+        doc_type = None if mode == "auto" else mode
+        results = _search(q, top_k=5, doc_type=doc_type)
+        if not results:
+            return func.HttpResponse(json.dumps({"answer": "No relevant documents found.",
+                "grounded": False, "confidence": 0, "sources": []}), mimetype="application/json")
 
-    # Build grounded prompt
-    ctx = "\n\n---\n\n".join([
-        f"[Source {i+1}: {r['chunk']['source']}, {r['chunk']['section']}]\n{r['chunk']['content']}"
-        for i, r in enumerate(results)])
+        # Build grounded prompt
+        ctx = "\n\n---\n\n".join([
+            f"[Source {i+1}: {r['chunk']['source']}, {r['chunk']['section']}]\n{r['chunk']['content']}"
+            for i, r in enumerate(results)])
 
-    system = """You are GovRAG — a Grounded Knowledge Assistant. Answer ONLY from the context below.
+        system = """You are GovRAG — a Grounded Knowledge Assistant. Answer ONLY from the context below.
 Cite [Source N] for every claim. If insufficient info, say "INSUFFICIENT EVIDENCE".
 Return JSON: {"answer":"...[Source N]...","sources_cited":[1,2],"confidence":85,"warnings":[],"key_facts":["fact [Source N]"]}"""
 
-    ai = _call_ai(system, f"CONTEXT:\n{ctx}\n\nQUESTION: {q}\n\nReturn JSON.")
-    parsed = _parse_json(ai["text"])
-    answer = parsed.get("answer", ai["text"])
+        ai = _call_ai(system, f"CONTEXT:\n{ctx}\n\nQUESTION: {q}\n\nReturn JSON.")
+        parsed = _parse_json(ai["text"])
+        answer = parsed.get("answer", ai["text"])
 
-    # Faithfulness check
-    sentences = [s.strip() for s in re.split(r'[.!?]+', answer) if len(s.strip()) > 15]
-    grounded = sum(1 for s in sentences if re.search(r'\[Source \d+\]', s))
-    faith = round((grounded / len(sentences)) * 100) if sentences else 0
+        # Faithfulness check
+        sentences = [s.strip() for s in re.split(r'[.!?]+', answer) if len(s.strip()) > 15]
+        grounded = sum(1 for s in sentences if re.search(r'\[Source \d+\]', s))
+        faith = round((grounded / len(sentences)) * 100) if sentences else 0
 
-    sources = [{"num": i+1, "doc": r["chunk"]["source"], "section": r["chunk"]["section"],
-                "relevance": r["score"], "preview": r["chunk"]["content"][:200]}
-               for i, r in enumerate(results)]
+        sources = [{"num": i+1, "doc": r["chunk"]["source"], "section": r["chunk"]["section"],
+                    "relevance": r["score"], "preview": r["chunk"]["content"][:200]}
+                   for i, r in enumerate(results)]
 
-    return func.HttpResponse(json.dumps({
-        "answer": answer, "grounded": True,
-        "confidence": parsed.get("confidence", 50), "faithfulness": faith,
-        "sources": sources, "key_facts": parsed.get("key_facts", []),
-        "warnings": parsed.get("warnings", []),
-        "metrics": {"faithfulness": faith, "latency_ms": int((time.time()-start)*1000),
-                    "provider": ai["provider"], "model": ai["model"]},
-    }, indent=2), mimetype="application/json")
+        return func.HttpResponse(json.dumps({
+            "answer": answer, "grounded": True,
+            "confidence": parsed.get("confidence", 50), "faithfulness": faith,
+            "sources": sources, "key_facts": parsed.get("key_facts", []),
+            "warnings": parsed.get("warnings", []),
+            "metrics": {"faithfulness": faith, "latency_ms": int((time.time()-start)*1000),
+                        "provider": ai["provider"], "model": ai["model"]},
+        }, indent=2), mimetype="application/json")
+    except Exception as e:
+        logging.error(f"[GovRAG] Query error: {str(e)}")
+        return func.HttpResponse(json.dumps({
+            "error": str(e), "latency_ms": int((time.time()-start)*1000)
+        }), status_code=500, mimetype="application/json")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
