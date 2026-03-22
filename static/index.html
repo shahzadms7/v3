@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GovRAG — Grounded Knowledge Assistant</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a1a; --card: #111133; --accent: #4f8cff; --accent2: #ff6b6b;
+            --green: #4ecdc4; --gold: #ffd93d; --text: #e8e8ff; --muted: #8888aa;
+            --glow: rgba(79, 140, 255, 0.3);
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg); color: var(--text); min-height: 100vh;
+            background-image: radial-gradient(circle at 20% 50%, rgba(79,140,255,0.08) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 50%, rgba(255,107,107,0.06) 0%, transparent 50%);
+        }
+
+        /* ── Rainbow top bar ── */
+        .rainbow-bar { height: 4px; background: linear-gradient(90deg, #ff6b6b, #ffd93d, #4ecdc4, #4f8cff, #a855f7, #ff6b6b); background-size: 200%; animation: rainbow 3s linear infinite; }
+        @keyframes rainbow { 0% { background-position: 0%; } 100% { background-position: 200%; } }
+
+        /* ── Header ── */
+        header { text-align: center; padding: 2rem 1rem 1rem; }
+        header h1 { font-size: 2.5rem; background: linear-gradient(135deg, #4f8cff, #a855f7, #ff6b6b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+        header p { color: var(--muted); font-size: 1rem; margin-top: 0.5rem; max-width: 600px; margin-inline: auto; }
+        .badges { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+        .badge { background: var(--card); border: 1px solid #333; border-radius: 20px; padding: 0.25rem 0.75rem; font-size: 0.75rem; color: var(--muted); }
+        .badge.live { border-color: var(--green); color: var(--green); }
+
+        /* ── Main layout ── */
+        .container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+        .tabs { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; }
+        .tab { padding: 0.6rem 1.5rem; background: var(--card); border: 1px solid #333; border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+        .tab:hover, .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* ── Cards ── */
+        .card { background: var(--card); border: 1px solid #222; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+        .card h3 { color: var(--accent); margin-bottom: 0.75rem; font-size: 1.1rem; }
+
+        /* ── Input area ── */
+        textarea, input[type="text"], select { width: 100%; background: #0d0d2b; border: 1px solid #333; border-radius: 8px; padding: 0.75rem; color: var(--text); font-size: 0.95rem; resize: vertical; }
+        textarea:focus, input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px var(--glow); }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #4f8cff, #6366f1); color: #fff; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; transition: transform 0.1s, box-shadow 0.2s; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px var(--glow); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-eli12 { background: linear-gradient(135deg, #ffd93d, #f59e0b); color: #000; }
+        .btn-career { background: linear-gradient(135deg, #4ecdc4, #06b6d4); }
+
+        /* ── Results ── */
+        .answer-box { background: #0d0d2b; border: 1px solid #333; border-radius: 8px; padding: 1rem; margin-top: 1rem; line-height: 1.7; }
+        .answer-box .source-ref { color: var(--accent); font-weight: 600; cursor: pointer; }
+        .answer-box .source-ref:hover { text-decoration: underline; }
+
+        /* ── Metrics bar ── */
+        .metrics { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+        .metric { flex: 1; min-width: 120px; background: #0d0d2b; border-radius: 8px; padding: 0.75rem; text-align: center; }
+        .metric .value { font-size: 1.5rem; font-weight: 700; }
+        .metric .label { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; }
+        .metric.green .value { color: var(--green); }
+        .metric.gold .value { color: var(--gold); }
+        .metric.red .value { color: var(--accent2); }
+
+        /* ── Sources panel ── */
+        .source-item { background: #0a0a1a; border: 1px solid #222; border-radius: 8px; padding: 0.75rem; margin-top: 0.5rem; }
+        .source-item .src-header { display: flex; justify-content: space-between; font-size: 0.85rem; }
+        .source-item .src-header .num { color: var(--accent); font-weight: 700; }
+        .source-item .src-header .score { color: var(--green); }
+        .source-item .preview { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+
+        /* ── Loading ── */
+        .loading { display: none; text-align: center; padding: 2rem; }
+        .loading.show { display: block; }
+        .spinner { display: inline-block; width: 30px; height: 30px; border: 3px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Footer ── */
+        footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.8rem; }
+        footer a { color: var(--accent); }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            .tabs { flex-direction: column; align-items: stretch; }
+            .metrics { flex-direction: column; }
+        }
+
+        /* ── Tab content ── */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ── Privacy banner ── */
+        .privacy { background: linear-gradient(90deg, rgba(78,205,196,0.1), rgba(79,140,255,0.1)); border: 1px solid rgba(78,205,196,0.3); border-radius: 8px; padding: 0.75rem; text-align: center; font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .privacy strong { color: var(--green); }
+
+        /* ── ELI12 toggle ── */
+        .reading-level { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .rl-btn { padding: 0.3rem 0.8rem; background: #0d0d2b; border: 1px solid #333; border-radius: 20px; font-size: 0.8rem; cursor: pointer; color: var(--muted); }
+        .rl-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(255,217,61,0.1); }
+
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="rainbow-bar"></div>
+
+    <header>
+        <h1>GovRAG</h1>
+        <p>Grounded Knowledge Assistant for Regulated Teams & Career Intelligence for 8 Billion Humans</p>
+        <div class="badges">
+            <span class="badge live">LIVE on Azure</span>
+            <span class="badge">100% Python</span>
+            <span class="badge">Zero Data Storage</span>
+            <span class="badge">Source-Grounded</span>
+            <span class="badge">Microsoft Hackathon 2026</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="privacy">
+            <strong>Your Privacy:</strong> Nothing stored. No database. No login. No cookies. Refresh = gone forever.
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('compliance')">Compliance Q&A</div>
+            <div class="tab" onclick="switchTab('career')">Career Intelligence</div>
+            <div class="tab" onclick="switchTab('audit')">Audit Dashboard</div>
+        </div>
+
+        <!-- ═══ TAB 1: COMPLIANCE Q&A ═══ -->
+        <div class="tab-content active" id="tab-compliance">
+            <div class="card">
+                <h3>Ask a Compliance Question</h3>
+                <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.75rem">Every answer cites exact source documents. Blocked if insufficient evidence.</p>
+                <textarea id="query-input" rows="3" placeholder="Example: What is our data retention policy for EU customers?"></textarea>
+                <div style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">
+                    <button class="btn" onclick="askQuery()">Get Grounded Answer</button>
+                    <button class="btn btn-eli12" onclick="simplifyLast()">Explain Like Zara (ELI12)</button>
+                </div>
+            </div>
+
+            <div class="loading" id="loading-query">
+                <div class="spinner"></div>
+                <p style="margin-top:0.5rem;color:var(--muted)">Searching documents & verifying answer...</p>
+            </div>
+
+            <div id="query-result" style="display:none;">
+                <div class="metrics" id="query-metrics"></div>
+                <div class="card">
+                    <h3>Grounded Answer</h3>
+                    <div class="answer-box" id="answer-text"></div>
+                </div>
+                <div class="card">
+                    <h3>Sources Used (click to verify)</h3>
+                    <div id="sources-list"></div>
+                </div>
+            </div>
+
+            <div id="eli12-result" style="display:none;">
+                <div class="card" style="border-color:var(--gold);">
+                    <h3 style="color:var(--gold);">Simplified for Zara (Grade 6)</h3>
+                    <div class="reading-level">
+                        <span class="rl-btn" onclick="changeLevel('grade3')">Age 8</span>
+                        <span class="rl-btn active" onclick="changeLevel('grade6')">Age 12 (Zara)</span>
+                        <span class="rl-btn" onclick="changeLevel('grade9')">High School</span>
+                        <span class="rl-btn" onclick="changeLevel('adult')">Plain Adult</span>
+                    </div>
+                    <div class="answer-box" id="eli12-text" style="margin-top:0.75rem;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ TAB 2: CAREER INTELLIGENCE ═══ -->
+        <div class="tab-content" id="tab-career">
+            <div class="card">
+                <h3>Career Analyzer — Top 1% Standard</h3>
+                <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.75rem">Paste your resume. Get brutally honest feedback grounded in career intelligence data.</p>
+                <textarea id="resume-input" rows="6" placeholder="Paste your resume text here..."></textarea>
+                <textarea id="job-input" rows="3" placeholder="(Optional) Paste the job description you're targeting..." style="margin-top:0.5rem;"></textarea>
+                <div class="two-col" style="margin-top:0.5rem;">
+                    <input type="text" id="country-input" placeholder="Your country (e.g., Canada)">
+                    <input type="text" id="industry-input" placeholder="Industry (e.g., IT, Healthcare)">
+                </div>
+                <button class="btn btn-career" onclick="analyzeCareer()" style="margin-top:0.75rem;">Analyze Resume</button>
+            </div>
+
+            <div class="loading" id="loading-career">
+                <div class="spinner"></div>
+                <p style="margin-top:0.5rem;color:var(--muted)">Analyzing against career intelligence data...</p>
+            </div>
+
+            <div id="career-result" style="display:none;">
+                <div class="metrics" id="career-metrics"></div>
+                <div class="card">
+                    <h3>Analysis</h3>
+                    <div class="answer-box" id="career-text"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ TAB 3: AUDIT DASHBOARD ═══ -->
+        <div class="tab-content" id="tab-audit">
+            <div class="card">
+                <h3>System Health</h3>
+                <div id="health-data">Loading...</div>
+            </div>
+            <div class="card">
+                <h3>Responsible AI Card</h3>
+                <div id="rai-data">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Built with Azure for the <a href="https://github.com/shahzadms7/v3">Microsoft Hackathon 2026</a></p>
+        <p>Shahzad Muhammad &middot; Mississauga, Ontario, Canada &middot; Serving all 8 billion humans</p>
+        <p style="margin-top:0.5rem;">Powered by Azure Functions &middot; Gemini AI &middot; Grok AI &middot; Zero Data Storage</p>
+    </footer>
+
+    <script>
+        const API = window.location.origin;
+        let lastAnswer = '';
+
+        function switchTab(name) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + name).classList.add('active');
+            if (name === 'audit') loadAudit();
+        }
+
+        async function askQuery() {
+            const q = document.getElementById('query-input').value.trim();
+            if (!q) return alert('Please enter a question');
+            document.getElementById('loading-query').classList.add('show');
+            document.getElementById('query-result').style.display = 'none';
+            document.getElementById('eli12-result').style.display = 'none';
+            try {
+                const res = await fetch(API + '/api/query', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({query: q})
+                });
+                const data = await res.json();
+                lastAnswer = data.answer || '';
+
+                // Metrics
+                const faith = data.faithfulness || data.metrics?.faithfulness || 0;
+                const conf = data.confidence || 0;
+                const lat = data.metrics?.latency_ms || 0;
+                const prov = data.metrics?.provider || 'unknown';
+                document.getElementById('query-metrics').innerHTML = `
+                    <div class="metric ${faith > 70 ? 'green' : faith > 40 ? 'gold' : 'red'}"><div class="value">${faith}%</div><div class="label">Faithfulness</div></div>
+                    <div class="metric ${conf > 70 ? 'green' : conf > 40 ? 'gold' : 'red'}"><div class="value">${conf}%</div><div class="label">Confidence</div></div>
+                    <div class="metric green"><div class="value">${(lat/1000).toFixed(1)}s</div><div class="label">Latency</div></div>
+                    <div class="metric"><div class="value">${prov}</div><div class="label">AI Provider</div></div>
+                `;
+
+                // Answer with highlighted sources
+                let html = (data.answer || 'No answer').replace(/\[Source (\d+)\]/g, '<span class="source-ref">[Source $1]</span>');
+                document.getElementById('answer-text').innerHTML = html;
+
+                // Sources
+                let srcHtml = '';
+                (data.sources || []).forEach(s => {
+                    srcHtml += `<div class="source-item">
+                        <div class="src-header"><span class="num">[Source ${s.num}] ${s.doc}</span><span class="score">${(s.relevance * 100).toFixed(0)}% relevant</span></div>
+                        <div><strong>${s.section}</strong></div>
+                        <div class="preview">${s.preview || ''}</div>
+                    </div>`;
+                });
+                document.getElementById('sources-list').innerHTML = srcHtml || '<p style="color:var(--muted)">No sources</p>';
+
+                document.getElementById('query-result').style.display = 'block';
+            } catch (e) {
+                document.getElementById('answer-text').innerHTML = 'Error: ' + e.message;
+                document.getElementById('query-result').style.display = 'block';
+            }
+            document.getElementById('loading-query').classList.remove('show');
+        }
+
+        async function simplifyLast() {
+            if (!lastAnswer) return alert('Ask a question first, then simplify');
+            try {
+                const res = await fetch(API + '/api/simplify', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: lastAnswer, reading_level: 'grade6'})
+                });
+                const data = await res.json();
+                document.getElementById('eli12-text').innerText = data.simplified || data.text || 'Could not simplify';
+                document.getElementById('eli12-result').style.display = 'block';
+            } catch (e) {
+                alert('Simplification error: ' + e.message);
+            }
+        }
+
+        function changeLevel(level) {
+            document.querySelectorAll('.rl-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            if (lastAnswer) {
+                fetch(API + '/api/simplify', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: lastAnswer, reading_level: level})
+                }).then(r => r.json()).then(data => {
+                    document.getElementById('eli12-text').innerText = data.simplified || '';
+                });
+            }
+        }
+
+        async function analyzeCareer() {
+            const resume = document.getElementById('resume-input').value.trim();
+            if (!resume) return alert('Please paste your resume');
+            document.getElementById('loading-career').classList.add('show');
+            document.getElementById('career-result').style.display = 'none';
+            try {
+                const res = await fetch(API + '/api/career', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        resume: resume,
+                        job_description: document.getElementById('job-input').value,
+                        country: document.getElementById('country-input').value,
+                        industry: document.getElementById('industry-input').value,
+                    })
+                });
+                const data = await res.json();
+                const a = data.analysis || {};
+                document.getElementById('career-metrics').innerHTML = `
+                    <div class="metric ${(a.score||0) > 70 ? 'green' : 'gold'}"><div class="value">${a.score || 'N/A'}</div><div class="label">Resume Score</div></div>
+                    <div class="metric green"><div class="value">${a.confidence || 'N/A'}%</div><div class="label">Confidence</div></div>
+                    <div class="metric"><div class="value">${data.metrics?.provider || 'AI'}</div><div class="label">Provider</div></div>
+                `;
+                let html = `<p><strong>Summary:</strong> ${a.summary || 'N/A'}</p>`;
+                if (a.strengths?.length) html += `<h4 style="color:var(--green);margin-top:1rem;">Strengths</h4><ul>${a.strengths.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                if (a.weaknesses?.length) html += `<h4 style="color:var(--accent2);margin-top:1rem;">Weaknesses</h4><ul>${a.weaknesses.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                if (a.missing_skills?.length) html += `<h4 style="color:var(--gold);margin-top:1rem;">Missing Skills</h4><ul>${a.missing_skills.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                if (a.recommended_certs?.length) html += `<h4 style="color:var(--accent);margin-top:1rem;">Recommended Certifications</h4><ul>${a.recommended_certs.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                if (a.action_items?.length) html += `<h4 style="margin-top:1rem;">Action Items</h4><ol>${a.action_items.map(s=>'<li>'+s+'</li>').join('')}</ol>`;
+                html += `<p style="color:var(--green);margin-top:1rem;font-size:0.85rem;">${data.privacy || ''}</p>`;
+                document.getElementById('career-text').innerHTML = html;
+                document.getElementById('career-result').style.display = 'block';
+            } catch (e) {
+                document.getElementById('career-text').innerHTML = 'Error: ' + e.message;
+                document.getElementById('career-result').style.display = 'block';
+            }
+            document.getElementById('loading-career').classList.remove('show');
+        }
+
+        async function loadAudit() {
+            try {
+                const [h, r] = await Promise.all([
+                    fetch(API + '/api/health').then(r=>r.json()),
+                    fetch(API + '/api/responsible-ai').then(r=>r.json()),
+                ]);
+                document.getElementById('health-data').innerHTML = `
+                    <div class="metrics">
+                        <div class="metric green"><div class="value">${h.chunks_loaded}</div><div class="label">Chunks Loaded</div></div>
+                        <div class="metric"><div class="value">${h.career_chunks}</div><div class="label">Career Docs</div></div>
+                        <div class="metric"><div class="value">${h.compliance_chunks}</div><div class="label">Compliance Docs</div></div>
+                        <div class="metric green"><div class="value">${h.status}</div><div class="label">Status</div></div>
+                    </div>
+                    <p style="margin-top:1rem;font-size:0.85rem;color:var(--muted)">Sources: ${(h.sources||[]).join(', ')}</p>
+                    <p style="font-size:0.85rem;color:var(--muted)">AI Keys: ${h.ai_keys_configured ? 'Configured' : 'Missing'} | Platform: ${h.platform}</p>
+                `;
+                const rai = r.responsible_ai_card || {};
+                document.getElementById('rai-data').innerHTML = Object.entries(rai).map(([k,v]) =>
+                    `<div style="margin:0.5rem 0;"><strong style="color:var(--accent);text-transform:capitalize;">${k}:</strong> ${v}</div>`
+                ).join('');
+            } catch (e) {
+                document.getElementById('health-data').innerHTML = 'Error loading: ' + e.message;
+            }
+        }
+    </script>
+</body>
+</html>
