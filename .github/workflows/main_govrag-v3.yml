@@ -64,7 +64,6 @@ jobs:
           app-name: 'govrag-v3'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1784652D399545C994F94CF99CA0BE45 }}
-          startup-command: 'uvicorn app.api.main:app --host 0.0.0.0 --port 8000'
 
       - name: Warm-up — trigger first request to load RAG index
         run: |
