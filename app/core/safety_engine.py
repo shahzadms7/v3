@@ -27,7 +27,7 @@ class SafetyEngine:
 
         # Prompt injection patterns (attackers try to override AI instructions)
         self.injection_patterns = [
-            re.compile(r"ignore\s+(previous|above|all)\s+instructions", re.I),
+            re.compile(r"ignore.*(previous|above|all).*instructions", re.I),
             re.compile(r"you\s+are\s+now", re.I),
             re.compile(r"system\s*:\s*", re.I),
             re.compile(r"<\s*script", re.I),
