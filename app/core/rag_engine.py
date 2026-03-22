@@ -117,26 +117,40 @@ class RAGEngine:
         self._build_index()
 
     def _build_index(self):
-        """Build TF-IDF search index from all chunks."""
+        """Build keyword search index — pure Python, zero heavy dependencies."""
         if not self.chunks:
             return
 
-        from sklearn.feature_extraction.text import TfidfVectorizer
-        from sklearn.metrics.pairwise import cosine_similarity
+        # Build inverted index: word → list of (chunk_index, frequency)
+        self._word_index = {}
+        self._chunk_word_counts = []
+        stop_words = {'the','a','an','is','are','was','were','be','been','being','have','has','had',
+                      'do','does','did','will','would','shall','should','may','might','must','can',
+                      'could','to','of','in','for','on','with','at','by','from','as','into','through',
+                      'during','before','after','above','below','between','under','again','further',
+                      'then','once','and','but','or','nor','not','so','very','just','also','this',
+                      'that','these','those','it','its','all','each','every','both','few','more',
+                      'most','other','some','such','no','only','own','same','than','too','about'}
 
-        texts = [f"{c.section} {c.content}" for c in self.chunks]
-        self._vectorizer = TfidfVectorizer(
-            max_features=10000, stop_words="english",
-            ngram_range=(1, 2), min_df=1,
-        )
-        self._tfidf_matrix = self._vectorizer.fit_transform(texts)
+        for i, chunk in enumerate(self.chunks):
+            text = f"{chunk.section} {chunk.content}".lower()
+            words = re.findall(r'\b[a-z]{3,}\b', text)
+            words = [w for w in words if w not in stop_words]
+            word_freq = {}
+            for w in words:
+                word_freq[w] = word_freq.get(w, 0) + 1
+                if w not in self._word_index:
+                    self._word_index[w] = []
+                self._word_index[w].append(i)
+            self._chunk_word_counts.append(word_freq)
+
         self._indexed = True
-        print(f"[RAG] TF-IDF index built: {self._tfidf_matrix.shape}")
+        print(f"[RAG] Keyword index built: {len(self._word_index)} unique terms, {len(self.chunks)} chunks")
 
     def retrieve(self, query: str, top_k: int = None, doc_type: Optional[str] = None) -> dict:
         """
-        Search for relevant chunks.
-        Returns top_k most relevant chunks with relevance scores.
+        Search for relevant chunks using keyword matching.
+        Pure Python — no scikit-learn, no numpy. Starts in <1 second.
         """
         import time
         start = time.time()
@@ -145,30 +159,33 @@ class RAGEngine:
         if not self._indexed or not self.chunks:
             return {"chunks": [], "retrieval_time_ms": 0, "total": 0, "query": query}
 
-        from sklearn.metrics.pairwise import cosine_similarity
+        # Extract query terms
+        query_lower = query.lower()
+        query_terms = set(re.findall(r'\b[a-z]{3,}\b', query_lower))
 
-        query_vec = self._vectorizer.transform([query])
-        similarities = cosine_similarity(query_vec, self._tfidf_matrix).flatten()
-
-        # Get top K indices
-        top_indices = similarities.argsort()[::-1]
-
-        results = []
-        for idx in top_indices:
-            if len(results) >= top_k:
-                break
-            chunk = self.chunks[idx]
-            score = float(similarities[idx])
-
-            # Filter by doc_type if specified
+        # Score each chunk by term overlap
+        scores = []
+        for i, chunk in enumerate(self.chunks):
             if doc_type and chunk.doc_type != doc_type:
                 continue
+            word_freq = self._chunk_word_counts[i]
+            score = 0
+            for term in query_terms:
+                if term in word_freq:
+                    score += word_freq[term]
+            if score > 0:
+                # Normalize by chunk length
+                total_words = sum(word_freq.values()) or 1
+                normalized = score / (total_words ** 0.5)
+                scores.append((i, round(normalized, 4)))
 
-            # Skip very low relevance
-            if score < settings.RAG_MIN_RELEVANCE:
-                continue
+        # Sort by score descending
+        scores.sort(key=lambda x: x[1], reverse=True)
 
-            chunk.relevance_score = round(score, 4)
+        results = []
+        for idx, score in scores[:top_k]:
+            chunk = self.chunks[idx]
+            chunk.relevance_score = score
             results.append(chunk)
 
         return {

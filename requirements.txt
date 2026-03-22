@@ -1,35 +1,17 @@
-# >=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=
-# GovRAG V3 — Python Dependencies
+# GovRAG V3 — Python Dependencies (LIGHTWEIGHT — no heavy ML packages)
 # Created: March 21, 2026 | Microsoft Hackathon
-# 100% Python | Zero cost | Enterprise SaaS
-# >=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=
+# 100% Python | Zero cost | Fast startup on Azure
 
 # --- Web Framework ---
-fastapi>=0.115.0          # Backend API — fastest Python framework, auto-docs at /docs
-uvicorn>=0.32.0           # ASGI server — runs FastAPI
-streamlit>=1.41.0         # Frontend UI — 100% Python, beautiful dashboards
+fastapi>=0.115.0
+uvicorn>=0.32.0
 
 # --- AI Providers (all FREE tier) ---
-google-generativeai>=0.8.0  # Google AI Studio (Gemini) — 2 free keys
-openai>=1.58.0              # Grok (xAI) — OpenAI-compatible endpoint
-
-# --- Azure Services ---
-azure-search-documents>=11.6.0   # Azure AI Search — RAG retrieval
-azure-storage-blob>=12.23.0      # Azure Blob Storage — document storage
-azure-identity>=1.19.0           # Azure Managed Identity — zero keys in production
-azure-monitor-opentelemetry>=1.6.0  # Azure Monitor — audit trail + observability
-
-# --- Document Processing ---
-pymupdf>=1.24.0           # PDF text extraction (fast, no Java)
-python-docx>=1.1.0        # DOCX text extraction
-markdown>=3.7             # Markdown parsing
-
-# --- Data & Search ---
-numpy>=2.1.0              # Numerical operations for scoring
-scikit-learn>=1.5.0       # TF-IDF, cosine similarity for local search fallback
+google-generativeai>=0.8.0
+httpx>=0.28.0
 
 # --- Utilities ---
-python-dotenv>=1.0.1      # Load .env files
-pydantic>=2.10.0          # Data validation (used by FastAPI)
-httpx>=0.28.0             # Async HTTP client
-python-multipart>=0.0.17  # File upload support
+python-dotenv>=1.0.1
+pydantic>=2.10.0
+pydantic-settings>=2.0.0
+python-multipart>=0.0.17
