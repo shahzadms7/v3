@@ -297,6 +297,49 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# ENDPOINT: /api/decision — FULL CAREER DECISION (hardest algorithm)
+# ══════════════════════════════════════════════════════════════════════════════
+@app.route("decision", methods=["POST"])
+def decision(req: func.HttpRequest) -> func.HttpResponse:
+    """Complete career decision — resume + gaps + country fit + pivots. ZERO AI cost."""
+    import logging
+    start = time.time()
+    try:
+        body = req.get_json()
+        resume = (body.get("resume") or "")[:8000]
+        if not resume:
+            return func.HttpResponse(json.dumps({"error": "Resume required"}), status_code=400, mimetype="application/json")
+
+        from app.core.career_engine import parse_resume
+        from app.core.decision_engine import full_decision
+
+        parsed = parse_resume(resume)
+        result = full_decision(
+            parsed,
+            job_desc=body.get("job_description", ""),
+            country=body.get("country", ""),
+            industry=body.get("industry", ""),
+            target_role=body.get("target_role", ""),
+        )
+
+        # Add career intelligence from RAG
+        search_q = f"{body.get('industry','')} {body.get('country','')} career salary certification visa"
+        rag_results = _search(search_q, top_k=5, doc_type="career")
+        result["career_intelligence"] = [
+            {"source": r["chunk"]["source"], "section": r["chunk"]["section"],
+             "relevance": r["score"], "preview": r["chunk"]["content"][:300]}
+            for r in rag_results
+        ]
+        result["metrics"] = {"latency_ms": int((time.time()-start)*1000), "method": "100% algorithm — zero AI cost"}
+        result["privacy"] = "Your resume was NOT stored. Zero database. Refresh = gone."
+
+        return func.HttpResponse(json.dumps(result, indent=2), mimetype="application/json")
+    except Exception as e:
+        logging.error(f"[GovRAG] Decision error: {str(e)}")
+        return func.HttpResponse(json.dumps({"error": str(e), "latency_ms": int((time.time()-start)*1000)}), status_code=500, mimetype="application/json")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # ENDPOINT: /api/responsible-ai — RAI Transparency Card
 # ══════════════════════════════════════════════════════════════════════════════
 @app.route("responsible-ai", methods=["GET"])
