@@ -90,7 +90,7 @@ def _call_ai(system, user):
         try:
             import google.generativeai as genai
             genai.configure(api_key=key)
-            for model in ["gemini-2.0-flash", "gemini-1.5-flash"]:
+            for model in ["gemini-2.0-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]:
                 try:
                     m = genai.GenerativeModel(model)
                     r = m.generate_content(f"{system}\n\n{user}",
@@ -110,7 +110,7 @@ def _call_ai(system, user):
             import httpx
             resp = httpx.post("https://api.x.ai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {grok_key}", "Content-Type": "application/json"},
-                json={"model": "grok-beta", "messages": [
+                json={"model": "grok-2-latest", "messages": [
                     {"role": "system", "content": system},
                     {"role": "user", "content": user}
                 ], "temperature": 0.3, "max_tokens": 4096},
