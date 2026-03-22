@@ -48,13 +48,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Load documents on startup ─────────────────────────────────────────────────
+# ── Load documents on startup (deferred to avoid container timeout) ────────────
+_initialized = False
+
 @app.on_event("startup")
 async def startup():
-    """Load all documents into RAG index when app starts."""
+    """Start fast — Azure container has 230s timeout. Load docs on first request."""
     print(f"[GovRAG] Starting {settings.APP_NAME} v{settings.APP_VERSION}")
-    rag_engine.load_documents()
-    print(f"[GovRAG] RAG index ready: {rag_engine.stats}")
+    print(f"[GovRAG] RAG index will load on first request (deferred for fast startup)")
+
+async def ensure_initialized():
+    """Lazy init — load documents only when first query arrives."""
+    global _initialized
+    if not _initialized:
+        print("[GovRAG] First request — loading documents and building index...")
+        rag_engine.load_documents()
+        print(f"[GovRAG] RAG index ready: {rag_engine.stats}")
+        _initialized = True
 
 
 # ── Request/Response Models ───────────────────────────────────────────────────
@@ -80,6 +90,7 @@ async def query(req: QueryRequest):
     Ask a grounded question. Every answer cites sources.
     Privacy: Query is NEVER stored. Only metrics are logged.
     """
+    await ensure_initialized()
     start = time.time()
 
     # Gate 1: Input safety
@@ -179,6 +190,7 @@ async def career_analyze(req: CareerAnalyzeRequest):
     Analyze a resume with RAG-grounded career intelligence.
     Privacy: Resume is NEVER stored. Only processed in-memory.
     """
+    await ensure_initialized()
     start = time.time()
 
     # Build career-specific query from resume + job description
@@ -283,6 +295,7 @@ async def metrics():
 @app.get("/api/sources")
 async def list_sources():
     """List all indexed document sources."""
+    await ensure_initialized()
     return {
         "stats": rag_engine.stats,
         "sources": list(set(c.source for c in rag_engine.chunks)),
@@ -351,6 +364,7 @@ async def explain_retrieval(req: QueryRequest):
     Shows exactly WHY specific sources were selected for a query.
     Displays keyword overlap, relevance reasoning, and search strategy.
     """
+    await ensure_initialized()
     doc_type = None if req.mode == "auto" else req.mode
     retrieval = rag_engine.retrieve(req.query, doc_type=doc_type, top_k=10)
 
