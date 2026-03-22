@@ -246,34 +246,54 @@ def simplify(req: func.HttpRequest) -> func.HttpResponse:
 # ══════════════════════════════════════════════════════════════════════════════
 @app.route("career", methods=["POST"])
 def career(req: func.HttpRequest) -> func.HttpResponse:
+    """Naked Truth Career Analysis — 99% data-driven, 1% AI formatting."""
+    import logging
     start = time.time()
-    body = req.get_json()
-    resume = (body.get("resume") or "")[:8000]
-    job_desc = (body.get("job_description") or "")[:4000]
-    country = body.get("country", "")
-    industry = body.get("industry", "")
-    if not resume:
-        return func.HttpResponse(json.dumps({"error": "Resume required"}), status_code=400, mimetype="application/json")
+    try:
+        body = req.get_json()
+        resume = (body.get("resume") or "")[:8000]
+        job_desc = (body.get("job_description") or "")[:4000]
+        country = body.get("country", "")
+        industry = body.get("industry", "")
+        if not resume:
+            return func.HttpResponse(json.dumps({"error": "Resume required"}), status_code=400, mimetype="application/json")
 
-    results = _search(f"resume {industry} {country} career certification salary", doc_type="career", top_k=7)
-    ctx = "\n\n".join([f"[Source {i+1}: {r['chunk']['source']}, {r['chunk']['section']}]\n{r['chunk']['content']}" for i, r in enumerate(results)])
+        # ── STEP 1: Parse resume (ZERO AI cost) ──
+        from app.core.career_engine import parse_resume, naked_truth_score, ats_score
+        parsed = parse_resume(resume)
 
-    system = f"""You are GovRAG Career Intelligence — top 1% career advisor for 8 billion humans.
-3-STEP METHOD: 1) 6-second skim test 2) Every bullet needs numbers 3) Top 3 results first half of page 1
-Country: {country or 'Global'} | Industry: {industry or 'General'}
-Use career data below. Cite [Source N] for salary, certs, market data.
-CAREER DATA:\n{ctx}
-Return JSON: {{"score":0-100,"summary":"...","strengths":["..."],"weaknesses":["..."],"missing_skills":["..."],"recommended_certs":["... [Source N]"],"action_items":["..."],"confidence":85}}"""
+        # ── STEP 2: Score against TOP 1% standard (ZERO AI cost) ──
+        truth = naked_truth_score(parsed, job_desc, country, industry)
 
-    ai = _call_ai(system, f"RESUME:\n{resume}\n{f'JOB: {job_desc}' if job_desc else ''}\nAnalyze. Be brutally honest. Top 1% standard. Return JSON.")
-    parsed = _parse_json(ai["text"])
+        # ── STEP 3: ATS match against job description (ZERO AI cost) ──
+        ats = ats_score(resume, job_desc) if job_desc else {"ats_score": None}
 
-    return func.HttpResponse(json.dumps({
-        "analysis": parsed,
-        "sources": [{"num": i+1, "doc": r["chunk"]["source"], "section": r["chunk"]["section"]} for i, r in enumerate(results)],
-        "metrics": {"latency_ms": int((time.time()-start)*1000), "provider": ai["provider"]},
-        "privacy": "Your resume was NOT stored. Gone from memory after this response.",
-    }, indent=2), mimetype="application/json")
+        # ── STEP 4: RAG search for career intelligence (ZERO AI cost) ──
+        search_terms = f"resume {industry} {country} career certification salary skills"
+        results = _search(search_terms, top_k=7, doc_type="career")
+        career_intel = [{"source": r["chunk"]["source"], "section": r["chunk"]["section"],
+                         "relevance": r["score"], "preview": r["chunk"]["content"][:200]}
+                        for r in results]
+
+        # ── STEP 5: AI narrative ONLY if requested (1% AI cost) ──
+        ai_narrative = None
+        if body.get("include_ai_narrative", False):
+            ctx = "\n\n".join([f"[Source {i+1}: {r['chunk']['source']}]\n{r['chunk']['content']}" for i, r in enumerate(results)])
+            system = f"You are GovRAG Career — top 1% advisor. Country: {country or 'Global'}. Industry: {industry or 'General'}. CAREER DATA:\n{ctx}\nWrite 3 paragraphs: 1) What's good 2) What's killing this resume 3) Exact action items. Cite [Source N]. Be brutal."
+            ai = _call_ai(system, f"RESUME STATS:\nScore: {truth['composite_score']}/100\nWeaknesses: {truth['weaknesses']}\nStrengths: {truth['strengths']}\nHidden: {truth['hidden_issues']}")
+            ai_narrative = {"text": ai["text"], "provider": ai["provider"], "model": ai["model"]}
+
+        return func.HttpResponse(json.dumps({
+            "naked_truth": truth,
+            "ats_match": ats,
+            "career_intelligence": career_intel,
+            "ai_narrative": ai_narrative,
+            "metrics": {"latency_ms": int((time.time()-start)*1000), "method": "99% algorithm + data, 1% AI"},
+            "privacy": "Your resume was NOT stored. Gone from memory after this response.",
+        }, indent=2), mimetype="application/json")
+    except Exception as e:
+        logging.error(f"[GovRAG] Career error: {str(e)}")
+        return func.HttpResponse(json.dumps({"error": str(e)}), status_code=500, mimetype="application/json")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
