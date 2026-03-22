@@ -83,7 +83,7 @@ def _call_ai(system, user):
     errors = []
 
     # Try Gemini
-    keys = [os.environ.get("GEMINI_API_KEY", ""), os.environ.get("GEMINI_API_KEY_2", "")]
+    keys = [os.environ.get("GEMINI_API_KEY", ""), os.environ.get("GEMINI_API_KEY_2", ""), os.environ.get("GEMINI_API_KEY_3", "")]
     for ki, key in enumerate(keys):
         if not key:
             continue
@@ -175,8 +175,22 @@ def query(req: func.HttpRequest) -> func.HttpResponse:
 
         q = (body.get("query") or "")[:2000].strip()
         mode = body.get("mode", "auto")
+        target_lang = body.get("language", "en")
         if not q:
             return func.HttpResponse(json.dumps({"error": "Query required"}), status_code=400, mimetype="application/json")
+
+        # ── AZURE AI: PII Detection + Key Phrases ──
+        azure_ai = {}
+        try:
+            from app.core.azure_ai_services import detect_pii, extract_key_phrases, detect_language
+            pii = detect_pii(q)
+            azure_ai["pii_detection"] = {"count": pii.get("pii_count", 0), "status": pii.get("status")}
+            if pii.get("pii_count", 0) > 0:
+                azure_ai["pii_warning"] = "PII detected in query. We NEVER store your data."
+            azure_ai["key_phrases"] = extract_key_phrases(q)
+            azure_ai["detected_language"] = detect_language(q)
+        except Exception as e:
+            azure_ai["error"] = str(e)[:80]
 
         # Search
         doc_type = None if mode == "auto" else mode
@@ -207,13 +221,32 @@ Return JSON: {"answer":"...[Source N]...","sources_cited":[1,2],"confidence":85,
                     "relevance": r["score"], "preview": r["chunk"]["content"][:200]}
                    for i, r in enumerate(results)]
 
+        # ── AZURE AI: Content Safety check on response ──
+        safety_result = {}
+        try:
+            from app.core.azure_ai_services import check_content_safety, translate_text
+            safety_result = check_content_safety(answer)
+            if not safety_result.get("safe", True):
+                answer = "Response blocked by Azure Content Safety. The answer contained potentially harmful content."
+                faith = 0
+            # ── AZURE AI: Translate if requested ──
+            translation = None
+            if target_lang and target_lang != "en":
+                translation = translate_text(answer, target_lang)
+                if translation.get("status") == "translated":
+                    answer = translation["translated"]
+        except Exception as e:
+            safety_result = {"error": str(e)[:80]}
+
         return func.HttpResponse(json.dumps({
             "answer": answer, "grounded": True,
             "confidence": parsed.get("confidence", 50), "faithfulness": faith,
             "sources": sources, "key_facts": parsed.get("key_facts", []),
             "warnings": parsed.get("warnings", []),
+            "azure_ai": {**azure_ai, "content_safety": safety_result},
             "metrics": {"faithfulness": faith, "latency_ms": int((time.time()-start)*1000),
-                        "provider": ai["provider"], "model": ai["model"]},
+                        "provider": ai["provider"], "model": ai["model"],
+                        "azure_services_used": ["Content Safety", "Language PII", "Language KeyPhrases", "Translator"]},
         }, indent=2), mimetype="application/json")
     except Exception as e:
         logging.error(f"[GovRAG] Query error: {str(e)}")
