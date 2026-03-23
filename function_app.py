@@ -103,24 +103,26 @@ def _call_ai(system, user):
         except Exception as e:
             errors.append(f"Gemini import: {str(e)[:80]}")
 
-    # Try Grok (OpenAI-compatible)
-    grok_key = os.environ.get("GROK_API_KEY", "")
-    if grok_key:
+    # Try Grok (OpenAI-compatible) — 3 keys, grok-4-1-fast model
+    grok_keys = [os.environ.get("GROK_API_KEY", ""), os.environ.get("GROK_API_KEY_2", ""), os.environ.get("GROK_API_KEY_3", "")]
+    for gi, grok_key in enumerate(grok_keys):
+        if not grok_key:
+            continue
         try:
             import httpx
             resp = httpx.post("https://api.x.ai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {grok_key}", "Content-Type": "application/json"},
-                json={"model": "grok-2-latest", "messages": [
+                json={"model": "grok-4-1-fast", "messages": [
                     {"role": "system", "content": system},
                     {"role": "user", "content": user}
                 ], "temperature": 0.3, "max_tokens": 4096},
                 timeout=55.0)
             if resp.status_code == 200:
                 text = resp.json()["choices"][0]["message"]["content"]
-                return {"text": text, "provider": "Grok", "model": "grok-beta"}
-            errors.append(f"Grok: HTTP {resp.status_code}")
+                return {"text": text, "provider": f"Grok-Key{gi+1}", "model": "grok-4-1-fast"}
+            errors.append(f"Grok-{gi+1}: HTTP {resp.status_code}")
         except Exception as e:
-            errors.append(f"Grok: {str(e)[:80]}")
+            errors.append(f"Grok-{gi+1}: {str(e)[:80]}")
 
     logging.error(f"[GovRAG] All AI providers failed: {errors}")
     return {"text": f"AI temporarily unavailable. Errors: {'; '.join(errors)}", "provider": "none", "model": "none"}
