@@ -177,8 +177,13 @@
         <div class="tab-content" id="tab-career">
             <div class="card">
                 <h3>Career Analyzer — Top 1% Standard</h3>
-                <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.75rem">Paste your resume. Get brutally honest feedback grounded in career intelligence data.</p>
-                <textarea id="resume-input" rows="6" placeholder="Paste your resume text here..."></textarea>
+                <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.75rem">Upload your resume (PDF/DOCX/TXT) or paste text. Get brutally honest feedback.</p>
+                <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">
+                    <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:#0d0d2b;border:1px solid #333;border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.85rem;">
+                    <button class="btn" onclick="uploadFile()" style="padding:0.5rem 1rem;font-size:0.85rem;">Upload & Extract</button>
+                </div>
+                <div id="upload-status" style="display:none;font-size:0.8rem;color:var(--green);margin-bottom:0.5rem;"></div>
+                <textarea id="resume-input" rows="6" placeholder="Or paste your resume text here..."></textarea>
                 <textarea id="job-input" rows="3" placeholder="(Optional) Paste the job description you're targeting..." style="margin-top:0.5rem;"></textarea>
                 <div class="two-col" style="margin-top:0.5rem;">
                     <input type="text" id="country-input" placeholder="Your country (e.g., Canada)">
@@ -197,6 +202,7 @@
                 <div class="card">
                     <h3>Analysis</h3>
                     <div class="answer-box" id="career-text"></div>
+                    <button class="btn" onclick="downloadResults()" style="margin-top:1rem;">Download Results (.txt)</button>
                 </div>
             </div>
         </div>
@@ -223,6 +229,48 @@
     <script>
         const API = window.location.origin;
         let lastAnswer = '';
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB max
+        const ALLOWED_TYPES = ['.pdf', '.docx', '.txt', '.md'];
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('resume-file');
+            const statusDiv = document.getElementById('upload-status');
+            if (!fileInput.files.length) return alert('Please select a file first');
+            const file = fileInput.files[0];
+
+            // Security checks
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+            if (!ALLOWED_TYPES.includes(ext)) {
+                alert('Only PDF, DOCX, TXT, MD files allowed. Selected: ' + ext);
+                return;
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                alert('File too large! Maximum 5MB (about 20 pages). Your file: ' + (file.size/1024/1024).toFixed(1) + 'MB');
+                return;
+            }
+
+            statusDiv.style.display = 'block';
+            statusDiv.textContent = 'Uploading and extracting text...';
+            statusDiv.style.color = 'var(--gold)';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                const resp = await fetch(API + '/api/upload', { method: 'POST', body: formData });
+                const data = await resp.json();
+                if (data.error) {
+                    statusDiv.textContent = 'Error: ' + data.error;
+                    statusDiv.style.color = 'var(--accent2)';
+                    return;
+                }
+                document.getElementById('resume-input').value = data.text;
+                statusDiv.textContent = 'Extracted ' + data.words_extracted + ' words from ' + data.file + ' (' + data.extraction_method + '). File erased from memory.';
+                statusDiv.style.color = 'var(--green)';
+            } catch (e) {
+                statusDiv.textContent = 'Upload failed: ' + e.message;
+                statusDiv.style.color = 'var(--accent2)';
+            }
+        }
 
         function switchTab(name) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -345,6 +393,24 @@
                 document.getElementById('career-result').style.display = 'block';
             }
             document.getElementById('loading-career').classList.remove('show');
+        }
+
+        function downloadResults() {
+            const careerText = document.getElementById('career-text')?.innerText || '';
+            const queryText = document.getElementById('answer-text')?.innerText || '';
+            const timestamp = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+            let content = '=== GovRAG V3 — Career Intelligence Report ===\n';
+            content += 'Generated: ' + new Date().toLocaleString() + '\n';
+            content += 'Privacy: Your data was NOT stored. This is your only copy.\n\n';
+            if (queryText) { content += '=== COMPLIANCE Q&A ===\n' + queryText + '\n\n'; }
+            if (careerText) { content += '=== CAREER ANALYSIS ===\n' + careerText + '\n\n'; }
+            content += '=== POWERED BY ===\nGovRAG V3 | Azure Functions | Microsoft Hackathon 2026\nFree for all 8 billion humans. No data stored.\n';
+            const blob = new Blob([content], {type: 'text/plain'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'GovRAG-Results-' + timestamp + '.txt';
+            a.click();
+            URL.revokeObjectURL(a.href);
         }
 
         async function loadAudit() {

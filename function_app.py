@@ -375,6 +375,121 @@ def decision(req: func.HttpRequest) -> func.HttpResponse:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# ENDPOINT: /api/upload — Upload PDF, DOCX, TXT files for analysis
+# ══════════════════════════════════════════════════════════════════════════════
+@app.route("upload", methods=["POST"])
+def upload(req: func.HttpRequest) -> func.HttpResponse:
+    """Extract text from uploaded PDF, DOCX, or TXT files. ZERO storage — file processed in memory only."""
+    import logging
+    start = time.time()
+    try:
+        # Get the uploaded file from multipart form data
+        file_data = None
+        file_name = ""
+        content_type = req.headers.get("Content-Type", "")
+
+        if "multipart/form-data" in content_type:
+            # Multipart upload
+            for input_file in req.files.values():
+                file_data = input_file.read()
+                file_name = input_file.filename or "unknown"
+                break
+        else:
+            # Raw body upload
+            file_data = req.get_body()
+            file_name = req.headers.get("X-Filename", req.params.get("filename", "unknown.txt"))
+
+        if not file_data:
+            return func.HttpResponse(json.dumps({"error": "No file uploaded"}), status_code=400, mimetype="application/json")
+
+        # ── SECURITY: File size limit (5MB = ~20 pages) ──
+        MAX_FILE_SIZE = 5 * 1024 * 1024
+        if len(file_data) > MAX_FILE_SIZE:
+            return func.HttpResponse(json.dumps({
+                "error": f"File too large ({len(file_data)//1024//1024}MB). Maximum 5MB (~20 pages).",
+                "max_size": "5MB", "your_size": f"{len(file_data)//1024}KB"
+            }), status_code=413, mimetype="application/json")
+
+        # ── SECURITY: Allowed file types only ──
+        ALLOWED_EXTENSIONS = {"pdf", "docx", "txt", "md", "csv"}
+        file_ext = file_name.lower().rsplit(".", 1)[-1] if "." in file_name else ""
+        if file_ext not in ALLOWED_EXTENSIONS:
+            return func.HttpResponse(json.dumps({
+                "error": f"File type .{file_ext} not allowed. Supported: PDF, DOCX, TXT, MD",
+            }), status_code=400, mimetype="application/json")
+
+        text = ""
+        extraction_method = ""
+
+        # ── Extract text based on file type ──
+        if file_ext == "pdf":
+            try:
+                import fitz  # pymupdf
+                doc = fitz.open(stream=file_data, filetype="pdf")
+                text = "\n".join(page.get_text() for page in doc)
+                extraction_method = "pymupdf"
+                doc.close()
+            except ImportError:
+                # Fallback: basic PDF text extraction without pymupdf
+                text_bytes = file_data.decode("utf-8", errors="ignore")
+                # Extract readable text between stream markers
+                chunks = re.findall(r'\((.*?)\)', text_bytes)
+                text = " ".join(c for c in chunks if len(c) > 3 and c.isprintable())
+                extraction_method = "basic-fallback"
+
+        elif file_ext == "docx":
+            try:
+                from docx import Document
+                import io
+                doc = Document(io.BytesIO(file_data))
+                text = "\n".join(para.text for para in doc.paragraphs if para.text.strip())
+                extraction_method = "python-docx"
+            except ImportError:
+                # Fallback: extract raw text from DOCX XML
+                import zipfile, io
+                with zipfile.ZipFile(io.BytesIO(file_data)) as z:
+                    if "word/document.xml" in z.namelist():
+                        xml = z.read("word/document.xml").decode("utf-8", errors="ignore")
+                        text = re.sub(r"<[^>]+>", " ", xml)
+                        text = re.sub(r"\s+", " ", text).strip()
+                extraction_method = "xml-fallback"
+
+        elif file_ext in ("txt", "md", "csv"):
+            text = file_data.decode("utf-8", errors="ignore")
+            extraction_method = "plaintext"
+
+        else:
+            return func.HttpResponse(json.dumps({
+                "error": f"Unsupported file type: .{file_ext}. Supported: PDF, DOCX, TXT, MD"
+            }), status_code=400, mimetype="application/json")
+
+        # Truncate to 10K chars
+        text = text[:10000].strip()
+
+        if not text or len(text) < 20:
+            return func.HttpResponse(json.dumps({
+                "error": "Could not extract text from file. Try copy-pasting instead.",
+                "file": file_name, "bytes": len(file_data), "extraction": extraction_method,
+            }), status_code=400, mimetype="application/json")
+
+        return func.HttpResponse(json.dumps({
+            "text": text,
+            "file": file_name,
+            "file_type": file_ext,
+            "chars_extracted": len(text),
+            "words_extracted": len(text.split()),
+            "extraction_method": extraction_method,
+            "truncated": len(file_data) > 10000,
+            "latency_ms": int((time.time()-start)*1000),
+            "privacy": "File was processed in MEMORY only. ZERO storage. Already erased.",
+        }, indent=2), mimetype="application/json")
+
+    except Exception as e:
+        logging.error(f"[GovRAG] Upload error: {str(e)}")
+        return func.HttpResponse(json.dumps({"error": str(e)}), status_code=500, mimetype="application/json")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # ENDPOINT: /api/responsible-ai — RAI Transparency Card
 # ══════════════════════════════════════════════════════════════════════════════
 @app.route("responsible-ai", methods=["GET"])
