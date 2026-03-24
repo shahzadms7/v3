@@ -3,491 +3,459 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GovRAG — Grounded Knowledge Assistant</title>
+    <title>Alfalah AI — Career Intelligence for 8 Billion Humans</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg: #0a0a1a; --card: rgba(17,17,51,0.85); --accent: #4f8cff; --accent2: #ff6b6b;
+            --bg: #000008; --card: rgba(10,10,40,0.88); --accent: #4f8cff; --accent2: #ff6b6b;
             --green: #4ecdc4; --gold: #ffd93d; --text: #e8e8ff; --muted: #8888aa;
-            --glow: rgba(79, 140, 255, 0.4); --purple: #a855f7; --pink: #ec4899;
+            --purple: #a855f7; --pink: #ec4899; --glow: rgba(79,140,255,0.4);
         }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg); color: var(--text); min-height: 100vh;
-            background-image:
-                radial-gradient(ellipse at 15% 20%, rgba(79,140,255,0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 85% 30%, rgba(168,85,247,0.12) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(236,72,153,0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 60%, rgba(78,205,196,0.06) 0%, transparent 40%);
-            overflow-x: hidden;
+            background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden;
         }
 
-        /* ── Animated star particles ── */
-        body::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;
-            background-image:
-                radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6), transparent),
-                radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.4), transparent),
-                radial-gradient(1px 1px at 45% 10%, rgba(255,255,255,0.5), transparent),
-                radial-gradient(1.5px 1.5px at 60% 45%, rgba(79,140,255,0.8), transparent),
-                radial-gradient(1px 1px at 75% 20%, rgba(255,255,255,0.3), transparent),
-                radial-gradient(1px 1px at 90% 55%, rgba(168,85,247,0.6), transparent),
-                radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,0.4), transparent),
-                radial-gradient(1.5px 1.5px at 55% 85%, rgba(78,205,196,0.7), transparent),
-                radial-gradient(1px 1px at 80% 75%, rgba(255,255,255,0.3), transparent),
-                radial-gradient(1px 1px at 15% 90%, rgba(236,72,153,0.5), transparent),
-                radial-gradient(1px 1px at 40% 50%, rgba(255,255,255,0.5), transparent),
-                radial-gradient(1px 1px at 95% 85%, rgba(255,217,61,0.5), transparent);
-            animation: twinkle 8s ease-in-out infinite alternate;
-        }
-        @keyframes twinkle { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+        /* ── NASA Galaxy Canvas (fixed behind everything) ── */
+        #galaxy { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: auto; }
 
-        /* ── Rainbow top bar — thicker + glow ── */
+        /* ── Rainbow top bar ── */
         .rainbow-bar {
-            height: 5px;
-            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #4ecdc4, #4f8cff, #a855f7, #ec4899, #ff6b6b);
+            height: 5px; position: relative; z-index: 10;
+            background: linear-gradient(90deg,#ff6b6b,#ffd93d,#4ecdc4,#4f8cff,#a855f7,#ec4899,#ff6b6b);
             background-size: 300%; animation: rainbow 4s linear infinite;
-            box-shadow: 0 2px 20px rgba(79,140,255,0.4), 0 2px 40px rgba(168,85,247,0.2);
+            box-shadow: 0 2px 20px rgba(79,140,255,0.5), 0 2px 40px rgba(168,85,247,0.3);
         }
-        @keyframes rainbow { 0% { background-position: 0%; } 100% { background-position: 300%; } }
+        @keyframes rainbow { 0%{background-position:0%} 100%{background-position:300%} }
 
-        /* ── Header — glowing title ── */
-        header { text-align: center; padding: 2.5rem 1rem 1.5rem; position: relative; z-index: 1; }
+        /* ── Location + Weather Widget (top right) ── */
+        #loc-widget {
+            position: fixed; top: 12px; right: 16px; z-index: 100;
+            background: rgba(10,10,40,0.85); backdrop-filter: blur(12px);
+            border: 1px solid rgba(79,140,255,0.25); border-radius: 20px;
+            padding: 0.35rem 0.85rem; display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.78rem; color: var(--text); max-width: 380px;
+            box-shadow: 0 4px 20px rgba(79,140,255,0.15); transition: all 0.3s;
+        }
+        #loc-widget:hover { border-color: rgba(79,140,255,0.5); box-shadow: 0 4px 30px rgba(79,140,255,0.3); }
+        #loc-flag { font-size: 1.2rem; }
+        #loc-city { color: var(--text); font-weight: 600; }
+        #loc-weather { color: var(--gold); font-weight: 600; }
+        #loc-isp { color: var(--muted); font-size: 0.7rem; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* ── Ticker ── */
+        .ticker-wrap {
+            overflow: hidden; background: rgba(5,5,20,0.7); border-top: 1px solid rgba(79,140,255,0.1);
+            border-bottom: 1px solid rgba(79,140,255,0.1); padding: 0.4rem 0;
+            position: relative; z-index: 5;
+        }
+        .ticker { display: inline-block; white-space: nowrap; animation: tickerScroll 50s linear infinite; font-size: 0.8rem; color: var(--muted); }
+        .ticker span { margin: 0 2rem; }
+        .ticker .hi { color: var(--accent); font-weight: 600; }
+        .ticker .gr { color: var(--green); }
+        .ticker .go { color: var(--gold); }
+        @keyframes tickerScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+        /* ── Header ── */
+        header { text-align: center; padding: 2rem 1rem 1.5rem; position: relative; z-index: 5; }
         header h1 {
-            font-size: 3rem; font-weight: 900; letter-spacing: -1px;
-            background: linear-gradient(135deg, #4f8cff 0%, #a855f7 30%, #ec4899 60%, #ff6b6b 80%, #ffd93d 100%);
+            font-size: 3.2rem; font-weight: 900; letter-spacing: -1px;
+            background: linear-gradient(135deg,#4f8cff 0%,#a855f7 30%,#ec4899 55%,#ffd93d 75%,#4ecdc4 100%);
             background-size: 200%; animation: titleGlow 6s ease-in-out infinite alternate;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(79,140,255,0.3));
+            filter: drop-shadow(0 0 40px rgba(79,140,255,0.4));
         }
-        @keyframes titleGlow { 0% { background-position: 0% 50%; filter: drop-shadow(0 0 20px rgba(79,140,255,0.3)); } 100% { background-position: 100% 50%; filter: drop-shadow(0 0 30px rgba(168,85,247,0.4)); } }
-        header .subtitle { color: var(--muted); font-size: 1.05rem; margin-top: 0.5rem; max-width: 650px; margin-inline: auto; line-height: 1.5; }
-        .badges { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1.2rem; }
+        @keyframes titleGlow { 0%{background-position:0% 50%;filter:drop-shadow(0 0 25px rgba(79,140,255,0.4))} 100%{background-position:100% 50%;filter:drop-shadow(0 0 40px rgba(168,85,247,0.5))} }
+        header .subtitle { color: var(--muted); font-size: 1rem; margin-top: 0.5rem; max-width: 700px; margin-inline: auto; line-height: 1.6; }
+        .badges { display: flex; gap: 0.45rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
         .badge {
-            background: rgba(17,17,51,0.6); backdrop-filter: blur(10px);
+            background: rgba(10,10,40,0.7); backdrop-filter: blur(10px);
             border: 1px solid rgba(79,140,255,0.2); border-radius: 20px;
-            padding: 0.3rem 0.85rem; font-size: 0.75rem; color: var(--muted);
-            transition: all 0.3s ease;
+            padding: 0.28rem 0.8rem; font-size: 0.72rem; color: var(--muted); transition: all 0.3s;
         }
-        .badge:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(79,140,255,0.2); }
+        .badge:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
         .badge.live { border-color: var(--green); color: var(--green); animation: pulse 2s ease-in-out infinite; }
-        @keyframes pulse { 0%,100% { box-shadow: 0 0 5px rgba(78,205,196,0.3); } 50% { box-shadow: 0 0 20px rgba(78,205,196,0.6); } }
+        @keyframes pulse { 0%,100%{box-shadow:0 0 5px rgba(78,205,196,0.3)} 50%{box-shadow:0 0 20px rgba(78,205,196,0.7)} }
 
-        /* ── Main layout ── */
-        .container { max-width: 1100px; margin: 0 auto; padding: 1rem; position: relative; z-index: 1; }
+        /* ── Layout ── */
+        .container { max-width: 1100px; margin: 0 auto; padding: 1rem; position: relative; z-index: 5; }
 
-        /* ── Tabs — glass morphism ── */
-        .tabs { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; }
+        /* ── Tabs ── */
+        .tabs { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
         .tab {
-            padding: 0.7rem 1.8rem; background: rgba(17,17,51,0.5); backdrop-filter: blur(10px);
+            padding: 0.65rem 1.6rem; background: rgba(10,10,40,0.6); backdrop-filter: blur(10px);
             border: 1px solid rgba(79,140,255,0.15); border-radius: 12px; cursor: pointer;
-            font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease; color: var(--muted);
+            font-size: 0.9rem; font-weight: 500; transition: all 0.3s; color: var(--muted);
         }
         .tab:hover { background: rgba(79,140,255,0.15); color: var(--text); border-color: rgba(79,140,255,0.4); transform: translateY(-2px); }
         .tab.active {
-            background: linear-gradient(135deg, rgba(79,140,255,0.3), rgba(168,85,247,0.2));
+            background: linear-gradient(135deg,rgba(79,140,255,0.3),rgba(168,85,247,0.2));
             color: #fff; border-color: var(--accent);
             box-shadow: 0 4px 20px rgba(79,140,255,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
-        /* ── Cards — glass morphism + gradient border ── */
+        /* ── Cards ── */
         .card {
-            background: rgba(17,17,51,0.7); backdrop-filter: blur(12px);
+            background: rgba(10,10,40,0.78); backdrop-filter: blur(14px);
             border: 1px solid rgba(79,140,255,0.1); border-radius: 16px;
-            padding: 1.5rem; margin-bottom: 1rem;
-            transition: all 0.3s ease; position: relative; overflow: hidden;
+            padding: 1.5rem; margin-bottom: 1rem; transition: all 0.3s; position: relative; overflow: hidden;
         }
         .card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), var(--purple), transparent);
-            opacity: 0; transition: opacity 0.3s;
+            content:''; position:absolute; top:0; left:0; right:0; height:2px;
+            background: linear-gradient(90deg,transparent,var(--accent),var(--purple),transparent);
+            opacity:0; transition:opacity 0.3s;
         }
-        .card:hover { border-color: rgba(79,140,255,0.25); box-shadow: 0 8px 32px rgba(79,140,255,0.1); }
-        .card:hover::before { opacity: 1; }
+        .card:hover { border-color: rgba(79,140,255,0.25); box-shadow: 0 8px 32px rgba(79,140,255,0.12); }
+        .card:hover::before { opacity:1; }
         .card h3 {
-            background: linear-gradient(135deg, var(--accent), var(--purple));
+            background: linear-gradient(135deg,var(--accent),var(--purple));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 0.75rem; font-size: 1.15rem; font-weight: 700;
+            margin-bottom: 0.75rem; font-size: 1.1rem; font-weight: 700;
         }
 
-        /* ── Input area — glow on focus ── */
+        /* ── Inputs ── */
         textarea, input[type="text"], select {
-            width: 100%; background: rgba(13,13,43,0.8); border: 1px solid rgba(79,140,255,0.15);
-            border-radius: 10px; padding: 0.8rem; color: var(--text); font-size: 0.95rem; resize: vertical;
-            transition: all 0.3s ease;
+            width: 100%; background: rgba(5,5,25,0.85); border: 1px solid rgba(79,140,255,0.15);
+            border-radius: 10px; padding: 0.8rem; color: var(--text); font-size: 0.95rem; resize: vertical; transition: all 0.3s;
         }
-        textarea:focus, input:focus {
-            outline: none; border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(79,140,255,0.3), 0 0 30px rgba(79,140,255,0.1);
-        }
+        textarea:focus, input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 15px rgba(79,140,255,0.35); }
 
-        /* ── Buttons — vibrant gradients + glow ── */
+        /* ── Buttons ── */
         .btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
             padding: 0.8rem 1.8rem; border: none; border-radius: 10px;
             font-size: 1rem; cursor: pointer; font-weight: 600;
-            background: linear-gradient(135deg, #4f8cff, #6366f1, #a855f7);
-            background-size: 200%; color: #fff;
-            transition: all 0.3s ease; position: relative; overflow: hidden;
+            background: linear-gradient(135deg,#4f8cff,#6366f1,#a855f7); background-size:200%; color: #fff;
+            transition: all 0.3s; position: relative; overflow: hidden;
         }
         .btn::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+            background: linear-gradient(45deg,transparent 30%,rgba(255,255,255,0.1) 50%,transparent 70%);
             animation: shimmer 3s infinite;
         }
-        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-        .btn:hover {
-            transform: translateY(-2px); background-position: 100% 50%;
-            box-shadow: 0 6px 25px rgba(79,140,255,0.4), 0 0 60px rgba(99,102,241,0.2);
-        }
-        .btn:active { transform: translateY(0); }
-        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .btn-eli12 { background: linear-gradient(135deg, #ffd93d, #f59e0b, #ff6b6b); background-size: 200%; color: #000; }
-        .btn-eli12:hover { box-shadow: 0 6px 25px rgba(255,217,61,0.4); }
-        .btn-career { background: linear-gradient(135deg, #4ecdc4, #06b6d4, #0ea5e9); background-size: 200%; }
-        .btn-career:hover { box-shadow: 0 6px 25px rgba(78,205,196,0.4); }
+        @keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+        .btn:hover { transform:translateY(-2px); background-position:100% 50%; box-shadow:0 6px 25px rgba(79,140,255,0.4); }
+        .btn:active { transform:translateY(0); }
+        .btn:disabled { opacity:0.4; cursor:not-allowed; }
+        .btn-sm { padding:0.5rem 1rem; font-size:0.85rem; }
+        .btn-career { background: linear-gradient(135deg,#4ecdc4,#06b6d4,#0ea5e9); background-size:200%; }
+        .btn-career:hover { box-shadow:0 6px 25px rgba(78,205,196,0.4); }
+        .btn-danger { background: linear-gradient(135deg,#ff6b6b,#f59e0b); background-size:200%; }
 
-        /* ── Results — glowing answer box ── */
+        /* ── Results ── */
         .answer-box {
-            background: rgba(13,13,43,0.8); border: 1px solid rgba(79,140,255,0.15);
-            border-radius: 12px; padding: 1.2rem; margin-top: 1rem; line-height: 1.8;
-            animation: fadeInUp 0.5s ease-out;
+            background: rgba(5,5,25,0.85); border: 1px solid rgba(79,140,255,0.15);
+            border-radius: 12px; padding: 1.2rem; margin-top: 1rem; line-height: 1.8; animation: fadeInUp 0.5s ease-out;
         }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .answer-box .source-ref {
-            color: var(--accent); font-weight: 700; cursor: pointer;
-            background: rgba(79,140,255,0.1); padding: 0.1rem 0.4rem; border-radius: 4px;
-            transition: all 0.2s;
-        }
-        .answer-box .source-ref:hover { background: rgba(79,140,255,0.25); text-decoration: none; }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
-        /* ── Metrics bar — glowing cards ── */
-        .metrics { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+        /* ── Metrics ── */
+        .metrics { display: flex; gap: 0.85rem; flex-wrap: wrap; margin-top: 1rem; }
         .metric {
-            flex: 1; min-width: 120px; border-radius: 12px; padding: 1rem; text-align: center;
-            background: rgba(13,13,43,0.6); backdrop-filter: blur(8px);
-            border: 1px solid rgba(79,140,255,0.1);
-            transition: all 0.3s ease; animation: fadeInUp 0.5s ease-out;
+            flex: 1; min-width: 110px; border-radius: 12px; padding: 1rem; text-align: center;
+            background: rgba(5,5,25,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(79,140,255,0.1);
+            transition: all 0.3s; animation: fadeInUp 0.5s ease-out;
         }
-        .metric:hover { transform: translateY(-3px); border-color: rgba(79,140,255,0.3); box-shadow: 0 8px 25px rgba(79,140,255,0.15); }
-        .metric .value { font-size: 1.6rem; font-weight: 800; }
-        .metric .label { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .metric.green .value { color: var(--green); text-shadow: 0 0 20px rgba(78,205,196,0.4); }
-        .metric.gold .value { color: var(--gold); text-shadow: 0 0 20px rgba(255,217,61,0.4); }
-        .metric.red .value { color: var(--accent2); text-shadow: 0 0 20px rgba(255,107,107,0.4); }
+        .metric:hover { transform:translateY(-3px); border-color:rgba(79,140,255,0.3); box-shadow:0 8px 25px rgba(79,140,255,0.15); }
+        .metric .value { font-size: 1.5rem; font-weight: 800; }
+        .metric .label { font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .metric.green .value { color: var(--green); text-shadow: 0 0 20px rgba(78,205,196,0.5); }
+        .metric.gold .value { color: var(--gold); text-shadow: 0 0 20px rgba(255,217,61,0.5); }
+        .metric.red .value { color: var(--accent2); text-shadow: 0 0 20px rgba(255,107,107,0.5); }
+        .metric.purple .value { color: var(--purple); }
 
-        /* ── Sources panel — hover reveal ── */
-        .source-item {
-            background: rgba(10,10,26,0.6); border: 1px solid rgba(79,140,255,0.08);
-            border-radius: 10px; padding: 0.8rem; margin-top: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        .source-item:hover { border-color: rgba(79,140,255,0.3); background: rgba(10,10,26,0.9); transform: translateX(4px); }
-        .source-item .src-header { display: flex; justify-content: space-between; font-size: 0.85rem; }
-        .source-item .src-header .num { color: var(--accent); font-weight: 700; }
-        .source-item .src-header .score { color: var(--green); font-weight: 600; }
-        .source-item .preview { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.5; }
-
-        /* ── Loading — pulsing orb ── */
+        /* ── Loading ── */
         .loading { display: none; text-align: center; padding: 2.5rem; }
         .loading.show { display: block; animation: fadeInUp 0.3s ease-out; }
         .spinner {
-            display: inline-block; width: 40px; height: 40px;
+            display: inline-block; width: 44px; height: 44px;
             border: 3px solid rgba(79,140,255,0.15); border-top-color: var(--accent); border-right-color: var(--purple);
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-            box-shadow: 0 0 20px rgba(79,140,255,0.3);
+            border-radius: 50%; animation: spin 0.8s linear infinite; box-shadow: 0 0 25px rgba(79,140,255,0.4);
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin { to{transform:rotate(360deg)} }
 
-        /* ── Footer — gradient line ── */
-        footer {
-            text-align: center; padding: 2rem; color: var(--muted); font-size: 0.8rem;
-            border-top: 1px solid rgba(79,140,255,0.1); position: relative; z-index: 1;
-            margin-top: 2rem;
+        /* ── Privacy ── */
+        .privacy {
+            background: linear-gradient(135deg,rgba(78,205,196,0.07),rgba(79,140,255,0.07),rgba(168,85,247,0.04));
+            border: 1px solid rgba(78,205,196,0.2); border-radius: 12px;
+            padding: 0.7rem 1rem; text-align: center; font-size: 0.83rem; margin-bottom: 1.5rem; position: relative; overflow: hidden;
         }
-        footer::before {
-            content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), var(--purple), transparent);
+        .privacy::before {
+            content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background: linear-gradient(90deg,transparent,rgba(78,205,196,0.08),transparent);
+            animation: privacySweep 4s infinite;
         }
-        footer a { color: var(--accent); text-decoration: none; }
-        footer a:hover { text-decoration: underline; }
+        @keyframes privacySweep { 0%{left:-100%} 100%{left:200%} }
+        .privacy strong { color: var(--green); }
 
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-            header h1 { font-size: 1.8rem; }
-            .tabs { flex-direction: column; align-items: stretch; }
-            .metrics { flex-direction: column; }
+        /* ── AI Card Accordion ── */
+        .ai-card {
+            background: rgba(10,10,40,0.82); backdrop-filter: blur(12px);
+            border: 1px solid rgba(79,140,255,0.12); border-radius: 14px;
+            margin-bottom: 0.6rem; overflow: hidden; transition: all 0.3s;
         }
+        .ai-card:hover { border-color: rgba(79,140,255,0.25); }
+        .ai-card-header {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.9rem 1.1rem; cursor: pointer; user-select: none; transition: background 0.2s;
+        }
+        .ai-card-header:hover { background: rgba(79,140,255,0.07); }
+        .ai-card-icon { font-size: 1.3rem; width: 1.6rem; text-align: center; flex-shrink: 0; }
+        .ai-card-title { font-weight: 700; font-size: 0.95rem; flex: 1; }
+        .ai-card-badge { font-size: 0.67rem; padding: 0.15rem 0.55rem; border-radius: 10px; font-weight: 600; letter-spacing: 0.3px; }
+        .badge-ai { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.25); }
+        .badge-rag { background: rgba(78,205,196,0.15); color: var(--green); border: 1px solid rgba(78,205,196,0.25); }
+        .badge-data { background: rgba(255,217,61,0.12); color: var(--gold); border: 1px solid rgba(255,217,61,0.25); }
+        .ai-card-chevron { color: var(--muted); font-size: 0.8rem; transition: transform 0.3s; flex-shrink: 0; }
+        .ai-card.open .ai-card-chevron { transform: rotate(180deg); }
+        .ai-card-body { display: none; padding: 0 1.1rem 1rem; border-top: 1px solid rgba(79,140,255,0.08); }
+        .ai-card.open .ai-card-body { display: block; animation: fadeInUp 0.3s ease-out; }
+        .ai-card-body ul { margin: 0.5rem 0 0 1.1rem; line-height: 1.9; }
+        .ai-card-body li { margin-bottom: 0.2rem; }
+        .ai-card-body .pretext { white-space: pre-wrap; font-size: 0.87rem; line-height: 1.8; background: rgba(5,5,25,0.6); border-radius: 8px; padding: 0.8rem; margin-top: 0.6rem; }
+        .ai-card-body table { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.85rem; }
+        .ai-card-body th { background: rgba(79,140,255,0.1); padding: 0.5rem 0.75rem; text-align: left; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
+        .ai-card-body td { padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(79,140,255,0.06); }
+        .ai-card-body a { color: var(--accent); text-decoration: none; }
+        .ai-card-body a:hover { text-decoration: underline; }
 
-        /* ── Tab content ── */
+        /* ── Job listings ── */
+        .job-item {
+            background: rgba(5,5,25,0.7); border: 1px solid rgba(79,140,255,0.1);
+            border-radius: 10px; padding: 0.85rem; margin-bottom: 0.5rem; transition: all 0.3s;
+        }
+        .job-item:hover { border-color: rgba(79,140,255,0.3); transform: translateX(4px); }
+        .job-title { font-weight: 700; color: var(--accent); font-size: 0.95rem; }
+        .job-title a { color: var(--accent); text-decoration: none; }
+        .job-title a:hover { text-decoration: underline; }
+        .job-meta { font-size: 0.78rem; color: var(--green); margin: 0.25rem 0; }
+        .job-snippet { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+        /* ── Similar occupations chips ── */
+        .occ-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+        .occ-chip {
+            background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.25);
+            color: var(--purple); border-radius: 20px; padding: 0.3rem 0.9rem;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+        }
+        .occ-chip:hover { background: rgba(168,85,247,0.25); transform: translateY(-2px); }
+
+        /* ── Source items ── */
+        .source-item {
+            background: rgba(5,5,25,0.6); border: 1px solid rgba(79,140,255,0.08);
+            border-radius: 10px; padding: 0.75rem; margin-top: 0.5rem; transition: all 0.3s;
+        }
+        .source-item:hover { border-color: rgba(79,140,255,0.3); transform: translateX(4px); }
+        .source-item .src-header { display: flex; justify-content: space-between; font-size: 0.82rem; }
+        .source-item .num { color: var(--accent); font-weight: 700; }
+        .source-item .score { color: var(--green); font-weight: 600; }
+        .source-item .preview { font-size: 0.78rem; color: var(--muted); margin-top: 0.4rem; line-height: 1.5; }
+
+        /* ── Layout helpers ── */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* ── Privacy banner — glowing ── */
-        .privacy {
-            background: linear-gradient(135deg, rgba(78,205,196,0.08), rgba(79,140,255,0.08), rgba(168,85,247,0.05));
-            border: 1px solid rgba(78,205,196,0.2); border-radius: 12px;
-            padding: 0.8rem 1rem; text-align: center; font-size: 0.85rem; margin-bottom: 1.5rem;
-            position: relative; overflow: hidden;
+        /* ── Footer ── */
+        footer {
+            text-align: center; padding: 2rem; color: var(--muted); font-size: 0.8rem;
+            border-top: 1px solid rgba(79,140,255,0.1); position: relative; z-index: 5; margin-top: 2rem;
         }
-        .privacy::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(78,205,196,0.1), transparent);
-            animation: privacySweep 4s infinite;
+        footer::before {
+            content:''; position:absolute; top:0; left:15%; right:15%; height:1px;
+            background: linear-gradient(90deg,transparent,var(--accent),var(--purple),transparent);
         }
-        @keyframes privacySweep { 0% { left: -100%; } 100% { left: 200%; } }
-        .privacy strong { color: var(--green); }
+        footer a { color: var(--accent); text-decoration: none; }
 
-        /* ── Scrolling ticker ── */
-        .ticker-wrap {
-            overflow: hidden; background: rgba(10,10,26,0.6); border-top: 1px solid rgba(79,140,255,0.1);
-            border-bottom: 1px solid rgba(79,140,255,0.1); padding: 0.4rem 0; position: relative; z-index: 1;
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .two-col { grid-template-columns: 1fr; }
+            .metrics { flex-direction: column; }
+            #loc-widget { display: none; }
         }
-        .ticker {
-            display: inline-block; white-space: nowrap; animation: tickerScroll 40s linear infinite;
-            font-size: 0.8rem; color: var(--muted);
-        }
-        .ticker span { margin: 0 2rem; }
-        .ticker .highlight { color: var(--accent); font-weight: 600; }
-        .ticker .green { color: var(--green); }
-        .ticker .gold { color: var(--gold); }
-        @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-        /* ── Floating orbs (background decoration) ── */
-        .orb {
-            position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-            filter: blur(80px); opacity: 0.15;
-        }
-        .orb-1 { width: 400px; height: 400px; background: var(--accent); top: -100px; right: -100px; animation: float1 20s ease-in-out infinite; }
-        .orb-2 { width: 300px; height: 300px; background: var(--purple); bottom: -50px; left: -50px; animation: float2 25s ease-in-out infinite; }
-        .orb-3 { width: 250px; height: 250px; background: var(--pink); top: 50%; left: 50%; animation: float3 18s ease-in-out infinite; }
-        @keyframes float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-50px,50px); } }
-        @keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(50px,-30px); } }
-        @keyframes float3 { 0%,100% { transform: translate(-50%,-50%); } 50% { transform: translate(-40%,-60%); } }
-
-        /* ── ELI12 toggle ── */
-        .reading-level { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
-        .rl-btn { padding: 0.3rem 0.8rem; background: #0d0d2b; border: 1px solid #333; border-radius: 20px; font-size: 0.8rem; cursor: pointer; color: var(--muted); }
-        .rl-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(255,217,61,0.1); }
-
-        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
-
-        /* ── AI Card accordion ── */
-        .ai-card {
-            background: rgba(17,17,51,0.7); backdrop-filter: blur(12px);
-            border: 1px solid rgba(79,140,255,0.12); border-radius: 14px;
-            margin-bottom: 0.6rem; overflow: hidden; transition: all 0.3s ease;
-        }
-        .ai-card-header {
-            display: flex; align-items: center; gap: 0.75rem;
-            padding: 0.9rem 1.1rem; cursor: pointer; user-select: none;
-            transition: background 0.2s;
-        }
-        .ai-card-header:hover { background: rgba(79,140,255,0.08); }
-        .ai-card-icon { font-size: 1.3rem; width: 1.6rem; text-align: center; flex-shrink: 0; }
-        .ai-card-title { font-weight: 700; font-size: 0.95rem; flex: 1; }
-        .ai-card-badge {
-            font-size: 0.68rem; padding: 0.15rem 0.55rem; border-radius: 10px;
-            font-weight: 600; letter-spacing: 0.3px;
-        }
-        .badge-score { background: rgba(78,205,196,0.15); color: var(--green); border: 1px solid rgba(78,205,196,0.25); }
-        .badge-ai { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.25); }
-        .ai-card-chevron { color: var(--muted); font-size: 0.8rem; transition: transform 0.3s; flex-shrink: 0; }
-        .ai-card.open .ai-card-chevron { transform: rotate(180deg); }
-        .ai-card-body {
-            display: none; padding: 0 1.1rem 1rem; border-top: 1px solid rgba(79,140,255,0.08);
-        }
-        .ai-card.open .ai-card-body { display: block; animation: fadeInUp 0.3s ease-out; }
-        .ai-card-body ul { margin: 0.5rem 0 0 1.1rem; line-height: 1.9; }
-        .ai-card-body ul li { margin-bottom: 0.2rem; }
-        .ai-card-body .pretext { white-space: pre-wrap; font-size: 0.88rem; line-height: 1.8; background: rgba(13,13,43,0.5); border-radius: 8px; padding: 0.8rem; margin-top: 0.6rem; }
-        .ai-card-body table { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.85rem; }
-        .ai-card-body th { background: rgba(79,140,255,0.1); padding: 0.5rem 0.75rem; text-align: left; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
-        .ai-card-body td { padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(79,140,255,0.06); }
-        .card-dim-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(150px,1fr)); gap: 0.5rem; margin-top: 0.6rem; }
-        .card-dim { background: rgba(13,13,43,0.6); border-radius: 8px; padding: 0.6rem; text-align: center; border: 1px solid rgba(79,140,255,0.08); }
-        .card-dim .dv { font-size: 1.4rem; font-weight: 800; }
-        .card-dim .dl { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; margin-top: 0.2rem; }
     </style>
 </head>
 <body>
-    <!-- Floating orbs -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+    <!-- NASA Galaxy Canvas -->
+    <canvas id="galaxy"></canvas>
 
     <div class="rainbow-bar"></div>
 
-    <!-- Scrolling ticker -->
+    <!-- Location + Weather Widget -->
+    <div id="loc-widget">
+        <span id="loc-flag">🌍</span>
+        <span id="loc-city">Detecting location...</span>
+        <span id="loc-weather"></span>
+        <span id="loc-isp"></span>
+    </div>
+
+    <!-- Scrolling Ticker -->
     <div class="ticker-wrap">
         <div class="ticker">
-            <span class="highlight">Azure Functions</span>
-            <span class="green">Zero Data Storage</span>
-            <span>195 Countries</span>
-            <span class="gold">Content Safety</span>
-            <span>AI Search</span>
-            <span class="highlight">Language PII Detection</span>
-            <span class="green">Translator 100+ Languages</span>
-            <span>170+ Occupations</span>
-            <span class="gold">30-360 Day Career Roadmaps</span>
-            <span>Ages 5 to 100</span>
-            <span class="highlight">Microsoft Responsible AI</span>
-            <span class="green">Free Forever</span>
-            <!-- Duplicate for seamless scroll -->
-            <span class="highlight">Azure Functions</span>
-            <span class="green">Zero Data Storage</span>
-            <span>195 Countries</span>
-            <span class="gold">Content Safety</span>
-            <span>AI Search</span>
-            <span class="highlight">Language PII Detection</span>
-            <span class="green">Translator 100+ Languages</span>
-            <span>170+ Occupations</span>
-            <span class="gold">30-360 Day Career Roadmaps</span>
-            <span>Ages 5 to 100</span>
-            <span class="highlight">Microsoft Responsible AI</span>
-            <span class="green">Free Forever</span>
+            <span class="hi">Alfalah AI — الفلاح — Come to Success</span>
+            <span class="gr">436 ISCO-08 Occupations</span><span>3,000+ ESCO Job Types</span>
+            <span class="go">123,000 Global Job Titles</span><span>195 Countries</span>
+            <span class="hi">17 AI Career Engines</span><span class="gr">99% RAG · 1% AI</span>
+            <span>Google Jobs Search (Last 7 Days)</span><span class="go">Top 1% Framework</span>
+            <span>Skills A-Z: 900+</span><span class="hi">Future Jobs 2026–2125</span>
+            <span class="gr">Fortune 500 · All Global Companies</span><span>Free Forever · No Login · Zero Storage</span>
+            <span class="go">8 Billion Humans Served</span><span class="hi">Microsoft Azure Cloud</span>
+            <span class="gr">436 ISCO-08 Occupations</span><span>3,000+ ESCO Job Types</span>
+            <span class="go">123,000 Global Job Titles</span><span>195 Countries</span>
+            <span class="hi">17 AI Career Engines</span><span class="gr">99% RAG · 1% AI</span>
+            <span>Google Jobs Search (Last 7 Days)</span><span class="go">Top 1% Framework</span>
+            <span>Skills A-Z: 900+</span><span class="hi">Future Jobs 2026–2125</span>
+            <span class="gr">Fortune 500 · All Global Companies</span><span>Free Forever · No Login · Zero Storage</span>
         </div>
     </div>
 
     <header>
-        <h1>GovRAG</h1>
-        <p class="subtitle">Grounded Knowledge Assistant for Regulated Teams & Career Intelligence for 8 Billion Humans</p>
+        <h1>Alfalah AI</h1>
+        <p class="subtitle">Career Intelligence Engine · 436 ISCO-08 Occupations · 3,000+ Job Types · 195 Countries · 8 Billion Humans<br>99% RAG Knowledge · 1% AI Polish · Built on Microsoft Azure · Free Forever</p>
         <div class="badges">
             <span class="badge live">LIVE on Azure</span>
-            <span class="badge">100% Python</span>
-            <span class="badge">Zero Data Storage</span>
-            <span class="badge">Source-Grounded</span>
+            <span class="badge">99% RAG Engine</span>
+            <span class="badge">436 Occupations</span>
+            <span class="badge">Google Jobs Search</span>
+            <span class="badge">Top 1% Framework</span>
+            <span class="badge">195 Countries</span>
+            <span class="badge">Zero Storage</span>
             <span class="badge">Microsoft Hackathon 2026</span>
         </div>
     </header>
 
     <div class="container">
         <div class="privacy">
-            <strong>Your Privacy:</strong> Nothing stored. No database. No login. No cookies. Refresh = gone forever.
+            <strong>Your Privacy:</strong> Nothing stored. No database. No login. No cookies. Refresh = gone forever. Zero bias. Zero discrimination. All 8 billion humans.
         </div>
 
         <div class="tabs">
-            <div class="tab active" onclick="switchTab('compliance')">Compliance Q&A</div>
-            <div class="tab" onclick="switchTab('career')">Career Intelligence</div>
-            <div class="tab" onclick="switchTab('audit')">Audit Dashboard</div>
+            <div class="tab active" onclick="switchTab('career', this)">Career Intelligence</div>
+            <div class="tab" onclick="switchTab('audit', this)">Audit Dashboard</div>
         </div>
 
-        <!-- ═══ TAB 1: COMPLIANCE Q&A ═══ -->
-        <div class="tab-content active" id="tab-compliance">
-            <div class="card">
-                <h3>Ask a Compliance Question</h3>
-                <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.75rem">Every answer cites exact source documents. Blocked if insufficient evidence.</p>
-                <textarea id="query-input" rows="3" placeholder="Example: What is our data retention policy for EU customers?"></textarea>
-                <div style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">
-                    <button class="btn" onclick="askQuery()">Get Grounded Answer</button>
-                    <button class="btn btn-eli12" onclick="simplifyLast()">Explain Like Zara (ELI12)</button>
-                </div>
-            </div>
+        <!-- ═══ TAB 1: CAREER INTELLIGENCE ═══ -->
+        <div class="tab-content active" id="tab-career">
 
-            <div class="loading" id="loading-query">
-                <div class="spinner"></div>
-                <p style="margin-top:0.5rem;color:var(--muted)">Searching documents & verifying answer...</p>
-            </div>
-
-            <div id="query-result" style="display:none;">
-                <div class="metrics" id="query-metrics"></div>
-                <div class="card">
-                    <h3>Grounded Answer</h3>
-                    <div class="answer-box" id="answer-text"></div>
-                </div>
-                <div class="card">
-                    <h3>Sources Used (click to verify)</h3>
-                    <div id="sources-list"></div>
-                </div>
-            </div>
-
-            <div id="eli12-result" style="display:none;">
-                <div class="card" style="border-color:var(--gold);">
-                    <h3 style="color:var(--gold);">Simplified for Zara (Grade 6)</h3>
-                    <div class="reading-level">
-                        <span class="rl-btn" onclick="changeLevel('grade3')">Age 8</span>
-                        <span class="rl-btn active" onclick="changeLevel('grade6')">Age 12 (Zara)</span>
-                        <span class="rl-btn" onclick="changeLevel('grade9')">High School</span>
-                        <span class="rl-btn" onclick="changeLevel('adult')">Plain Adult</span>
-                    </div>
-                    <div class="answer-box" id="eli12-text" style="margin-top:0.75rem;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ TAB 2: CAREER INTELLIGENCE ═══ -->
-        <div class="tab-content" id="tab-career">
-
-            <!-- RESUME UPLOAD BOX -->
+            <!-- RESUME UPLOAD -->
             <div class="card">
                 <h3>📄 Resume — Upload or Paste</h3>
-                <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.75rem">PDF, DOCX, or TXT · Max 12 pages (~7,000 words)</p>
+                <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.75rem">PDF · DOCX · TXT · Max 12 pages (~7,000 words) · Processed in memory only — never stored</p>
                 <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">
-                    <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:#0d0d2b;border:1px solid rgba(79,140,255,0.2);border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.85rem;">
-                    <button class="btn" onclick="uploadResume()" style="padding:0.6rem 1.2rem;font-size:0.85rem;white-space:nowrap;">Upload Resume</button>
+                    <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:rgba(5,5,25,0.85);border:1px solid rgba(79,140,255,0.2);border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.83rem;">
+                    <button class="btn btn-sm" onclick="uploadResume()">Upload Resume</button>
                 </div>
                 <div id="resume-upload-status" style="display:none;font-size:0.8rem;padding:0.4rem 0.6rem;border-radius:6px;margin-bottom:0.5rem;"></div>
-                <textarea id="resume-input" rows="7" placeholder="Or paste your resume text here (copy from Word, PDF, or LinkedIn)..."></textarea>
+                <textarea id="resume-input" rows="7" placeholder="Or paste your resume text here (from Word, PDF, or LinkedIn Profile)..."></textarea>
                 <div id="resume-word-count" style="font-size:0.75rem;color:var(--muted);text-align:right;margin-top:0.25rem;"></div>
             </div>
 
-            <!-- JOB DESCRIPTION UPLOAD BOX -->
+            <!-- JD UPLOAD -->
             <div class="card">
                 <h3>💼 Job Description — Upload or Paste</h3>
-                <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.75rem">PDF, DOCX, or TXT · Max 12 pages (~7,000 words) · Optional but improves ATS scoring</p>
+                <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.75rem">PDF · DOCX · TXT · Max 12 pages · Optional but significantly improves ATS scoring + skill matching</p>
                 <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">
-                    <input type="file" id="jd-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:#0d0d2b;border:1px solid rgba(79,140,255,0.2);border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.85rem;">
-                    <button class="btn" onclick="uploadJD()" style="padding:0.6rem 1.2rem;font-size:0.85rem;white-space:nowrap;">Upload JD</button>
+                    <input type="file" id="jd-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:rgba(5,5,25,0.85);border:1px solid rgba(79,140,255,0.2);border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.83rem;">
+                    <button class="btn btn-sm" onclick="uploadJD()">Upload JD</button>
                 </div>
                 <div id="jd-upload-status" style="display:none;font-size:0.8rem;padding:0.4rem 0.6rem;border-radius:6px;margin-bottom:0.5rem;"></div>
-                <textarea id="job-input" rows="5" placeholder="Or paste the job description here..."></textarea>
+                <textarea id="job-input" rows="4" placeholder="Or paste the job description here..."></textarea>
                 <div id="jd-word-count" style="font-size:0.75rem;color:var(--muted);text-align:right;margin-top:0.25rem;"></div>
             </div>
 
-            <!-- COUNTRY + INDUSTRY + ANALYZE -->
+            <!-- CONTEXT + ANALYZE -->
             <div class="card">
                 <h3>Context</h3>
                 <div class="two-col" style="margin-bottom:0.75rem;">
-                    <input type="text" id="country-input" placeholder="Your country (e.g., Canada)">
-                    <input type="text" id="industry-input" placeholder="Industry (e.g., IT, Healthcare)">
+                    <input type="text" id="country-input" placeholder="Your country (e.g., Canada, UAE, India)">
+                    <input type="text" id="industry-input" placeholder="Industry (e.g., IT, Healthcare, Finance)">
                 </div>
                 <button class="btn btn-career" onclick="analyzeCareer()" style="width:100%;font-size:1.05rem;padding:1rem;">
-                    Analyze — Run All 17 Engines
+                    ⚡ Analyze — Run All 17 Engines + Similar Roles + Live Jobs
                 </button>
-                <p style="color:var(--muted);font-size:0.75rem;text-align:center;margin-top:0.5rem;">ATS · Recruiter PoV · Skills Gap · Visa · Salary · Cover Letter · Interview Prep · 11 more</p>
+                <p style="color:var(--muted);font-size:0.73rem;text-align:center;margin-top:0.5rem;">
+                    ATS Score · Recruiter POV · Skills Gap · Similar Occupations · Cover Letter · Interview Prep · Salary · Visa · Live Jobs + 9 more engines
+                </p>
             </div>
 
+            <!-- LOADING -->
             <div class="loading" id="loading-career">
                 <div class="spinner"></div>
-                <p style="margin-top:0.5rem;color:var(--muted)">Running all 17 engines...</p>
+                <p style="margin-top:0.75rem;color:var(--muted)">Running 17 engines · Searching similar occupations · Fetching live jobs...</p>
+                <p style="margin-top:0.4rem;color:var(--muted);font-size:0.8rem;">99% RAG processing + 1% AI polish — ~15-30 seconds</p>
             </div>
 
+            <!-- RESULTS -->
             <div id="career-result" style="display:none;">
+
+                <!-- Score metrics -->
                 <div class="metrics" id="career-metrics"></div>
+
+                <!-- Top 1% Alert (if score < 75) -->
+                <div id="top1-alert" style="display:none;" class="card" style="border-color:var(--gold);">
+                    <h3 style="background:linear-gradient(135deg,var(--gold),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">🎯 Top 1% Action Plan — What's Needed</h3>
+                    <div id="top1-content"></div>
+                </div>
 
                 <!-- Score card -->
                 <div class="card" id="card-score" style="display:none;">
-                    <h3>Resume Score — Naked Truth</h3>
+                    <h3>Resume Score — Naked Truth (Algorithmic, Zero Guessing)</h3>
                     <div class="answer-box" id="career-score-text"></div>
+                </div>
+
+                <!-- Similar Occupations -->
+                <div class="card" id="card-similar" style="display:none;">
+                    <h3>🔀 Similar Occupations — Adjacent Career Paths (ISCO-08 RAG)</h3>
+                    <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.5rem;">Based on your skills and experience — roles you can pivot to or are qualified for:</p>
+                    <div class="occ-chips" id="similar-occ-chips"></div>
+                </div>
+
+                <!-- JD Template -->
+                <div class="card" id="card-jd-template" style="display:none;">
+                    <h3>📋 What This Job Description Should Look Like</h3>
+                    <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.5rem;">Standard JD template from our 500+ role database — use this to align your resume:</p>
+                    <div class="answer-box" id="jd-template-text" style="white-space:pre-wrap;font-size:0.85rem;"></div>
+                </div>
+
+                <!-- Live Job Search -->
+                <div class="card" id="card-live-jobs" style="display:none;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                        <h3>🔍 Live Jobs — Last 7 Days (Google Search)</h3>
+                        <button class="btn btn-sm" onclick="refreshJobs()" id="refresh-jobs-btn">Refresh Jobs</button>
+                    </div>
+                    <p style="color:var(--muted);font-size:0.8rem;margin-bottom:0.75rem;" id="jobs-meta"></p>
+                    <div id="live-jobs-container">
+                        <p style="color:var(--muted);">Job search runs automatically after analysis...</p>
+                    </div>
                 </div>
 
                 <!-- 17 AI Cards -->
                 <div id="ai-cards-grid" style="display:none;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin:1rem 0 0.5rem;">
-                        <h3 style="background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:1.2rem;font-weight:800;">17 AI Engines — Complete Analysis</h3>
-                        <button class="btn" onclick="downloadResults()" style="padding:0.5rem 1rem;font-size:0.82rem;">Download All (.txt)</button>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin:1rem 0 0.75rem;">
+                        <h3 style="background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:1.15rem;font-weight:800;">17 AI Engines — Complete Career Analysis</h3>
+                        <button class="btn btn-sm" onclick="downloadResults()">Download All (.txt)</button>
                     </div>
                     <div id="cards-container"></div>
+                </div>
+
+                <!-- Career Intelligence Sources -->
+                <div class="card" id="card-intel" style="display:none;">
+                    <h3>📚 RAG Sources — Career Intelligence Used</h3>
+                    <div id="intel-list"></div>
                 </div>
             </div>
         </div>
 
-        <!-- ═══ TAB 3: AUDIT DASHBOARD ═══ -->
+        <!-- ═══ TAB 2: AUDIT DASHBOARD ═══ -->
         <div class="tab-content" id="tab-audit">
             <div class="card">
                 <h3>System Health</h3>
                 <div id="health-data">Loading...</div>
+            </div>
+            <div class="card">
+                <h3>Occupation & Skills Database</h3>
+                <div id="occ-data">Loading...</div>
             </div>
             <div class="card">
                 <h3>Responsible AI Card</h3>
@@ -497,432 +465,583 @@
     </div>
 
     <footer>
-        <p>Built with Azure for the <a href="https://github.com/shahzadms7/v3">Microsoft Hackathon 2026</a></p>
-        <p>Shahzad Muhammad &middot; Mississauga, Ontario, Canada &middot; Serving all 8 billion humans</p>
-        <p style="margin-top:0.5rem;">Powered by Azure Functions &middot; Gemini AI &middot; Grok AI &middot; Zero Data Storage</p>
+        <p>Built with ❤️ on Azure for the <a href="https://github.com/shahzadms7/v3" target="_blank">Microsoft Innovation Challenge 2026</a></p>
+        <p>Shahzad Muhammad · Mississauga, Ontario, Canada · Serving all 8 billion humans on Earth</p>
+        <p style="margin-top:0.5rem;">Powered by Azure Functions · Gemini AI · Grok AI · 99% RAG Knowledge · Zero Data Storage</p>
+        <p style="margin-top:0.5rem;color:rgba(136,136,170,0.6);font-size:0.72rem;">
+            No bias · No racism · No religion · No politics · Pure career science · Free forever · الفلاح
+        </p>
     </footer>
 
     <script>
-        const API = window.location.origin;
-        let lastAnswer = '';
-        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-        const ALLOWED_TYPES = ['.pdf', '.docx', '.txt', '.md'];
-        const MAX_WORDS = 7000;
+    // ═══════════════════════════════════════════════════
+    // NASA GALAXY CANVAS — Nebula + Stars + Ripple
+    // ═══════════════════════════════════════════════════
+    (function() {
+        const canvas = document.getElementById('galaxy');
+        const ctx = canvas.getContext('2d');
+        let W, H, stars = [], ripples = [], shooters = [], t = 0;
 
-        function wordCount(text) { return text.trim() ? text.trim().split(/\s+/).length : 0; }
-
-        function updateWordCount(textareaId, counterId) {
-            const ta = document.getElementById(textareaId);
-            const counter = document.getElementById(counterId);
-            if (!ta || !counter) return;
-            ta.addEventListener('input', () => {
-                const wc = wordCount(ta.value);
-                counter.textContent = wc + ' words' + (wc > MAX_WORDS ? ' ⚠️ exceeds 12-page limit' : '');
-                counter.style.color = wc > MAX_WORDS ? 'var(--accent2)' : 'var(--muted)';
-            });
-        }
-        updateWordCount('resume-input', 'resume-word-count');
-        updateWordCount('job-input', 'jd-word-count');
-
-        async function doUpload(fileInputId, textareaId, statusId) {
-            const fileInput = document.getElementById(fileInputId);
-            const statusDiv = document.getElementById(statusId);
-            if (!fileInput.files.length) { alert('Please select a file first'); return; }
-            const file = fileInput.files[0];
-            const ext = '.' + file.name.split('.').pop().toLowerCase();
-            if (!ALLOWED_TYPES.includes(ext)) { alert('Only PDF, DOCX, TXT files allowed. Got: ' + ext); return; }
-            if (file.size > MAX_FILE_SIZE) { alert('File too large! Max 5MB. Your file: ' + (file.size/1024/1024).toFixed(1) + 'MB'); return; }
-
-            statusDiv.style.display = 'block';
-            statusDiv.style.background = 'rgba(255,217,61,0.08)';
-            statusDiv.style.color = 'var(--gold)';
-            statusDiv.textContent = 'Uploading and extracting text...';
-
-            try {
-                const formData = new FormData();
-                formData.append('file', file);
-                const resp = await fetch(API + '/upload', { method: 'POST', body: formData });
-                const data = await resp.json();
-                if (data.error) {
-                    statusDiv.style.background = 'rgba(255,107,107,0.08)';
-                    statusDiv.style.color = 'var(--accent2)';
-                    statusDiv.textContent = 'Error: ' + data.error;
-                    return;
-                }
-                document.getElementById(textareaId).value = data.text;
-                // Trigger word count update
-                document.getElementById(textareaId).dispatchEvent(new Event('input'));
-                statusDiv.style.background = 'rgba(78,205,196,0.08)';
-                statusDiv.style.color = 'var(--green)';
-                statusDiv.textContent = '✓ Extracted ' + data.words_extracted.toLocaleString() + ' words from "' + data.file + '" · Method: ' + data.extraction_method + ' · File erased from memory.';
-            } catch (e) {
-                statusDiv.style.background = 'rgba(255,107,107,0.08)';
-                statusDiv.style.color = 'var(--accent2)';
-                statusDiv.textContent = 'Upload failed: ' + e.message;
-            }
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            initStars();
         }
 
-        function uploadResume() { doUpload('resume-file', 'resume-input', 'resume-upload-status'); }
-        function uploadJD()     { doUpload('jd-file', 'job-input', 'jd-upload-status'); }
-
-        function switchTab(name) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('tab-' + name).classList.add('active');
-            if (name === 'audit') loadAudit();
-        }
-
-        async function askQuery() {
-            const q = document.getElementById('query-input').value.trim();
-            if (!q) return alert('Please enter a question');
-            document.getElementById('loading-query').classList.add('show');
-            document.getElementById('query-result').style.display = 'none';
-            document.getElementById('eli12-result').style.display = 'none';
-            try {
-                const res = await fetch(API + '/query', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({query: q})
-                });
-                const data = await res.json();
-                lastAnswer = data.answer || '';
-
-                // Metrics
-                const faith = data.faithfulness || data.metrics?.faithfulness || 0;
-                const conf = data.confidence || 0;
-                const lat = data.metrics?.latency_ms || 0;
-                const prov = data.metrics?.provider || 'unknown';
-                document.getElementById('query-metrics').innerHTML = `
-                    <div class="metric ${faith > 70 ? 'green' : faith > 40 ? 'gold' : 'red'}"><div class="value">${faith}%</div><div class="label">Faithfulness</div></div>
-                    <div class="metric ${conf > 70 ? 'green' : conf > 40 ? 'gold' : 'red'}"><div class="value">${conf}%</div><div class="label">Confidence</div></div>
-                    <div class="metric green"><div class="value">${(lat/1000).toFixed(1)}s</div><div class="label">Latency</div></div>
-                    <div class="metric"><div class="value">${prov}</div><div class="label">AI Provider</div></div>
-                `;
-
-                // Answer with highlighted sources
-                let html = (data.answer || 'No answer').replace(/\[Source (\d+)\]/g, '<span class="source-ref">[Source $1]</span>');
-                document.getElementById('answer-text').innerHTML = html;
-
-                // Sources
-                let srcHtml = '';
-                (data.sources || []).forEach(s => {
-                    srcHtml += `<div class="source-item">
-                        <div class="src-header"><span class="num">[Source ${s.num}] ${s.doc}</span><span class="score">${(s.relevance * 100).toFixed(0)}% relevant</span></div>
-                        <div><strong>${s.section}</strong></div>
-                        <div class="preview">${s.preview || ''}</div>
-                    </div>`;
-                });
-                document.getElementById('sources-list').innerHTML = srcHtml || '<p style="color:var(--muted)">No sources</p>';
-
-                document.getElementById('query-result').style.display = 'block';
-            } catch (e) {
-                document.getElementById('answer-text').innerHTML = 'Error: ' + e.message;
-                document.getElementById('query-result').style.display = 'block';
-            }
-            document.getElementById('loading-query').classList.remove('show');
-        }
-
-        async function simplifyLast() {
-            if (!lastAnswer) return alert('Ask a question first, then simplify');
-            try {
-                const res = await fetch(API + '/simplify', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({text: lastAnswer, reading_level: 'grade6'})
-                });
-                const data = await res.json();
-                document.getElementById('eli12-text').innerText = data.simplified || data.text || 'Could not simplify';
-                document.getElementById('eli12-result').style.display = 'block';
-            } catch (e) {
-                alert('Simplification error: ' + e.message);
-            }
-        }
-
-        function changeLevel(level) {
-            document.querySelectorAll('.rl-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            if (lastAnswer) {
-                fetch(API + '/simplify', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({text: lastAnswer, reading_level: level})
-                }).then(r => r.json()).then(data => {
-                    document.getElementById('eli12-text').innerText = data.simplified || '';
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 500; i++) {
+                const hue = [0, 200, 220, 260, 310][Math.floor(Math.random() * 5)];
+                stars.push({
+                    x: Math.random() * W, y: Math.random() * H,
+                    r: Math.random() * 1.6 + 0.2,
+                    phase: Math.random() * Math.PI * 2,
+                    speed: Math.random() * 0.015 + 0.005,
+                    bright: Math.random() * 0.5 + 0.4,
+                    color: hue === 0 ? '#fff' : `hsl(${hue},70%,80%)`
                 });
             }
         }
 
-        // ── Card definitions: key, icon, title, color ──
-        const CARD_DEFS = [
-            {key:'recruiterPov',    icon:'👁️', title:'Recruiter POV — 6-Second Test',        color:'var(--accent2)'},
-            {key:'skillsGap',       icon:'📊', title:'Skills Gap Analysis',                   color:'var(--gold)'},
-            {key:'resumeRewrite',   icon:'✏️', title:'Resume Rewrite — Top 1%',               color:'var(--accent)'},
-            {key:'coverLetter',     icon:'📝', title:'Cover Letter — Tailored',               color:'var(--green)'},
-            {key:'interviewPrep',   icon:'🎯', title:'Interview Prep — 5 Q&A',                color:'var(--purple)'},
-            {key:'starStories',     icon:'⭐', title:'STAR Behavioral Stories',               color:'var(--gold)'},
-            {key:'linkedinSummary', icon:'💼', title:'LinkedIn Summary',                      color:'var(--accent)'},
-            {key:'introScripts',    icon:'🎤', title:'Introduction Scripts (1/2/3 min)',       color:'var(--pink)'},
-            {key:'thankYouEmail',   icon:'📧', title:'Post-Interview Thank You Email',         color:'var(--green)'},
-            {key:'salaryNegotiation',icon:'💰',title:'Salary Negotiation — Local Currency',   color:'var(--gold)'},
-            {key:'actionPlan',      icon:'📅', title:'30-60-90 Day Action Plan',              color:'var(--accent)'},
-            {key:'coldOutreach',    icon:'🚀', title:'Cold Outreach — LinkedIn + Email',       color:'var(--purple)'},
-            {key:'careerPivot',     icon:'🔄', title:'Career Pivot Analysis',                 color:'var(--pink)'},
-            {key:'visaPathways',    icon:'🌍', title:'Visa Pathways — All Routes',            color:'var(--green)'},
-            {key:'countryLaws',     icon:'⚖️', title:'Country Labor Laws + GRC',              color:'var(--muted)'},
-            {key:'matchingJobs',    icon:'🔍', title:'Matching Jobs + Recruiters',             color:'var(--accent2)'},
+        // Nebula definitions (fraction of W/H)
+        const NEBULAE = [
+            {x:0.12, y:0.18, r:0.40, r0:[0,80,255],   a:0.07},
+            {x:0.80, y:0.12, r:0.32, r0:[180,0,255],   a:0.055},
+            {x:0.50, y:0.72, r:0.42, r0:[255,40,140],  a:0.045},
+            {x:0.88, y:0.58, r:0.28, r0:[0,210,210],   a:0.045},
+            {x:0.30, y:0.50, r:0.22, r0:[100,50,255],  a:0.035},
+            {x:0.65, y:0.35, r:0.18, r0:[255,120,50],  a:0.025},
         ];
 
-        function toggleCard(el) {
-            el.closest('.ai-card').classList.toggle('open');
+        function drawNebula(t) {
+            NEBULAE.forEach(n => {
+                const pulse = 1 + Math.sin(t * 0.25 + n.x * 8) * 0.06;
+                const rad = n.r * Math.min(W, H) * pulse;
+                const gx = n.x * W + Math.sin(t * 0.08 + n.y * 5) * 30;
+                const gy = n.y * H + Math.cos(t * 0.06 + n.x * 4) * 20;
+                const g = ctx.createRadialGradient(gx, gy, 0, gx, gy, rad);
+                const [r,g2,b] = n.r0;
+                g.addColorStop(0, `rgba(${r},${g2},${b},${n.a * 2.2})`);
+                g.addColorStop(0.35, `rgba(${r},${g2},${b},${n.a})`);
+                g.addColorStop(0.7, `rgba(${r},${g2},${b},${n.a * 0.3})`);
+                g.addColorStop(1, 'transparent');
+                ctx.fillStyle = g;
+                ctx.fillRect(0, 0, W, H);
+            });
         }
 
-        function renderCardBody(key, data) {
-            if (!data || (typeof data === 'string' && !data.trim())) return '<p style="color:var(--muted);padding-top:0.6rem;">No data returned for this section.</p>';
-            if (typeof data === 'string') return `<div class="pretext">${data}</div>`;
-
-            switch(key) {
-                case 'recruiterPov':
-                    return `
-                    ${data.first_impression ? `<div style="border-left:3px solid var(--accent2);padding:0.5rem 0.8rem;margin:0.6rem 0;font-weight:600;color:var(--accent2)">${data.first_impression}</div>` : ''}
-                    ${data.top_third?.length ? `<h5 style="color:var(--green);margin-top:0.8rem;">✓ What Recruiter Sees (Top Third)</h5><ul>${data.top_third.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.buried?.length ? `<h5 style="color:var(--gold);margin-top:0.8rem;">⚠ Buried (Should Be Visible)</h5><ul>${data.buried.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.red_flags?.length ? `<h5 style="color:var(--accent2);margin-top:0.8rem;">🚩 Red Flags</h5><ul>${data.red_flags.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.quick_wins?.length ? `<h5 style="color:var(--accent);margin-top:0.8rem;">⚡ Quick Wins (Fix Today)</h5><ul>${data.quick_wins.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}`;
-
-                case 'skillsGap':
-                    return `
-                    ${data.matched_hard?.length ? `<h5 style="color:var(--green);margin-top:0.6rem;">✓ Hard Skills Matched</h5><ul>${data.matched_hard.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.missing_hard?.length ? `<h5 style="color:var(--accent2);margin-top:0.6rem;">✗ Hard Skills Missing</h5><ul>${data.missing_hard.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.soft_missing?.length ? `<h5 style="color:var(--gold);margin-top:0.6rem;">Soft Skills to Develop</h5><ul>${data.soft_missing.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.certs_to_pursue?.length ? `<h5 style="color:var(--accent);margin-top:0.6rem;">🎓 Certifications to Pursue</h5><ul>${data.certs_to_pursue.map(c=>typeof c==='object'?`<li><strong>${c.name}</strong> <span style="color:var(--accent2)">[${c.priority||''}]</span>${c.url?` — <a href="${c.url}" target="_blank" style="color:var(--accent)">Official Link</a>`:''}` : '<li>'+c+'</li>').join('')}</ul>` : ''}
-                    ${data.roadmap?.length ? `<h5 style="color:var(--purple);margin-top:0.6rem;">Upskilling Roadmap</h5><ol style="margin:0.4rem 0 0 1.1rem;line-height:1.9">${data.roadmap.map(s=>'<li>'+s+'</li>').join('')}</ol>` : ''}`;
-
-                case 'interviewPrep':
-                    return `
-                    ${(data.qa||[]).map((item,i)=>`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.6rem;border:1px solid rgba(79,140,255,0.1);">
-                        <div style="color:var(--accent);font-weight:700;font-size:0.88rem;">Q${i+1}: ${item.q||item.question||''}</div>
-                        <div style="margin-top:0.4rem;font-size:0.88rem;line-height:1.7">${item.a||item.answer||''}</div>
-                    </div>`).join('')}
-                    ${data.questions_to_ask?.length ? `<h5 style="color:var(--green);margin-top:0.8rem;">Questions to Ask the Interviewer</h5><ul>${data.questions_to_ask.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}`;
-
-                case 'starStories':
-                    return (data||[]).map((story,i)=>`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.6rem;border:1px solid rgba(255,217,61,0.1);">
-                        <div style="color:var(--gold);font-weight:700;font-size:0.9rem;">Story ${i+1}: ${story.title||''}</div>
-                        <div style="display:grid;grid-template-columns:auto 1fr;gap:0.3rem 0.75rem;margin-top:0.5rem;font-size:0.86rem;line-height:1.7">
-                            ${story.s?`<span style="color:var(--accent);font-weight:700">S:</span><span>${story.s}</span>`:''}
-                            ${story.t?`<span style="color:var(--accent);font-weight:700">T:</span><span>${story.t}</span>`:''}
-                            ${story.a?`<span style="color:var(--accent);font-weight:700">A:</span><span>${story.a}</span>`:''}
-                            ${story.r?`<span style="color:var(--green);font-weight:700">R:</span><span style="color:var(--green)">${story.r}</span>`:''}
-                        </div>
-                    </div>`).join('') || `<div class="pretext">${JSON.stringify(data,null,2)}</div>`;
-
-                case 'introScripts':
-                    return `
-                    ${data.min1?`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.6rem;"><div style="color:var(--accent);font-weight:700;margin-bottom:0.4rem;">⏱ 1-Minute (Phone Screen)</div><div style="font-size:0.87rem;line-height:1.8">${data.min1}</div></div>`:''}
-                    ${data.min2?`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--purple);font-weight:700;margin-bottom:0.4rem;">⏱ 2-Minute (Hiring Manager)</div><div style="font-size:0.87rem;line-height:1.8">${data.min2}</div></div>`:''}
-                    ${data.min3?`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--green);font-weight:700;margin-bottom:0.4rem;">⏱ 3-Minute (Technical Round)</div><div style="font-size:0.87rem;line-height:1.8">${data.min3}</div></div>`:''}`;
-
-                case 'salaryNegotiation':
-                    return `
-                    ${data.table?.length ? `<table><thead><tr><th>Level</th><th>Salary Range</th></tr></thead><tbody>${data.table.map(r=>`<tr><td><strong>${r.level||r.Level||''}</strong></td><td>${r.range||r.Range||''}</td></tr>`).join('')}</tbody></table>` : ''}
-                    ${data.script ? `<div style="background:rgba(79,140,255,0.06);border-radius:8px;padding:0.8rem;margin-top:0.8rem;border:1px solid rgba(79,140,255,0.1);"><div style="color:var(--accent);font-weight:700;margin-bottom:0.4rem;">Negotiation Script</div><div style="font-size:0.87rem;line-height:1.8">${data.script}</div></div>` : ''}
-                    ${data.counter_script ? `<div style="background:rgba(255,217,61,0.05);border-radius:8px;padding:0.8rem;margin-top:0.5rem;border:1px solid rgba(255,217,61,0.1);"><div style="color:var(--gold);font-weight:700;margin-bottom:0.4rem;">Counter-Offer Script</div><div style="font-size:0.87rem;line-height:1.8">${data.counter_script}</div></div>` : ''}`;
-
-                case 'actionPlan':
-                    return `
-                    ${data.day30?.length ? `<div style="border-left:3px solid var(--green);padding:0.5rem 0.8rem;margin-top:0.6rem;"><strong style="color:var(--green)">Days 1-30</strong><ul style="margin-top:0.3rem">${data.day30.map(s=>'<li>'+s+'</li>').join('')}</ul></div>` : ''}
-                    ${data.day60?.length ? `<div style="border-left:3px solid var(--gold);padding:0.5rem 0.8rem;margin-top:0.5rem;"><strong style="color:var(--gold)">Days 31-60</strong><ul style="margin-top:0.3rem">${data.day60.map(s=>'<li>'+s+'</li>').join('')}</ul></div>` : ''}
-                    ${data.day90?.length ? `<div style="border-left:3px solid var(--accent);padding:0.5rem 0.8rem;margin-top:0.5rem;"><strong style="color:var(--accent)">Days 61-90</strong><ul style="margin-top:0.3rem">${data.day90.map(s=>'<li>'+s+'</li>').join('')}</ul></div>` : ''}`;
-
-                case 'coldOutreach':
-                    return `
-                    ${data.linkedin_request ? `<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.6rem;"><div style="color:var(--accent);font-weight:700;margin-bottom:0.3rem;">LinkedIn Connection Request (300 chars)</div><div style="font-size:0.87rem;line-height:1.8">${data.linkedin_request}</div></div>` : ''}
-                    ${data.linkedin_dm ? `<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--purple);font-weight:700;margin-bottom:0.3rem;">LinkedIn DM</div><div style="font-size:0.87rem;line-height:1.8">${data.linkedin_dm}</div></div>` : ''}
-                    ${data.cold_email ? `<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--green);font-weight:700;margin-bottom:0.3rem;">Cold Email</div><div style="font-size:0.87rem;line-height:1.8">${data.cold_email}</div></div>` : ''}
-                    ${data.follow_up ? `<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--gold);font-weight:700;margin-bottom:0.3rem;">1-Week Follow-Up</div><div style="font-size:0.87rem;line-height:1.8">${data.follow_up}</div></div>` : ''}`;
-
-                case 'careerPivot':
-                    return `
-                    ${data.pivot_score ? `<div style="font-size:1.1rem;font-weight:800;color:${data.pivot_score==='Easy'?'var(--green)':data.pivot_score==='Moderate'?'var(--gold)':'var(--accent2)'};padding:0.5rem 0">Pivot Difficulty: ${data.pivot_score}</div>` : ''}
-                    ${data.reason ? `<p style="color:var(--muted);font-size:0.87rem;margin-bottom:0.6rem">${data.reason}</p>` : ''}
-                    ${data.adjacent_roles?.map(r=>`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border:1px solid rgba(168,85,247,0.1);">
-                        <strong style="color:var(--purple)">${r.title||''}</strong> <span style="color:var(--muted);font-size:0.82rem">· ${r.time_to_qualify||''}</span>
-                        ${r.transferable?.length ? `<div style="font-size:0.83rem;margin-top:0.3rem;color:var(--green)">✓ ${r.transferable.join(' · ')}</div>` : ''}
-                        ${r.gaps?.length ? `<div style="font-size:0.83rem;margin-top:0.2rem;color:var(--accent2)">Gap: ${r.gaps.join(' · ')}</div>` : ''}
-                    </div>`).join('') || ''}
-                    ${data.plan_90_day?.length ? `<h5 style="color:var(--accent);margin-top:0.6rem;">90-Day Pivot Plan</h5><ol style="margin:0.4rem 0 0 1.1rem;line-height:1.9">${data.plan_90_day.map(s=>'<li>'+s+'</li>').join('')}</ol>` : ''}`;
-
-                case 'visaPathways':
-                    return `
-                    ${data.in_country?.length ? `<h5 style="color:var(--green);margin-top:0.6rem;">In-Country Requirements</h5><ul>${data.in_country.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.outside_country?.length ? `<h5 style="color:var(--accent);margin-top:0.6rem;">Outside Country — All Visa Routes</h5>${data.outside_country.map(v=>typeof v==='object'?`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.7rem;margin-top:0.4rem;"><strong style="color:var(--accent)">${v.type||''}</strong> ${v.url?`<a href="${v.url}" target="_blank" style="color:var(--purple);font-size:0.8rem;margin-left:0.5rem">Official →</a>`:''}<div style="font-size:0.85rem;margin-top:0.3rem;color:var(--muted)">${v.description||''}</div></div>`:'<li>'+v+'</li>').join('')}` : ''}
-                    ${data.digital_nomad ? `<p style="margin-top:0.6rem;font-size:0.85rem;"><strong style="color:var(--purple)">Digital Nomad:</strong> ${data.digital_nomad}</p>` : ''}
-                    ${data.working_holiday ? `<p style="font-size:0.85rem;"><strong style="color:var(--gold)">Working Holiday:</strong> ${data.working_holiday}</p>` : ''}`;
-
-                case 'countryLaws':
-                    return `
-                    ${data.notice_period ? `<p><strong style="color:var(--accent)">Notice Period:</strong> ${data.notice_period}</p>` : ''}
-                    ${data.termination_rights ? `<p style="margin-top:0.4rem;"><strong style="color:var(--gold)">Termination:</strong> ${data.termination_rights}</p>` : ''}
-                    ${data.non_compete ? `<p style="margin-top:0.4rem;"><strong style="color:var(--muted)">Non-Compete:</strong> ${data.non_compete}</p>` : ''}
-                    ${data.resume_compliance?.length ? `<h5 style="color:var(--accent);margin-top:0.8rem;">Resume Compliance Rules</h5><ul>${data.resume_compliance.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.worker_rights?.length ? `<h5 style="color:var(--green);margin-top:0.6rem;">Worker Rights</h5><ul>${data.worker_rights.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}`;
-
-                case 'matchingJobs':
-                    return `
-                    ${data.titles?.length ? `<h5 style="color:var(--accent);margin-top:0.6rem;">Job Titles to Target</h5><ul>${data.titles.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.companies?.length ? `<h5 style="color:var(--green);margin-top:0.6rem;">Target Companies</h5><ul>${data.companies.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.job_boards?.length ? `<h5 style="color:var(--purple);margin-top:0.6rem;">Job Boards</h5><ul>${data.job_boards.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
-                    ${data.recruiters_by_country?.length ? `<h5 style="color:var(--gold);margin-top:0.6rem;">Recruiters</h5>${data.recruiters_by_country.map(r=>`<div style="font-size:0.85rem;margin-top:0.3rem"><strong>${r.country}:</strong> ${(r.firms||[]).join(', ')}</div>`).join('')}` : ''}
-                    ${data.freelance_platforms?.length ? `<h5 style="color:var(--accent2);margin-top:0.6rem;">Freelance Platforms</h5><ul>${data.freelance_platforms.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}`;
-
-                default:
-                    // coverLetter, resumeRewrite, linkedinSummary, thankYouEmail — plain text
-                    if (typeof data === 'string') return `<div class="pretext">${data}</div>`;
-                    return `<div class="pretext">${JSON.stringify(data, null, 2)}</div>`;
-            }
+        function drawStars(t) {
+            stars.forEach(s => {
+                const alpha = s.bright * (0.55 + 0.45 * Math.sin(t * s.speed * 60 + s.phase));
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = s.r > 1.2
+                    ? `rgba(255,255,255,${alpha})`
+                    : (s.color === '#fff' ? `rgba(255,255,255,${alpha})` : s.color.replace(')', `,${alpha})`).replace('hsl', 'hsla').replace(',80%)', ',80%,'+alpha+')'));
+                ctx.fill();
+                // Bright star cross-flare
+                if (s.r > 1.3) {
+                    ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.25})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(s.x - s.r * 4, s.y); ctx.lineTo(s.x + s.r * 4, s.y);
+                    ctx.moveTo(s.x, s.y - s.r * 4); ctx.lineTo(s.x, s.y + s.r * 4);
+                    ctx.stroke();
+                }
+            });
         }
 
-        async function analyzeCareer() {
-            const resume = document.getElementById('resume-input').value.trim();
-            if (!resume) return alert('Please upload or paste your resume first');
-            const wc = wordCount(resume);
-            if (wc > MAX_WORDS + 500) return alert('Resume exceeds 12-page limit (' + wc + ' words). Please trim it down.');
+        function drawRipples() {
+            ripples = ripples.filter(r => r.age < 1);
+            ripples.forEach(r => {
+                r.age += 0.018;
+                const op = (1 - r.age) * 0.7;
+                const rad = r.age * 180;
+                ctx.beginPath(); ctx.arc(r.x, r.y, rad, 0, Math.PI*2);
+                ctx.strokeStyle = `rgba(79,140,255,${op})`; ctx.lineWidth = 2 - r.age * 1.5; ctx.stroke();
+                ctx.beginPath(); ctx.arc(r.x, r.y, rad * 0.55, 0, Math.PI*2);
+                ctx.strokeStyle = `rgba(168,85,247,${op*0.5})`; ctx.lineWidth = 1; ctx.stroke();
+                ctx.beginPath(); ctx.arc(r.x, r.y, rad * 0.25, 0, Math.PI*2);
+                ctx.strokeStyle = `rgba(236,72,153,${op*0.35})`; ctx.lineWidth = 0.5; ctx.stroke();
+            });
+        }
 
-            document.getElementById('loading-career').classList.add('show');
-            document.getElementById('career-result').style.display = 'none';
+        function spawnShooter() {
+            shooters.push({
+                x: Math.random() * W * 0.7, y: Math.random() * H * 0.3,
+                vx: (Math.random() * 4 + 2), vy: (Math.random() * 2 + 1),
+                len: Math.random() * 80 + 60, age: 0
+            });
+        }
 
-            try {
-                const res = await fetch(API + '/career', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        resume,
-                        job_description: document.getElementById('job-input').value.trim(),
-                        country: document.getElementById('country-input').value.trim(),
-                        industry: document.getElementById('industry-input').value.trim(),
-                    })
-                });
-                const data = await res.json();
-                if (data.error) {
-                    document.getElementById('career-score-text').innerHTML = '<p style="color:var(--accent2)">Error: ' + data.error + '</p>';
-                    document.getElementById('card-score').style.display = 'block';
-                    document.getElementById('career-result').style.display = 'block';
-                    document.getElementById('loading-career').classList.remove('show');
-                    return;
-                }
+        function drawShooters() {
+            shooters = shooters.filter(s => s.age < 1);
+            shooters.forEach(s => {
+                s.x += s.vx; s.y += s.vy; s.age += 0.025;
+                const op = (1 - s.age) * 0.8;
+                const grd = ctx.createLinearGradient(s.x - s.vx*8, s.y - s.vy*8, s.x, s.y);
+                grd.addColorStop(0, 'transparent');
+                grd.addColorStop(1, `rgba(255,255,255,${op})`);
+                ctx.strokeStyle = grd; ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(s.x - s.vx * (s.len/5), s.y - s.vy * (s.len/5));
+                ctx.lineTo(s.x, s.y); ctx.stroke();
+            });
+        }
 
-                // ── Naked truth scores ──
-                const nt = data.naked_truth || {};
-                const ats = data.ats_match || {};
-                const score = nt.composite_score ?? 0;
-                const verdict = nt.verdict || '';
-                const dims = nt.dimension_scores || {};
-                const latency = data.metrics?.latency_ms || 0;
-                const atsScore = ats.ats_score;
-                const scoreColor = score >= 70 ? 'green' : score >= 40 ? 'gold' : 'red';
+        canvas.addEventListener('click', e => {
+            ripples.push({x: e.clientX, y: e.clientY, age: 0});
+        });
 
-                // Metrics bar
-                document.getElementById('career-metrics').innerHTML = `
-                    <div class="metric ${scoreColor}"><div class="value">${score}</div><div class="label">Resume Score / 100</div></div>
-                    ${atsScore != null ? `<div class="metric ${atsScore>=70?'green':'gold'}"><div class="value">${atsScore}%</div><div class="label">ATS Match</div></div>` : ''}
-                    <div class="metric"><div class="value">${(latency/1000).toFixed(1)}s</div><div class="label">Total Time</div></div>
-                    <div class="metric"><div class="value">${data.ai_provider||'AI'}</div><div class="label">AI Provider</div></div>
-                `;
+        let lastShooter = 0;
+        function animate(ts) {
+            t = ts / 1000;
+            ctx.fillStyle = '#000008';
+            ctx.fillRect(0, 0, W, H);
+            drawNebula(t);
+            drawStars(t);
+            drawShooters();
+            drawRipples();
+            if (t - lastShooter > 8 + Math.random() * 12) { spawnShooter(); lastShooter = t; }
+            requestAnimationFrame(animate);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        requestAnimationFrame(animate);
+    })();
 
-                // Score card body
-                let scoreHtml = '';
-                if (verdict) {
-                    const vc = score>=70?'var(--green)':score>=40?'var(--gold)':'var(--accent2)';
-                    scoreHtml += `<div style="border-left:4px solid ${vc};padding:0.7rem 1rem;border-radius:6px;margin-bottom:1rem;font-weight:700;font-size:1.05rem;color:${vc}">${verdict}</div>`;
-                }
-                if (Object.keys(dims).length) {
-                    scoreHtml += `<div class="card-dim-grid">`;
-                    for (const [dim, val] of Object.entries(dims)) {
-                        const pct = typeof val === 'object' ? (val.score ?? val) : val;
-                        const dc = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--gold)' : 'var(--accent2)';
-                        scoreHtml += `<div class="card-dim"><div class="dv" style="color:${dc}">${typeof pct==='number'?pct:'-'}</div><div class="dl">${dim.replace(/_/g,' ')}</div></div>`;
+    // ═══════════════════════════════════════════════════
+    // LOCATION + WEATHER AUTO-DETECT
+    // ═══════════════════════════════════════════════════
+    function countryFlag(code) {
+        if (!code || code.length !== 2) return '🌍';
+        return code.toUpperCase().replace(/./g, c => String.fromCodePoint(c.charCodeAt(0) + 127397));
+    }
+    function weatherEmoji(code) {
+        if (code === 0) return '☀️';
+        if (code <= 3) return code <= 1 ? '🌤️' : '⛅';
+        if (code <= 48) return '🌫️';
+        if (code <= 67) return '🌧️';
+        if (code <= 77) return '❄️';
+        if (code <= 82) return '🌦️';
+        return '⛈️';
+    }
+
+    async function detectLocation() {
+        try {
+            const res = await fetch('https://ip-api.com/json/?fields=status,country,countryCode,city,isp,lat,lon');
+            const loc = await res.json();
+            if (loc.status === 'success') {
+                document.getElementById('loc-flag').textContent = countryFlag(loc.countryCode);
+                document.getElementById('loc-city').textContent = `${loc.city}, ${loc.country}`;
+                document.getElementById('loc-isp').textContent = loc.isp ? `· ${loc.isp.substring(0,25)}` : '';
+                // Auto-fill country
+                const ci = document.getElementById('country-input');
+                if (!ci.value) ci.value = loc.country;
+                // Weather from Open-Meteo (free, no key)
+                try {
+                    const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current_weather=true`);
+                    const wData = await wRes.json();
+                    const cw = wData.current_weather;
+                    if (cw) {
+                        const emoji = weatherEmoji(cw.weathercode);
+                        const temp = Math.round(cw.temperature);
+                        document.getElementById('loc-weather').textContent = ` ${emoji} ${temp}°C`;
                     }
-                    scoreHtml += `</div>`;
-                }
-                const strengths = nt.strengths || []; const weaknesses = nt.weaknesses || []; const hidden = nt.hidden_issues || [];
-                if (strengths.length) scoreHtml += `<h5 style="color:var(--green);margin-top:1rem;">✓ Strengths</h5><ul>${strengths.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                if (weaknesses.length) scoreHtml += `<h5 style="color:var(--accent2);margin-top:0.8rem;">✗ Weaknesses</h5><ul>${weaknesses.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                if (hidden.length) scoreHtml += `<h5 style="color:var(--gold);margin-top:0.8rem;">⚠ Hidden Issues</h5><ul>${hidden.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                if (ats.matched_keywords?.length) scoreHtml += `<h5 style="color:var(--accent);margin-top:0.8rem;">ATS Matched Keywords</h5><p style="font-size:0.85rem;color:var(--green)">${ats.matched_keywords.join(', ')}</p>`;
-                if (ats.missing_keywords?.length) scoreHtml += `<h5 style="color:var(--accent2);margin-top:0.5rem;">ATS Missing Keywords</h5><p style="font-size:0.85rem;color:var(--accent2)">${ats.missing_keywords.join(', ')}</p>`;
-                document.getElementById('career-score-text').innerHTML = scoreHtml;
-                document.getElementById('card-score').style.display = 'block';
-
-                // ── 17 AI Cards ──
-                const cards = data.cards || {};
-                if (Object.keys(cards).length > 0) {
-                    const container = document.getElementById('cards-container');
-                    container.innerHTML = CARD_DEFS.map(def => {
-                        const cardData = cards[def.key];
-                        const hasData = cardData && (typeof cardData === 'string' ? cardData.trim() : Object.keys(cardData).length > 0);
-                        return `<div class="ai-card">
-                            <div class="ai-card-header" onclick="toggleCard(this)">
-                                <span class="ai-card-icon">${def.icon}</span>
-                                <span class="ai-card-title" style="color:${def.color}">${def.title}</span>
-                                <span class="ai-card-badge ${hasData?'badge-ai':'badge-score'}">${hasData?'AI READY':'No data'}</span>
-                                <span class="ai-card-chevron">▼</span>
-                            </div>
-                            <div class="ai-card-body">${renderCardBody(def.key, cardData)}</div>
-                        </div>`;
-                    }).join('');
-                    document.getElementById('ai-cards-grid').style.display = 'block';
-                    // Auto-open first card
-                    document.querySelector('.ai-card')?.classList.add('open');
-                }
-
-                document.getElementById('career-result').style.display = 'block';
-            } catch (e) {
-                document.getElementById('career-score-text').innerHTML = '<p style="color:var(--accent2)">Error: ' + e.message + '. Please try again.</p>';
-                document.getElementById('card-score').style.display = 'block';
-                document.getElementById('career-result').style.display = 'block';
+                } catch(e) {}
             }
+        } catch(e) {
+            document.getElementById('loc-city').textContent = 'Location unavailable';
+        }
+    }
+    detectLocation();
+
+    // ═══════════════════════════════════════════════════
+    // CORE APP LOGIC
+    // ═══════════════════════════════════════════════════
+    const API = window.location.origin;
+    let lastJobRole = '', lastJobCountry = '';
+    const MAX_WORDS = 7000;
+
+    function wordCount(text) { return text.trim() ? text.trim().split(/\s+/).length : 0; }
+
+    function updateWordCount(taId, countId) {
+        const ta = document.getElementById(taId);
+        const el = document.getElementById(countId);
+        if (!ta || !el) return;
+        ta.addEventListener('input', () => {
+            const wc = wordCount(ta.value);
+            el.textContent = `${wc.toLocaleString()} words${wc > MAX_WORDS ? ' ⚠️ exceeds limit' : ''}`;
+            el.style.color = wc > MAX_WORDS ? 'var(--accent2)' : 'var(--muted)';
+        });
+    }
+    updateWordCount('resume-input', 'resume-word-count');
+    updateWordCount('job-input', 'jd-word-count');
+
+    function switchTab(name, el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('tab-' + name).classList.add('active');
+        if (name === 'audit') loadAudit();
+    }
+
+    async function doUpload(fileId, taId, statusId) {
+        const fi = document.getElementById(fileId);
+        const status = document.getElementById(statusId);
+        if (!fi.files.length) { alert('Please select a file first'); return; }
+        const file = fi.files[0];
+        if (file.size > 5 * 1024 * 1024) { alert('File too large. Maximum 5MB.'); return; }
+        status.style.display = 'block';
+        status.style.background = 'rgba(79,140,255,0.1)';
+        status.style.color = 'var(--muted)';
+        status.textContent = `⏳ Parsing ${file.name}...`;
+        try {
+            const fd = new FormData();
+            fd.append('file', file);
+            const r = await fetch(API + '/upload', {method: 'POST', body: fd});
+            const d = await r.json();
+            if (d.error) throw new Error(d.error);
+            document.getElementById(taId).value = d.text;
+            document.getElementById(taId).dispatchEvent(new Event('input'));
+            status.style.background = 'rgba(78,205,196,0.1)';
+            status.style.color = 'var(--green)';
+            status.textContent = `✅ ${file.name} — ${d.words_extracted?.toLocaleString() || wordCount(d.text)} words extracted · Method: ${d.extraction_method}`;
+        } catch(e) {
+            status.style.background = 'rgba(255,107,107,0.1)';
+            status.style.color = 'var(--accent2)';
+            status.textContent = '❌ Upload failed: ' + e.message;
+        }
+    }
+    function uploadResume() { doUpload('resume-file', 'resume-input', 'resume-upload-status'); }
+    function uploadJD()     { doUpload('jd-file', 'job-input', 'jd-upload-status'); }
+
+    // ── CARD DEFINITIONS (17 AI engines) ──
+    const CARD_DEFS = [
+        {key:'recruiterPov',       icon:'👁️',  title:'Recruiter POV — 6-Second Test',             color:'var(--accent2)', badge:'badge-ai'},
+        {key:'skillsGap',          icon:'📊',  title:'Skills Gap Analysis',                        color:'var(--gold)',    badge:'badge-ai'},
+        {key:'resumeRewrite',      icon:'✏️',  title:'Resume Rewrite — Bullets That Win',          color:'var(--accent)', badge:'badge-ai'},
+        {key:'coverLetter',        icon:'📝',  title:'Cover Letter — Top 1% Template',             color:'var(--green)',   badge:'badge-ai'},
+        {key:'interviewPrep',      icon:'🎤',  title:'Interview Prep — 5 Q&A + Questions to Ask',  color:'var(--purple)', badge:'badge-ai'},
+        {key:'starStories',        icon:'⭐',  title:'STAR Stories — 3 Behavioral Answers',        color:'var(--gold)',    badge:'badge-ai'},
+        {key:'linkedinSummary',    icon:'💼',  title:'LinkedIn About Section',                     color:'var(--accent)', badge:'badge-ai'},
+        {key:'introScripts',       icon:'🎙️', title:'1 / 2 / 3-Minute Intro Scripts',             color:'var(--green)',  badge:'badge-ai'},
+        {key:'thankYouEmail',      icon:'📧',  title:'Post-Interview Thank You Email',              color:'var(--muted)',  badge:'badge-ai'},
+        {key:'salaryNegotiation',  icon:'💰',  title:'Salary Negotiation — Table + Scripts',       color:'var(--gold)',   badge:'badge-ai'},
+        {key:'actionPlan',         icon:'📅',  title:'30-60-90 Day Action Plan',                   color:'var(--accent)', badge:'badge-ai'},
+        {key:'coldOutreach',       icon:'📬',  title:'Cold Outreach — LinkedIn DM + Email',        color:'var(--purple)', badge:'badge-ai'},
+        {key:'careerPivot',        icon:'🔄',  title:'Career Pivot — Adjacent Roles + 90-Day Plan',color:'var(--pink)',   badge:'badge-ai'},
+        {key:'countryLaws',        icon:'⚖️',  title:'Country Labor Laws + GRC Compliance',        color:'var(--muted)',  badge:'badge-rag'},
+        {key:'visaPathways',       icon:'🌍',  title:'Visa Pathways — In-Country + International', color:'var(--accent)', badge:'badge-rag'},
+        {key:'matchingJobs',       icon:'🔍',  title:'Matching Jobs + Recruiters + Boards',        color:'var(--accent2)',badge:'badge-ai'},
+    ];
+
+    function toggleCard(el) { el.closest('.ai-card').classList.toggle('open'); }
+
+    function renderCardBody(key, data) {
+        if (!data || (typeof data === 'string' && !data.trim()))
+            return '<p style="color:var(--muted);padding-top:0.6rem;font-size:0.85rem;">No data for this section.</p>';
+        if (typeof data === 'string') return `<div class="pretext">${data}</div>`;
+
+        switch(key) {
+            case 'recruiterPov':
+                return `
+                    <p style="color:var(--gold);font-size:0.85rem;margin-top:0.6rem;"><strong>First Impression:</strong> ${data.first_impression||''}</p>
+                    ${data.top_third?.length ? `<p style="margin-top:0.6rem;font-weight:700;color:var(--green);font-size:0.85rem;">✅ Top Third (What They See):</p><ul>${data.top_third.map(i=>`<li>${i}</li>`).join('')}</ul>` : ''}
+                    ${data.buried?.length ? `<p style="margin-top:0.6rem;font-weight:700;color:var(--accent2);font-size:0.85rem;">⚠️ Buried / Missed:</p><ul>${data.buried.map(i=>`<li>${i}</li>`).join('')}</ul>` : ''}
+                    ${data.red_flags?.length ? `<p style="margin-top:0.6rem;font-weight:700;color:var(--accent2);font-size:0.85rem;">🚩 Red Flags:</p><ul>${data.red_flags.map(i=>`<li>${i}</li>`).join('')}</ul>` : ''}
+                    ${data.quick_wins?.length ? `<p style="margin-top:0.6rem;font-weight:700;color:var(--accent);font-size:0.85rem;">⚡ Quick Wins:</p><ul>${data.quick_wins.map(i=>`<li>${i}</li>`).join('')}</ul>` : ''}
+                `;
+            case 'skillsGap':
+                return `
+                    ${data.matched_hard?.length ? `<p style="color:var(--green);font-weight:700;font-size:0.85rem;margin-top:0.6rem;">✅ Matched Skills:</p><ul>${data.matched_hard.map(s=>`<li>${s}</li>`).join('')}</ul>` : ''}
+                    ${data.missing_hard?.length ? `<p style="color:var(--accent2);font-weight:700;font-size:0.85rem;margin-top:0.6rem;">❌ Critical Gaps:</p><ul>${data.missing_hard.map(s=>`<li>${s}</li>`).join('')}</ul>` : ''}
+                    ${data.certs_to_pursue?.length ? `<p style="color:var(--gold);font-weight:700;font-size:0.85rem;margin-top:0.6rem;">🎓 Certifications to Pursue:</p><ul>${data.certs_to_pursue.map(c=>`<li><strong>${c.name}</strong> <span style="color:var(--${c.priority==='HIGH'?'accent2':'muted'})">[${c.priority}]</span> ${c.url?`<a href="${c.url}" target="_blank" rel="noopener">→ Get Cert</a>`:''}</li>`).join('')}</ul>` : ''}
+                    ${data.roadmap?.length ? `<p style="color:var(--accent);font-weight:700;font-size:0.85rem;margin-top:0.6rem;">🗺️ Upskilling Roadmap:</p><ol style="margin-left:1.2rem;">${data.roadmap.map(s=>`<li style="margin-bottom:0.3rem;">${s}</li>`).join('')}</ol>` : ''}
+                `;
+            case 'salaryNegotiation':
+                return `
+                    ${data.table?.length ? `<table><thead><tr><th>Level</th><th>Range</th></tr></thead><tbody>${data.table.map(r=>`<tr><td>${r.level}</td><td style="color:var(--green);font-weight:700;">${r.range}</td></tr>`).join('')}</tbody></table>` : ''}
+                    ${data.script ? `<p style="margin-top:0.8rem;font-weight:700;color:var(--gold);font-size:0.85rem;">💬 Negotiation Script:</p><div class="pretext" style="margin-top:0.4rem;">${data.script}</div>` : ''}
+                    ${data.counter_script ? `<p style="margin-top:0.6rem;font-weight:700;color:var(--accent);font-size:0.85rem;">🔄 Counter-Offer Script:</p><div class="pretext" style="margin-top:0.4rem;">${data.counter_script}</div>` : ''}
+                `;
+            case 'interviewPrep':
+                return `
+                    ${data.qa?.map((q,i)=>`<div style="margin-top:0.8rem;background:rgba(5,5,25,0.5);border-radius:8px;padding:0.75rem;"><p style="color:var(--gold);font-weight:700;font-size:0.85rem;">Q${i+1}: ${q.q}</p><p style="margin-top:0.4rem;font-size:0.85rem;line-height:1.7;">${q.a}</p></div>`).join('') || ''}
+                    ${data.questions_to_ask?.length ? `<p style="margin-top:0.8rem;font-weight:700;color:var(--accent);font-size:0.85rem;">❓ Questions to Ask the Interviewer:</p><ul>${data.questions_to_ask.map(q=>`<li>${q}</li>`).join('')}</ul>` : ''}
+                `;
+            case 'starStories':
+                return (data||[]).map((s,i)=>`<div style="margin-top:0.8rem;background:rgba(5,5,25,0.5);border-radius:8px;padding:0.75rem;border-left:3px solid var(--gold);"><p style="color:var(--gold);font-weight:700;">Story ${i+1}: ${s.title||''}</p><p style="font-size:0.84rem;margin-top:0.4rem;"><strong style="color:var(--accent);">S:</strong> ${s.s||''}</p><p style="font-size:0.84rem;margin-top:0.2rem;"><strong style="color:var(--accent);">T:</strong> ${s.t||''}</p><p style="font-size:0.84rem;margin-top:0.2rem;"><strong style="color:var(--accent);">A:</strong> ${s.a||''}</p><p style="font-size:0.84rem;margin-top:0.2rem;"><strong style="color:var(--green);">R:</strong> ${s.r||''}</p></div>`).join('') || '<div class="pretext">'+JSON.stringify(data,null,2)+'</div>';
+            case 'actionPlan':
+                return `
+                    ${data.day30?.length ? `<p style="color:var(--green);font-weight:700;margin-top:0.6rem;">📅 First 30 Days:</p><ul>${data.day30.map(a=>`<li>${a}</li>`).join('')}</ul>` : ''}
+                    ${data.day60?.length ? `<p style="color:var(--gold);font-weight:700;margin-top:0.6rem;">📅 Days 31-60:</p><ul>${data.day60.map(a=>`<li>${a}</li>`).join('')}</ul>` : ''}
+                    ${data.day90?.length ? `<p style="color:var(--accent);font-weight:700;margin-top:0.6rem;">📅 Days 61-90:</p><ul>${data.day90.map(a=>`<li>${a}</li>`).join('')}</ul>` : ''}
+                `;
+            case 'coldOutreach':
+                return `
+                    ${data.linkedin_request ? `<p style="color:var(--accent);font-weight:700;margin-top:0.6rem;">🔗 LinkedIn Connection Note:</p><div class="pretext">${data.linkedin_request}</div>` : ''}
+                    ${data.linkedin_dm ? `<p style="color:var(--purple);font-weight:700;margin-top:0.6rem;">💬 LinkedIn DM:</p><div class="pretext">${data.linkedin_dm}</div>` : ''}
+                    ${data.cold_email ? `<p style="color:var(--gold);font-weight:700;margin-top:0.6rem;">📧 Cold Email:</p><div class="pretext">${data.cold_email}</div>` : ''}
+                    ${data.follow_up ? `<p style="color:var(--green);font-weight:700;margin-top:0.6rem;">🔄 Follow-up Email:</p><div class="pretext">${data.follow_up}</div>` : ''}
+                `;
+            case 'careerPivot':
+                return `
+                    <p style="color:var(--gold);margin-top:0.6rem;"><strong>Pivot Difficulty:</strong> <span style="font-size:1.1rem;font-weight:800;">${data.pivot_score||'—'}</span></p>
+                    <p style="color:var(--muted);font-size:0.85rem;margin-top:0.3rem;">${data.reason||''}</p>
+                    ${data.adjacent_roles?.map(r=>`<div style="margin-top:0.75rem;background:rgba(5,5,25,0.5);border-radius:8px;padding:0.75rem;border-left:3px solid var(--purple);"><p style="color:var(--purple);font-weight:700;">${r.title||''}</p><p style="font-size:0.82rem;color:var(--green);">✅ ${(r.transferable||[]).join(' · ')}</p><p style="font-size:0.82rem;color:var(--accent2);">❌ Gaps: ${(r.gaps||[]).join(' · ')}</p><p style="font-size:0.82rem;color:var(--muted);">⏱️ ${r.time_to_qualify||''}</p></div>`).join('') || ''}
+                    ${data.plan_90_day?.length ? `<p style="color:var(--accent);font-weight:700;margin-top:0.75rem;">🗺️ 90-Day Pivot Plan:</p><ol style="margin-left:1.2rem;">${data.plan_90_day.map(s=>`<li style="margin-bottom:0.3rem;">${s}</li>`).join('')}</ol>` : ''}
+                `;
+            case 'countryLaws':
+                return `
+                    ${data.notice_period ? `<p style="margin-top:0.6rem;"><strong style="color:var(--accent);">Notice Period:</strong> ${data.notice_period}</p>` : ''}
+                    ${data.termination_rights ? `<p style="margin-top:0.4rem;"><strong style="color:var(--accent);">Termination Rights:</strong> ${data.termination_rights}</p>` : ''}
+                    ${data.non_compete ? `<p style="margin-top:0.4rem;"><strong style="color:var(--accent);">Non-Compete:</strong> ${data.non_compete}</p>` : ''}
+                    ${data.resume_compliance?.length ? `<p style="color:var(--gold);font-weight:700;margin-top:0.6rem;">📋 Resume Compliance Rules:</p><ul>${data.resume_compliance.map(r=>`<li>${r}</li>`).join('')}</ul>` : ''}
+                    ${data.worker_rights?.length ? `<p style="color:var(--green);font-weight:700;margin-top:0.6rem;">⚖️ Worker Rights:</p><ul>${data.worker_rights.map(r=>`<li>${r}</li>`).join('')}</ul>` : ''}
+                `;
+            case 'visaPathways':
+                return `
+                    ${data.scenario ? `<p style="color:var(--muted);font-size:0.82rem;margin-top:0.6rem;">Scenario: ${data.scenario}</p>` : ''}
+                    ${data.in_country?.length ? `<p style="color:var(--green);font-weight:700;margin-top:0.6rem;">🏠 In-Country Requirements:</p><ul>${data.in_country.map(r=>`<li>${r}</li>`).join('')}</ul>` : ''}
+                    ${data.outside_country?.length ? `<p style="color:var(--accent);font-weight:700;margin-top:0.6rem;">✈️ Outside Country — Visa Routes:</p>${data.outside_country.map(v=>`<div style="background:rgba(5,5,25,0.5);border-radius:8px;padding:0.6rem;margin-top:0.4rem;border-left:3px solid var(--accent);"><strong>${v.type||''}</strong> — ${v.description||''} ${v.url?`<a href="${v.url}" target="_blank" rel="noopener" style="margin-left:0.5rem;">[Official]</a>`:''}</div>`).join('') || ''}` : ''}
+                    ${data.digital_nomad ? `<p style="margin-top:0.6rem;"><strong style="color:var(--purple);">Digital Nomad Visa:</strong> ${data.digital_nomad}</p>` : ''}
+                    ${data.working_holiday ? `<p style="margin-top:0.4rem;"><strong style="color:var(--gold);">Working Holiday:</strong> ${data.working_holiday}</p>` : ''}
+                `;
+            case 'matchingJobs':
+                return `
+                    ${data.titles?.length ? `<p style="color:var(--accent);font-weight:700;margin-top:0.6rem;">💼 Matching Job Titles:</p><div class="occ-chips">${data.titles.map(t=>`<span class="occ-chip" onclick="searchJobsFor('${t}')">${t}</span>`).join('')}</div>` : ''}
+                    ${data.companies?.length ? `<p style="color:var(--green);font-weight:700;margin-top:0.6rem;">🏢 Target Companies:</p><ul>${data.companies.slice(0,8).map(c=>`<li>${c}</li>`).join('')}</ul>` : ''}
+                    ${data.job_boards?.length ? `<p style="color:var(--gold);font-weight:700;margin-top:0.6rem;">🔗 Job Boards:</p><ul>${data.job_boards.map(b=>`<li>${b}</li>`).join('')}</ul>` : ''}
+                    ${data.freelance_platforms?.length ? `<p style="color:var(--purple);font-weight:700;margin-top:0.6rem;">💻 Freelance Platforms:</p><ul>${data.freelance_platforms.map(p=>`<li>${p}</li>`).join('')}</ul>` : ''}
+                `;
+            default:
+                if (typeof data === 'string') return `<div class="pretext">${data}</div>`;
+                return `<div class="pretext">${JSON.stringify(data, null, 2)}</div>`;
+        }
+    }
+
+    // ── CAREER ANALYSIS ──
+    async function analyzeCareer() {
+        const resume = document.getElementById('resume-input').value.trim();
+        if (!resume) return alert('Please upload or paste your resume first');
+        const country = document.getElementById('country-input').value.trim() || 'Global';
+        const industry = document.getElementById('industry-input').value.trim() || 'General';
+
+        document.getElementById('loading-career').classList.add('show');
+        document.getElementById('career-result').style.display = 'none';
+
+        try {
+            const r = await fetch(API + '/career', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    resume,
+                    job_description: document.getElementById('job-input').value.trim(),
+                    country, industry
+                })
+            });
+            const data = await r.json();
+
+            if (data.error) {
+                document.getElementById('career-score-text').innerHTML = `<span style="color:var(--accent2);">Error: ${data.error}</span>`;
+                document.getElementById('card-score').style.display = 'block';
+                document.getElementById('career-result').style.display = 'block';
+                return;
+            }
+
+            // Metrics bar
+            const nt = data.naked_truth || {};
+            const score = nt.composite_score || 0;
+            const scoreColor = score >= 75 ? 'green' : score >= 55 ? 'gold' : 'red';
+            const ats = data.ats_match?.ats_score;
+            document.getElementById('career-metrics').innerHTML = `
+                <div class="metric ${scoreColor}"><div class="value">${score}/100</div><div class="label">Resume Score</div></div>
+                ${ats != null ? `<div class="metric ${ats>=70?'green':ats>=50?'gold':'red'}"><div class="value">${ats}%</div><div class="label">ATS Match</div></div>` : ''}
+                <div class="metric purple"><div class="value">${data.metrics?.rag_chunks_used||0}</div><div class="label">RAG Chunks Used</div></div>
+                <div class="metric"><div class="value">${data.metrics?.provider||'AI'}</div><div class="label">AI Provider</div></div>
+                <div class="metric"><div class="value">${((data.metrics?.latency_ms||0)/1000).toFixed(1)}s</div><div class="label">Analysis Time</div></div>
+            `;
+
+            // Top 1% alert
+            if (score < 75 && data.top1_tips?.length) {
+                const alert = document.getElementById('top1-alert');
+                alert.style.display = 'block';
+                document.getElementById('top1-content').innerHTML = `
+                    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.5rem;">Your score is ${score}/100. Top 1% = 90+. Here's what's needed:</p>
+                    ${data.top1_tips.map(t => `<div style="background:rgba(5,5,25,0.5);border-radius:8px;padding:0.75rem;margin-top:0.5rem;font-size:0.84rem;line-height:1.7;">${t}</div>`).join('')}
+                `;
+            }
+
+            // Score card
+            const dims = nt.dimensions || {};
+            document.getElementById('career-score-text').innerHTML = `
+                <p style="font-size:1.4rem;font-weight:900;color:${score>=75?'var(--green)':score>=55?'var(--gold)':'var(--accent2)'};">${score}/100 — ${nt.verdict||''}</p>
+                ${nt.strengths?.length ? `<p style="color:var(--green);margin-top:0.6rem;font-weight:700;">✅ Strengths:</p><ul style="margin-left:1rem;">${nt.strengths.map(s=>`<li>${s}</li>`).join('')}</ul>` : ''}
+                ${nt.weaknesses?.length ? `<p style="color:var(--accent2);margin-top:0.6rem;font-weight:700;">⚠️ Weaknesses:</p><ul style="margin-left:1rem;">${nt.weaknesses.map(w=>`<li>${w}</li>`).join('')}</ul>` : ''}
+                ${nt.hidden_issues?.length ? `<p style="color:var(--gold);margin-top:0.6rem;font-weight:700;">🔍 Hidden Issues:</p><ul style="margin-left:1rem;">${nt.hidden_issues.map(i=>`<li>${i}</li>`).join('')}</ul>` : ''}
+                ${Object.keys(dims).length ? `<div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;">${Object.entries(dims).map(([k,v])=>`<div style="background:rgba(5,5,25,0.6);border-radius:8px;padding:0.4rem 0.7rem;font-size:0.78rem;border:1px solid rgba(79,140,255,0.1);"><span style="color:var(--muted);">${k}:</span> <strong style="color:${v>=70?'var(--green)':v>=50?'var(--gold)':'var(--accent2)'};">${v}</strong></div>`).join('')}</div>` : ''}
+            `;
+            document.getElementById('card-score').style.display = 'block';
+
+            // Similar occupations
+            const simOcc = data.similar_occupations || [];
+            if (simOcc.length) {
+                document.getElementById('similar-occ-chips').innerHTML = simOcc.map(o =>
+                    `<span class="occ-chip" onclick="searchJobsFor('${o.replace(/['"]/g,'')}')">🔀 ${o}</span>`
+                ).join('');
+                document.getElementById('card-similar').style.display = 'block';
+            }
+
+            // JD Template
+            if (data.jd_template) {
+                document.getElementById('jd-template-text').textContent = data.jd_template;
+                document.getElementById('card-jd-template').style.display = 'block';
+            }
+
+            // 17 AI Cards
+            const cards = data.cards || {};
+            if (Object.keys(cards).length > 0) {
+                const container = document.getElementById('cards-container');
+                container.innerHTML = CARD_DEFS.map(def => {
+                    const cd = cards[def.key];
+                    const hasData = cd && (typeof cd === 'string' ? cd.trim() : Object.keys(cd).length > 0);
+                    return `<div class="ai-card">
+                        <div class="ai-card-header" onclick="toggleCard(this)">
+                            <span class="ai-card-icon">${def.icon}</span>
+                            <span class="ai-card-title">${def.title}</span>
+                            <span class="ai-card-badge ${def.badge}">${def.badge === 'badge-rag' ? 'RAG' : 'AI'}</span>
+                            <span class="ai-card-chevron">▼</span>
+                        </div>
+                        <div class="ai-card-body">${renderCardBody(def.key, cd)}</div>
+                    </div>`;
+                }).join('');
+                document.getElementById('ai-cards-grid').style.display = 'block';
+                document.querySelector('.ai-card')?.classList.add('open');
+            }
+
+            // Career intelligence sources
+            const intel = data.career_intelligence || [];
+            if (intel.length) {
+                document.getElementById('intel-list').innerHTML = intel.map((s, i) =>
+                    `<div class="source-item"><div class="src-header"><span class="num">[${i+1}] ${s.source}</span><span class="score">${s.relevance}</span></div><div class="preview">${s.section} — ${s.preview}</div></div>`
+                ).join('');
+                document.getElementById('card-intel').style.display = 'block';
+            }
+
+            document.getElementById('career-result').style.display = 'block';
+
+            // Auto-trigger live job search
+            const jobTitles = cards?.matchingJobs?.titles?.[0] || industry + ' professional';
+            lastJobRole = jobTitles;
+            lastJobCountry = country;
+            document.getElementById('card-live-jobs').style.display = 'block';
+            searchJobs(jobTitles, country);
+
+        } catch(e) {
+            document.getElementById('career-score-text').innerHTML = `<span style="color:var(--accent2);">Error: ${e.message}</span>`;
+            document.getElementById('card-score').style.display = 'block';
+            document.getElementById('career-result').style.display = 'block';
+        } finally {
             document.getElementById('loading-career').classList.remove('show');
         }
+    }
 
-        function downloadResults() {
-            const careerText = document.getElementById('career-text')?.innerText || '';
-            const queryText = document.getElementById('answer-text')?.innerText || '';
-            const timestamp = new Date().toISOString().slice(0,19).replace(/:/g,'-');
-            let content = '=== GovRAG V3 — Career Intelligence Report ===\n';
-            content += 'Generated: ' + new Date().toLocaleString() + '\n';
-            content += 'Privacy: Your data was NOT stored. This is your only copy.\n\n';
-            if (queryText) { content += '=== COMPLIANCE Q&A ===\n' + queryText + '\n\n'; }
-            if (careerText) { content += '=== CAREER ANALYSIS ===\n' + careerText + '\n\n'; }
-            content += '=== POWERED BY ===\nGovRAG V3 | Azure Functions | Microsoft Hackathon 2026\nFree for all 8 billion humans. No data stored.\n';
-            const blob = new Blob([content], {type: 'text/plain'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'GovRAG-Results-' + timestamp + '.txt';
-            a.click();
-            URL.revokeObjectURL(a.href);
-        }
-
-        async function loadAudit() {
-            try {
-                const [h, r] = await Promise.all([
-                    fetch(API + '/health').then(r=>r.json()),
-                    fetch(API + '/responsible-ai').then(r=>r.json()),
-                ]);
-                document.getElementById('health-data').innerHTML = `
-                    <div class="metrics">
-                        <div class="metric green"><div class="value">${h.chunks_loaded}</div><div class="label">Chunks Loaded</div></div>
-                        <div class="metric"><div class="value">${h.career_chunks}</div><div class="label">Career Docs</div></div>
-                        <div class="metric"><div class="value">${h.compliance_chunks}</div><div class="label">Compliance Docs</div></div>
-                        <div class="metric green"><div class="value">${h.status}</div><div class="label">Status</div></div>
-                    </div>
-                    <p style="margin-top:1rem;font-size:0.85rem;color:var(--muted)">Sources: ${(h.sources||[]).join(', ')}</p>
-                    <p style="font-size:0.85rem;color:var(--muted)">AI Keys: ${h.ai_keys_configured ? 'Configured' : 'Missing'} | Platform: ${h.platform}</p>
-                `;
-                const rai = r.responsible_ai_card || {};
-                document.getElementById('rai-data').innerHTML = Object.entries(rai).map(([k,v]) =>
-                    `<div style="margin:0.5rem 0;"><strong style="color:var(--accent);text-transform:capitalize;">${k}:</strong> ${v}</div>`
-                ).join('');
-            } catch (e) {
-                document.getElementById('health-data').innerHTML = 'Error loading: ' + e.message;
+    // ── JOB SEARCH ──
+    async function searchJobs(role, country) {
+        const container = document.getElementById('live-jobs-container');
+        const meta = document.getElementById('jobs-meta');
+        container.innerHTML = '<div style="color:var(--muted);padding:0.5rem;">🔍 Searching Google Jobs (last 7 days)...</div>';
+        try {
+            const r = await fetch(API + '/jobs', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({role, country})
+            });
+            const data = await r.json();
+            if (data.note) {
+                container.innerHTML = `<p style="color:var(--gold);font-size:0.85rem;">${data.note}</p>`;
+                return;
             }
+            const jobs = data.jobs || [];
+            meta.textContent = `Found ${jobs.length} jobs matching "${data.query}" · ${data.source || 'Google Search'}`;
+            if (!jobs.length) {
+                container.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">No recent jobs found. Try a different role title.</p>';
+                return;
+            }
+            container.innerHTML = jobs.map(j => `
+                <div class="job-item">
+                    <div class="job-title">${j.link ? `<a href="${j.link}" target="_blank" rel="noopener">${j.title}</a>` : j.title}</div>
+                    <div class="job-meta">${[j.company, j.location, j.date].filter(Boolean).join(' · ')}</div>
+                    ${j.snippet ? `<div class="job-snippet">${j.snippet}</div>` : ''}
+                </div>
+            `).join('');
+        } catch(e) {
+            container.innerHTML = `<p style="color:var(--accent2);font-size:0.85rem;">Job search error: ${e.message}</p>`;
         }
+    }
+
+    function searchJobsFor(role) {
+        const country = document.getElementById('country-input').value.trim() || 'Canada';
+        lastJobRole = role;
+        lastJobCountry = country;
+        document.getElementById('card-live-jobs').style.display = 'block';
+        document.getElementById('card-live-jobs').scrollIntoView({behavior: 'smooth'});
+        searchJobs(role, country);
+    }
+
+    function refreshJobs() { searchJobs(lastJobRole, lastJobCountry); }
+
+    // ── DOWNLOAD ──
+    function downloadResults() {
+        const score = document.getElementById('career-score-text')?.innerText || '';
+        const cards = document.getElementById('cards-container')?.innerText || '';
+        const jobs = document.getElementById('live-jobs-container')?.innerText || '';
+        const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+        const content = `ALFALAH AI — Career Analysis\nGenerated: ${ts}\n\n${'='.repeat(60)}\nRESUME SCORE\n${'='.repeat(60)}\n${score}\n\n${'='.repeat(60)}\n17 AI ENGINE RESULTS\n${'='.repeat(60)}\n${cards}\n\n${'='.repeat(60)}\nLIVE JOBS\n${'='.repeat(60)}\n${jobs}`;
+        const blob = new Blob([content], {type: 'text/plain'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `AlfalahAI-Career-${ts}.txt`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // ── AUDIT ──
+    async function loadAudit() {
+        try {
+            const [h, occ, rai] = await Promise.all([
+                fetch(API + '/health').then(r=>r.json()),
+                fetch(API + '/occupations').then(r=>r.json()),
+                fetch(API + '/responsible-ai').then(r=>r.json()),
+            ]);
+            document.getElementById('health-data').innerHTML = `
+                <div class="metrics">
+                    <div class="metric green"><div class="value">${h.chunks_loaded}</div><div class="label">RAG Chunks</div></div>
+                    <div class="metric"><div class="value">${h.career_chunks}</div><div class="label">Career Chunks</div></div>
+                    <div class="metric gold"><div class="value">${h.sources?.length || 0}</div><div class="label">Data Files</div></div>
+                    <div class="metric green"><div class="value">${h.status}</div><div class="label">Status</div></div>
+                </div>
+                <p style="color:var(--muted);font-size:0.8rem;margin-top:0.75rem;">Sources: ${(h.sources||[]).join(' · ')}</p>
+            `;
+            document.getElementById('occ-data').innerHTML = `
+                <div class="metrics">
+                    <div class="metric green"><div class="value">${(occ.isco_08_unit_groups||0).toLocaleString()}</div><div class="label">ISCO-08 Groups</div></div>
+                    <div class="metric gold"><div class="value">${(occ.esco_occupations||0).toLocaleString()}</div><div class="label">ESCO Occupations</div></div>
+                    <div class="metric purple"><div class="value">${(occ.global_unique_job_titles||0).toLocaleString()}</div><div class="label">Global Job Titles</div></div>
+                    <div class="metric"><div class="value">${(occ.onet_us_occupations||0).toLocaleString()}</div><div class="label">O*NET (US)</div></div>
+                </div>
+                <p style="color:var(--muted);font-size:0.8rem;margin-top:0.75rem;">Framework: ${occ.framework||''}</p>
+                <p style="color:var(--green);font-size:0.8rem;margin-top:0.25rem;">${occ.coverage||''}</p>
+            `;
+            const rai2 = rai.responsible_ai_card || rai;
+            document.getElementById('rai-data').innerHTML = Object.entries(rai2).map(([k,v]) =>
+                `<div style="margin:0.5rem 0;font-size:0.87rem;"><strong style="color:var(--accent);text-transform:capitalize;">${k.replace(/_/g,' ')}:</strong> ${v}</div>`
+            ).join('');
+        } catch(e) {
+            document.getElementById('health-data').innerHTML = 'Error: ' + e.message;
+        }
+    }
     </script>
 </body>
 </html>
