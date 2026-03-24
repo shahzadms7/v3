@@ -82,9 +82,31 @@ def _call_ai(system, user):
     warnings.filterwarnings("ignore")
     errors = []
 
-    # Try Gemini
-    keys = [os.environ.get("GEMINI_API_KEY", ""), os.environ.get("GEMINI_API_KEY_2", ""), os.environ.get("GEMINI_API_KEY_3", "")]
-    for ki, key in enumerate(keys):
+    # ── PRIORITY 1: Azure OpenAI (100% Azure — primary provider) ──
+    az_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "").rstrip("/")
+    az_key      = os.environ.get("AZURE_OPENAI_KEY", "")
+    az_deploy   = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini")
+    if az_endpoint and az_key:
+        try:
+            import httpx
+            url = f"{az_endpoint}/openai/deployments/{az_deploy}/chat/completions?api-version=2024-08-01-preview"
+            resp = httpx.post(url,
+                headers={"api-key": az_key, "Content-Type": "application/json"},
+                json={"messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user",   "content": user}
+                ], "temperature": 0.3, "max_tokens": 8192},
+                timeout=55.0)
+            if resp.status_code == 200:
+                text = resp.json()["choices"][0]["message"]["content"]
+                return {"text": text, "provider": "Azure OpenAI", "model": az_deploy}
+            errors.append(f"AzureOpenAI: HTTP {resp.status_code} — {resp.text[:120]}")
+        except Exception as e:
+            errors.append(f"AzureOpenAI: {str(e)[:80]}")
+
+    # ── PRIORITY 2: Gemini (temporary bridge until Azure quota approved) ──
+    gemini_keys = [os.environ.get("GEMINI_API_KEY", ""), os.environ.get("GEMINI_API_KEY_2", ""), os.environ.get("GEMINI_API_KEY_3", "")]
+    for ki, key in enumerate(gemini_keys):
         if not key:
             continue
         try:
@@ -94,16 +116,15 @@ def _call_ai(system, user):
                 try:
                     m = genai.GenerativeModel(model)
                     r = m.generate_content(f"{system}\n\n{user}",
-                        generation_config=genai.GenerationConfig(temperature=0.3, max_output_tokens=4096))
+                        generation_config=genai.GenerationConfig(temperature=0.3, max_output_tokens=8192))
                     if r.text:
                         return {"text": r.text, "provider": f"Gemini-Key{ki+1}", "model": model}
                 except Exception as e:
                     errors.append(f"Gemini-{ki+1}/{model}: {str(e)[:80]}")
-                    continue
         except Exception as e:
             errors.append(f"Gemini import: {str(e)[:80]}")
 
-    # Try Grok (OpenAI-compatible) — 3 keys, grok-4-1-fast model
+    # ── PRIORITY 3: Grok fallback ──
     grok_keys = [os.environ.get("GROK_API_KEY", ""), os.environ.get("GROK_API_KEY_2", ""), os.environ.get("GROK_API_KEY_3", "")]
     for gi, grok_key in enumerate(grok_keys):
         if not grok_key:
@@ -114,8 +135,8 @@ def _call_ai(system, user):
                 headers={"Authorization": f"Bearer {grok_key}", "Content-Type": "application/json"},
                 json={"model": "grok-4-1-fast", "messages": [
                     {"role": "system", "content": system},
-                    {"role": "user", "content": user}
-                ], "temperature": 0.3, "max_tokens": 4096},
+                    {"role": "user",   "content": user}
+                ], "temperature": 0.3, "max_tokens": 8192},
                 timeout=55.0)
             if resp.status_code == 200:
                 text = resp.json()["choices"][0]["message"]["content"]
