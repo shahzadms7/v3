@@ -486,19 +486,31 @@ def upload(req: func.HttpRequest) -> func.HttpResponse:
 
         # ── Extract text based on file type ──
         if file_ext == "pdf":
+            # Try pdfminer.six first — pure Python, always works on Azure
             try:
-                import fitz  # pymupdf
-                doc = fitz.open(stream=file_data, filetype="pdf")
-                text = "\n".join(page.get_text() for page in doc)
-                extraction_method = "pymupdf"
-                doc.close()
-            except ImportError:
-                # Fallback: basic PDF text extraction without pymupdf
-                text_bytes = file_data.decode("utf-8", errors="ignore")
-                # Extract readable text between stream markers
-                chunks = re.findall(r'\((.*?)\)', text_bytes)
-                text = " ".join(c for c in chunks if len(c) > 3 and c.isprintable())
-                extraction_method = "basic-fallback"
+                from pdfminer.high_level import extract_text as pdf_extract
+                import io
+                text = pdf_extract(io.BytesIO(file_data))
+                # Clean up extracted text
+                text = re.sub(r'\x00', '', text)          # remove null bytes
+                text = re.sub(r'[^\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]', ' ', text)  # remove non-printable
+                text = re.sub(r'[ \t]{3,}', '  ', text)  # collapse excessive spaces
+                text = re.sub(r'\n{4,}', '\n\n', text)   # collapse excessive newlines
+                extraction_method = "pdfminer"
+            except Exception as e1:
+                # Try pymupdf as second option
+                try:
+                    import fitz
+                    import io
+                    doc = fitz.open(stream=file_data, filetype="pdf")
+                    text = "\n".join(page.get_text() for page in doc)
+                    doc.close()
+                    extraction_method = "pymupdf"
+                except Exception as e2:
+                    return func.HttpResponse(json.dumps({
+                        "error": f"Could not read PDF. Please try saving as DOCX or TXT and uploading again.",
+                        "detail": f"pdfminer: {str(e1)[:80]} | pymupdf: {str(e2)[:80]}"
+                    }), status_code=400, mimetype="application/json")
 
         elif file_ext == "docx":
             try:
