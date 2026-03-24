@@ -1,509 +1,358 @@
-# 🏛️ GovRAG V3 — Grounded Knowledge Assistant for Regulated Teams + Career Intelligence
+# Alfalah AI — الفلاح — "Come to Success"
 
-<p align="center">
-  <strong>A governed RAG system that answers compliance-critical questions AND serves as a career intelligence platform for 8 billion humans</strong>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/100%25-Python-3776AB?logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/100%25-Azure%20Cloud-0078D4?logo=microsoftazure&logoColor=white" alt="Azure">
-  <img src="https://img.shields.io/badge/Microsoft-Hackathon%202026-purple" alt="Hackathon">
-  <img src="https://img.shields.io/badge/Zero-Data%20Storage-green" alt="Privacy">
-  <img src="https://img.shields.io/badge/Responsible-AI-orange" alt="RAI">
-  <img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT">
-</p>
+> **Free AI-powered career tools for all 8 billion humans on Earth.**
+> No login. No storage. No cost. No bias. No racism. No religion. No politics.
+> Built on Azure Cloud — serving every country, every industry, every language.
 
 ---
 
-## The Problem — Why This Matters
+## Live
 
-### For Regulated Teams (Legal, Compliance, Finance, Healthcare)
-Every day, **compliance teams** waste hours searching through policies, contracts, and SOPs for answers. When they use generic AI chatbots:
-- **75% risk** of hallucinated answers that could violate regulations
-- **Zero traceability** — can't prove where an answer came from
-- **No audit trail** — no record for regulators
-- **One wrong answer** in healthcare or finance can cost **millions in fines**
-
-### For 8 Billion Humans Searching for Jobs
-- **75% of resumes** are rejected by ATS before a human sees them
-- **87 million workers** need reskilling by 2030 (World Economic Forum)
-- Workers **45+** take 46% longer to find jobs (age discrimination)
-- Career advice is expensive ($50-150/month) and often generic
-- Visa and immigration pathways are confusing across **195 countries**
-
-### Our Answer: GovRAG
-**One platform. Two missions. Zero hallucinations.**
+| Version | URL | Status |
+|---------|-----|--------|
+| V2 (Demo locked) | https://shahzad-job-coach-ai.vercel.app | ✅ Live |
+| V3 (Azure) | Azure Static Web Apps | 🔨 Active Build |
+| GitHub | https://github.com/shahzad-ai-lab/shahzad-job-coach-ai | ✅ |
 
 ---
 
-## What is GovRAG?
+## The Mission
 
-GovRAG is a **governed Retrieval-Augmented Generation (RAG) system** that:
+**Shahzad Muhammad · Mississauga, Canada**
 
-1. **Answers questions** from internal documents (policies, contracts, SOPs, career data)
-2. **Cites every claim** with exact source references `[Source 1: document.md, Section 3.2]`
-3. **Verifies faithfulness** — real-time score showing what % of the answer is grounded
-4. **Blocks hallucinations** — answers below 40% confidence are automatically blocked
-5. **Logs everything** — full audit trail for compliance teams (metrics only, never user data)
-6. **Serves everyone** — free, no login, no data stored, works for compliance AND careers
+Most career tools cost money. Most are built for Western, English-speaking job seekers. Most ignore the 6+ billion people outside North America and Europe.
+
+Alfalah AI changes that.
+
+- **Free forever** — no subscription, no login, no paywall
+- **Zero data storage** — your resume never touches our database
+- **195 countries** — every UN-recognized nation supported
+- **15 industries** — IT, Healthcare, Finance, Engineering, Education, Trades, Marketing, Legal, HR, Logistics, Creative, Hospitality, Government, Science, and more
+- **All humanity's professions** — 436 ISCO-08 groups, 3,000+ ESCO occupations, 123,000 global job titles
+- **No bias** — same quality of analysis for a textile worker in Bangladesh as a software engineer in San Francisco
 
 ---
 
-## How It Works — Step by Step
+## V1 — The Prototype (March 6–8, 2026)
 
+Built in 72 hours for a hackathon.
+
+**What it did:**
+- 12 AI-powered career cards (resume score, cover letter, interview prep, etc.)
+- Single AI provider (Google Gemini)
+- Basic resume text input
+- Simple CSS design
+- No country awareness, no industry awareness
+
+**Result:** Submitted to H1 $6,000 hackathon on March 8, 2026. ✓
+
+**Stack:** Next.js 14 + Google Gemini API + Vercel
+
+---
+
+## V2 — The Intelligence Engine (March 11–15, 2026)
+
+30 sessions of deep engineering.
+
+**What changed:**
+- **17 AI cards** — expanded from 12 to 17 comprehensive career analysis tools
+- **640KB career knowledge base** — MASTER_CAREER_REFERENCE.md covering visa pathways, salary data, ATS algorithms, global hiring norms across 195 countries
+- **RAG system** — 9 local knowledge files injected into every AI call, zero hallucination
+- **Multi-provider AI chain** — Gemini KEY1 → Gemini KEY2 → Grok-4-latest (never goes down)
+- **5-phase smart splash** — IP auto-detection → country confirm → 195-country selector → industry selector
+- **195 countries** — full data packages: labor law, salary, visa, ATS norms, certifications, top employers
+- **PDF + DOCX upload** — parse resume from file (5MB limit, secure)
+- **Download results** — export all 17 cards as text file
+- **PWA store-ready** — installable on Android/iOS, manifest + icons ✅
+- **Country-aware AI** — different guidance for in-country vs cross-border job applications
+- **Skills Assessment** — 5-step quiz, 7 ISCO career categories, 0-100 score, 70+ career recommendations
+- **NASA galaxy UI** — animated stars, nebula clouds, shooting stars, ripple effects
+- **RED negative highlighting** — AI-detected weaknesses highlighted in red across all cards
+- **Live job search** — Google Jobs via Serper API, country-specific, last 7 days
+- **ISCO-08 occupations** — 436 unit groups with JDs, skills, tasks, salary, AI risk assessment
+
+**Stack:** Next.js 14 + Google Gemini + xAI Grok + Serper.dev + Vercel
+
+---
+
+## V3 — Pure Azure Cloud (March 21, 2026 — Active)
+
+**Why V3?** Microsoft Azure AI competition. Full enterprise-grade cloud architecture.
+
+**What's different from V2:**
+- **100% Azure ecosystem** — no external cloud providers
+- **Azure Functions v2 (Python)** — serverless backend, auto-scales, zero cold start penalty
+- **Azure OpenAI** — GPT-4o and GPT-4o-mini (Azure-hosted, Canada East)
+- **Azure AI Search** — vector + semantic search across all career knowledge
+- **Azure Cosmos DB** — NoSQL for session data (zero PII stored)
+- **Azure Key Vault** — all secrets managed securely, never in code
+- **Azure Entra ID B2C** — identity layer (optional auth for future features)
+- **Azure Static Web Apps** — frontend hosting with global CDN
+- **GitHub Actions CI/CD** — auto-deploy on every push to main
+- **GRC compliance** — RBAC, audit logs, threat protection, data sovereignty
+
+**Architecture:**
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                     USER ASKS A QUESTION                             │
-│  "What is our data retention policy for EU customers?"               │
-│  "Score my resume for this Azure cloud engineer position"            │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │
-                             ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  STEP 1: INPUT SAFETY GATE                                           │
-│  ✓ Check for prompt injection attacks                                │
-│  ✓ Detect PII in query (SSN, credit cards) — warn, never store       │
-│  ✓ Validate query length                                             │
-│  ✗ If dangerous → BLOCK immediately                                  │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │ ✓ Safe
-                             ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  STEP 2: RETRIEVE (Search Documents)                                 │
-│  • Search 74+ document chunks using TF-IDF / Azure AI Search         │
-│  • Find top 5 most relevant paragraphs                               │
-│  • Each chunk scored by relevance (0.0 to 1.0)                       │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │
-                             ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  STEP 3: RELEVANCE GATE                                              │
-│  ✓ Do we have enough relevant sources?                               │
-│  ✓ Is average relevance above threshold?                             │
-│  ✗ If insufficient → Return "I don't have enough info" (NOT guess)   │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │ ✓ Relevant sources found
-                             ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  STEP 4: GENERATE (AI Creates Answer)                                │
-│  • AI receives ONLY the retrieved chunks (not all documents)         │
-│  • Strict instruction: "Answer ONLY from context, cite [Source N]"   │
-│  • Multi-AI fallback: Gemini Key1 → Key2 → Grok                     │
-│  • Returns JSON with answer + citations + confidence                 │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │
-                             ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  STEP 5: VERIFY FAITHFULNESS                                         │
-│  • Check each sentence: is it grounded in a source?                  │
-│  • Calculate faithfulness score: grounded_claims / total_claims       │
-│  • Example: "5 out of 6 claims grounded = 83% faithful"              │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │
-                             ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  STEP 6: CONFIDENCE GATE                                             │
-│  • Below 40% → BLOCK (too risky to show)                             │
-│  • Below 70% → WARN (show with disclaimer)                           │
-│  • Above 70% → ALLOW (trusted answer)                                │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │
-                             ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  STEP 7: AUDIT LOG                                                   │
-│  • Log: timestamp, confidence%, faithfulness%, sources count, latency │
-│  • NEVER log: user query text, resume content, any PII               │
-│  • Sent to Azure Monitor for production observability                │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │
-                             ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  STEP 8: RESPOND TO USER                                             │
-│  ✅ Grounded answer with [Source N] citations                        │
-│  ✅ Faithfulness score (e.g., 92%)                                   │
-│  ✅ Confidence score (e.g., 85%)                                     │
-│  ✅ Clickable source previews                                        │
-│  ✅ Warnings if any                                                  │
-│  ✅ Audit ID for compliance tracking                                 │
-└──────────────────────────────────────────────────────────────────────┘
+User Browser
+    │
+    ▼
+Azure Static Web Apps (CDN — global edge)
+    │
+    ▼
+Azure Functions v2 Python (serverless API)
+    ├── /career     — 17-card analysis + RAG + AI polish
+    ├── /chat       — conversational career coach
+    ├── /jobs       — Google Jobs via Serper (last 7 days)
+    ├── /location   — IP geolocation (ip-api.com)
+    ├── /occupations — career data inventory
+    └── /upload     — secure PDF/DOCX/TXT extraction
+    │
+    ▼
+RAG Knowledge Base (local .md files, chunked + indexed)
+    ├── 436 ISCO-08 occupations with full JDs
+    ├── 195 country packages (laws, salary, visa, ATS)
+    ├── 500+ hard skills + 250+ soft skills A-Z
+    ├── Future occupations 2026–2125
+    ├── Top 1% hiring framework (Google, Amazon, Microsoft)
+    ├── Global platforms, tools, Fortune 500 companies
+    └── 10 more career intelligence files
+    │
+    ▼
+AI Fallback Chain
+    ├── Azure OpenAI (GPT-4o-mini) — primary
+    ├── Google Gemini KEY1 (3 models) — fallback
+    ├── Google Gemini KEY2 (3 models) — fallback
+    └── xAI Grok (grok-4-latest) — final fallback
 ```
 
----
-
-## Key Features
-
-### Core RAG System
-| Feature | Description |
-|---------|-------------|
-| **Source-Grounded Answers** | Every sentence cites `[Source N]` — click to see exact paragraph |
-| **3-Gate Safety Pipeline** | Input safety → Relevance gate → Confidence threshold |
-| **Real-time Faithfulness Score** | 0-100% — what percentage of claims are verified in sources |
-| **Multi-AI Resilience** | Gemini Key1 → Key2 → Grok fallback (enterprise pattern) |
-| **Full Audit Trail** | Every query logged with metrics (never PII) |
-| **Dual Domain** | Compliance mode (policies/SOPs) + Career mode (resume/jobs/skills) |
-
-### Killer Feature 1: "Explain Like Zara" (ELI12 Mode)
-*Inspired by the Cognitive Load Reduction challenge*
-
-Any complex compliance or career answer can be simplified to adjustable reading levels:
-- **Grade 3** — For an 8-year-old
-- **Grade 6** — For a 12-year-old (Zara's level)
-- **Grade 9** — For a high schooler
-- **Adult** — Plain language, no jargon
-
-Uses calm, supportive, non-anxiety-inducing language. Because compliance should be understandable by everyone.
-
-### Killer Feature 2: "Why These Sources?" Explainability
-*Inspired by the Lab Notebook AI Assistant challenge*
-
-Every answer comes with a transparency panel:
-- **Why** each source was selected (keyword overlap, relevance score)
-- **What terms** matched between your question and the document
-- **How** the search worked (method, index size, threshold)
-- Full retrieval reasoning visible to the user
-
-### Killer Feature 3: Responsible AI Transparency Card
-*Referenced in 4 out of 5 hackathon challenges*
-
-A dedicated endpoint (`/api/responsible-ai`) returns our full compliance with Microsoft's 6 Responsible AI principles:
-- **Fairness** — No demographic data, uniform treatment
-- **Reliability & Safety** — 3-gate pipeline, multi-AI fallback
-- **Privacy & Security** — Zero storage, PII detection
-- **Inclusiveness** — ELI12 mode, free for all, no login
-- **Transparency** — Source citations, explainability, open source
-- **Accountability** — Audit trail, safety verdicts, Azure Monitor
+**Resource Group:** `rg-v3` · **Subscription:** `2d7fae20-e207-40a5-bc46-53df96affcb7`
+**Region:** Canada East (data sovereignty for Canadian users)
 
 ---
 
-## Architecture
+## The 17 Career Tools
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Azure Resource Group: rg-v3                   │
-│                                                                  │
-│  ┌──────────────┐    ┌───────────────────────────────────────┐  │
-│  │ Azure App    │    │  Python Application (100% Python)      │  │
-│  │ Service (F1) │    │  ┌─────────┐ ┌──────────┐ ┌────────┐ │  │
-│  │ FREE tier    │───▶│  │ FastAPI │ │Streamlit │ │  RAG   │ │  │
-│  │ Python 3.12  │    │  │  API    │ │   UI     │ │ Engine │ │  │
-│  └──────────────┘    │  └────┬────┘ └──────────┘ └───┬────┘ │  │
-│                      │       │                        │       │  │
-│                      │  ┌────▼────────────────────────▼────┐ │  │
-│                      │  │  Core Engine                      │ │  │
-│                      │  │  • AI Provider (Gemini + Grok)    │ │  │
-│                      │  │  • Safety Engine (3 gates)        │ │  │
-│                      │  │  • Audit Logger (metrics only)    │ │  │
-│                      │  │  • TF-IDF Index (in-memory)       │ │  │
-│                      │  └──────────────────────────────────┘ │  │
-│                      └───────────────────────────────────────┘  │
-│                                                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │ Azure Blob   │  │ Azure Key    │  │ Azure Monitor        │  │
-│  │ Storage      │  │ Vault        │  │ + App Insights       │  │
-│  │ (documents)  │  │ (secrets)    │  │ (audit trail)        │  │
-│  └──────────────┘  └──────────────┘  └──────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-         │
-         ▼
-  ┌──────────────┐
-  │ GitHub       │
-  │ CI/CD        │
-  │ (auto-deploy)│
-  └──────────────┘
-```
+| # | Tool | What It Does |
+|---|------|-------------|
+| 1 | Resume Score | ATS algorithm score + 8 weighted dimensions + knockouts |
+| 2 | Recruiter POV | 6-second skim test — what gets noticed vs buried |
+| 3 | Cover Letter | Top 1% letter with specific hook + 3 quantified wins |
+| 4 | Resume Rewrite | 3-step rebuild: diagnose → extract wins → reorder for impact |
+| 5 | Skills Gap | Hard/soft matched vs missing + certs with URLs + roadmap |
+| 6 | Interview Prep | 5 Q&A + behavioral questions + questions to ask |
+| 7 | STAR Stories | 3 behavioral stories with metrics using STAR method |
+| 8 | LinkedIn Summary | About section optimized for search + recruiters |
+| 9 | Intro Scripts | 1-min, 2-min, 3-min professional introduction scripts |
+| 10 | Matching Jobs | Titles + companies + job boards + 7-country recruiters |
+| 11 | Visa Pathways | In-country AND cross-border — ALL visa routes + official URLs |
+| 12 | Thank You Email | Post-interview email that moves you to top of pile |
+| 13 | Salary Negotiation | Salary table Entry→Exec + negotiation scripts (local currency) |
+| 14 | Action Plan | 30-60-90 day onboarding and job search plan |
+| 15 | Cold Outreach | LinkedIn DM + cold email + follow-up templates |
+| 16 | Career Pivot | Pivot score + 3 adjacent roles + 90-day transition plan |
+| 17 | Country Laws | Labor law + resume compliance + worker rights + GRC |
+
+**Plus:**
+- **Similar Occupations** — ISCO-08 adjacent roles you qualify for today
+- **JD Template** — what a proper job description looks like for your role
+- **Top 1% Tips** — how Google, Amazon, Microsoft actually hire
+- **Live Jobs** — real postings from the last 7 days in your country
 
 ---
 
-## Azure Services Used
+## The RAG Knowledge Base (27 Files, ~800KB)
 
-| Service | Purpose | Tier | Cost |
-|---------|---------|------|------|
-| **App Service** | Host Python application | F1 (Free) | $0 |
-| **Blob Storage** | Document file storage | Standard LRS | ~$0.50/mo |
-| **Key Vault** | Secrets management | Standard | ~$0.03/mo |
-| **AI Search** | Production RAG retrieval | Free | $0 |
-| **Monitor + App Insights** | Audit trail + observability | Free 5GB | $0 |
-| **TOTAL** | | | **~$0.53/month** |
+All processing is **99% algorithmic** (fast, free, deterministic). AI only handles the final 1% — formatting and narrative polish.
 
----
-
-## Tech Stack — 100% Python
-
-| Layer | Technology | Lines | Why |
-|-------|-----------|-------|-----|
-| Backend API | **FastAPI** | ~350 | Fastest Python framework, auto-docs at `/docs` |
-| Frontend UI | **Streamlit** | ~250 | 100% Python, beautiful dashboards, zero JS |
-| RAG Engine | **Custom** (TF-IDF + Azure AI Search) | ~200 | Hybrid search, source grounding |
-| Safety Engine | **Custom** (3-gate pipeline) | ~150 | Input, relevance, confidence gates |
-| AI Provider | **Gemini + Grok** (multi-fallback) | ~130 | Free tier, enterprise resilience |
-| Audit Logger | **Custom** (Azure Monitor) | ~100 | Metrics only, zero PII |
-| Config | **Pydantic Settings** | ~60 | Type-safe, env-var driven |
-| **TOTAL** | **100% Python** | **~1,240** | Production-grade in under 1,300 lines |
+| File | Coverage |
+|------|----------|
+| `occupations-master-isco08-all.md` | All 436 ISCO-08 groups, JDs, skills, salary, AI risk |
+| `skills-az-master.md` | 500+ hard skills, 250+ soft skills, future skills 2026–2125 |
+| `future-occupations-2026-2125.md` | Emerging roles across 5 time horizons to 2125 |
+| `top-1-percent-framework.md` | Google/Amazon/Microsoft hiring science, ATS algorithms |
+| `global-platforms-tools-companies.md` | Fortune 500 + tools A-Z + companies by region worldwide |
+| `MASTER_CAREER_REFERENCE.md` | 640KB career intelligence covering 195 countries |
+| `COUNTRY_PACKAGES_195.md` | All 195 UN countries — salary, visa, laws, boards |
+| `CERTIFICATIONS_2026.md` | All-industry certs A-Z — Cloud, Cyber, Finance, Trades, AI |
+| `COMPANIES_BY_COUNTRY.md` | Top employers + career URLs for 30+ countries |
+| `OCCUPATIONS_ISCO08.md` | ISCO-08 436 groups, BLS fastest-growing, 2026 roles |
+| `ALL_COUNTRIES.md` | 195 UN countries, ISO codes, regions, tiers |
+| + 16 more | Platforms, certifications, compliance, salary data |
 
 ---
 
-## Document Knowledge Base
+## All Professions — All Humanity
 
-### Compliance Documents (for regulated teams)
-| Document | What It Covers |
-|----------|---------------|
-| `data-retention-policy.md` | Enterprise data retention schedules, GDPR, disposal rules |
-| `hipaa-compliance.md` | Healthcare PHI protection, breach notification, penalties |
-| `incident-response-sop.md` | Security incident procedures, severity levels, regulatory notification |
+ISCO-08 covers every job humans do, from Managing Directors to Agricultural Laborers:
 
-### Career Intelligence (for 8 billion humans)
-| Document | What It Covers |
-|----------|---------------|
-| `global-salary-data.md` | Salary by role, country, experience level (2026 data) |
-| `certifications-2026.md` | Professional certifications A-Z with cost, validity, URLs |
-| `countries-top-30.md` | Top 30 job markets: GDP, visa, job boards, top employers |
-| `job-market-challenges-2026.md` | 10 challenges humanity faces in job search globally |
-| `resume-best-practices-2026.md` | ATS optimization, STAR method, 2026 resume trends |
-| `ats-scoring-guide.md` | How ATS systems actually work, scoring algorithms |
-| `interview-preparation.md` | Top 20 behavioral questions, formats by industry, salary negotiation |
+| Major Group | Occupations | Examples |
+|-------------|-------------|---------|
+| 1 — Managers | Chief Executives, Directors | CEO, COO, Department Manager |
+| 2 — Professionals | Engineers, Doctors, Scientists | Software Dev, Nurse, Accountant |
+| 3 — Technicians | IT Techs, Paramedics | Network Tech, Medical Lab Tech |
+| 4 — Clerical | Admin, Secretaries | Data Entry, Receptionist |
+| 5 — Service/Sales | Retail, Healthcare Aides | Salesperson, Personal Care Worker |
+| 6 — Agriculture | Farmers, Fishers | Market Gardener, Livestock Farmer |
+| 7 — Trades | Electricians, Builders | Plumber, Welder, Carpenter |
+| 8 — Plant/Machine | Operators, Drivers | Truck Driver, Assembly Line Worker |
+| 9 — Elementary | Cleaners, Laborers | Construction Helper, Food Preparer |
+| 0 — Armed Forces | Military Officers, Soldiers | Officer, Non-Commissioned Officer |
 
----
+**Total:** 436 unit groups → 3,000+ ESCO occupations → 123,000+ global job titles
 
-## API Endpoints
-
-| Endpoint | Method | What It Does |
-|----------|--------|-------------|
-| `/api/query` | POST | Ask a grounded question (compliance or career) |
-| `/api/career/analyze` | POST | Resume analysis with RAG-grounded intelligence |
-| `/api/simplify` | POST | **ELI12** — Simplify any text to adjustable reading level |
-| `/api/explain` | POST | **Why These Sources?** — Retrieval explainability |
-| `/api/responsible-ai` | GET | **RAI Card** — Full Responsible AI compliance posture |
-| `/api/health` | GET | Health check for Azure Monitor |
-| `/api/metrics` | GET | Audit dashboard metrics |
-| `/api/sources` | GET | List all indexed documents |
-| `/docs` | GET | Swagger API documentation (auto-generated) |
+No job is too small. No career is too niche. Every human gets equal quality analysis.
 
 ---
 
-## For Non-Technical Users — How to Use GovRAG
+## Global Tools, Platforms, Technologies (A-Z)
 
-### If you're a compliance officer:
-1. Open the GovRAG website
-2. Select **"Compliance"** mode
-3. Type your question: *"What is our data retention policy for EU customers?"*
-4. Click **"Get Grounded Answer"**
-5. Read the answer — every fact has a `[Source]` tag you can click to verify
-6. Check the **Faithfulness Score** (green = trustworthy, yellow = verify, red = unreliable)
-7. That's it! Your question was never saved. Close the browser = data gone.
+The platform knows every tool across every industry:
 
-### If you're a job seeker:
-1. Open the GovRAG website
-2. Select **"Career Intelligence"** mode
-3. Go to **"Career Analyzer"** tab
-4. Paste your resume
-5. Optionally paste a job description you're targeting
-6. Select your country and industry
-7. Click **"Analyze Resume"**
-8. Get: Score (0-100), strengths, weaknesses, missing skills, recommended certifications, action items
-9. Everything cited from real career intelligence data
-10. Your resume was **NEVER stored**. Privacy first.
-
-### If you don't understand the answer:
-1. Click **"Explain Like Zara"** (ELI12 mode)
-2. Choose your reading level (Grade 3 to Adult)
-3. Get the same answer in simple, everyday words
-4. No jargon, no anxiety, no confusion
+**Cloud:** AWS · Azure · GCP · Oracle Cloud · IBM Cloud · Alibaba Cloud
+**AI/ML:** TensorFlow · PyTorch · scikit-learn · Hugging Face · OpenAI · Anthropic · Vertex AI
+**ERP/CRM:** SAP · Oracle ERP · Salesforce · Microsoft Dynamics · Workday · ServiceNow
+**DevOps:** Docker · Kubernetes · Terraform · Jenkins · GitHub Actions · ArgoCD
+**Data:** Spark · Databricks · Snowflake · dbt · Airflow · Kafka · Tableau · Power BI
+**Cybersecurity:** Splunk · CrowdStrike · Palo Alto · Fortinet · SentinelOne · Tenable
+**Healthcare:** Epic · Cerner · MEDITECH · Allscripts · HealthStream
+**Finance:** Bloomberg · Reuters Eikon · Murex · Finastra · Temenos · FIS · Fiserv
+**HR Tech:** Workday · SAP SuccessFactors · BambooHR · ADP · Greenhouse · Lever
+**Design:** Figma · Adobe XD · Sketch · InVision · Canva · Adobe Creative Suite
+**...and 500+ more** across every industry sector
 
 ---
 
-## Benefits
+## Companies Worldwide
 
-### For Organizations
-- **Reduce compliance risk** — Every answer traceable to source documents
-- **Save hours daily** — Instant answers vs. manual document searching
-- **Audit-ready** — Full trail of every question asked and answered
-- **Zero data liability** — Nothing stored, nothing to breach
+Career URLs for top employers on every continent:
 
-### For Job Seekers
-- **Free forever** — No subscription, no login, no paywall
-- **Global coverage** — 195 countries, salary data, visa pathways
-- **Honest feedback** — Not flattering, but truthful resume scoring
-- **Actionable** — Every weakness comes with a specific fix
-- **Private** — Your resume is NEVER stored anywhere
-
-### For Judges & Evaluators
-- **Source grounding** — Every claim cites exact document and section
-- **Hallucination metrics** — Real-time faithfulness score on every response
-- **Safety pipeline** — 3-gate validation, not just prompt engineering
-- **Responsible AI** — Full RAI card aligned to Microsoft's 6 principles
-- **Production path** — Azure infrastructure, CI/CD, monitoring, audit trail
-- **Clean code** — ~1,300 lines of Python, fully documented
+**North America:** Apple · Google · Microsoft · Amazon · Meta · JPMorgan · Goldman Sachs · RBC · TD Bank · Shopify · [+25 more]
+**Europe:** SAP · Siemens · Volkswagen · HSBC · Unilever · Nestlé · LVMH · Airbus · [+40 more]
+**Middle East:** Saudi Aramco · Emirates · ADNOC · Etisalat · STC · Majid Al Futtaim · [+15 more]
+**Asia:** Samsung · Toyota · TSMC · Infosys · TCS · Wipro · Alibaba · Tencent · [+40 more]
+**South Asia:** HBL · PTCL · Engro · Lucky Cement · Sui Gas · [+10 more]
+**Africa:** MTN · Safaricom · Standard Bank · Dangote · [+10 more]
+**Oceania:** BHP · Commonwealth Bank · Telstra · ANZ · Westpac · [+10 more]
 
 ---
 
-## Evaluation Metrics
+## Future Occupations (2026–2125)
 
-| Metric | What It Measures | Target | How We Measure |
-|--------|-----------------|--------|----------------|
-| **Faithfulness** | % of claims grounded in sources | > 90% | Automated per-response |
-| **Answer Relevance** | Does answer address the question? | > 85% | AI confidence score |
-| **Context Precision** | Are retrieved chunks relevant? | > 80% | TF-IDF cosine similarity |
-| **Hallucination Rate** | % of ungrounded claims | < 5% | 100% - faithfulness |
-| **Latency** | End-to-end response time | < 5 sec | Measured per request |
-| **Block Rate** | % of unsafe/uncertain queries blocked | Tracked | Safety engine logs |
+The platform includes 100+ years of emerging career roles:
 
----
+**Near-term (2026–2035):**
+- AI Prompt Engineer · LLM Fine-Tuning Specialist · AI Ethics Officer
+- Carbon Market Trader · ESG Analyst · Green Hydrogen Engineer
+- Longevity Scientist · Microbiome Nutritionist
 
-## Privacy & Security
+**Mid-term (2035–2060):**
+- Digital-Physical Integration Architect · Quantum Algorithm Designer
+- CRISPR Gene Therapy Specialist · Vertical Farm Systems Engineer
 
-```
-┌────────────────────────────────────────────────────┐
-│              ZERO DATA STORAGE                      │
-│                                                     │
-│  ✅ No database (no SQL, no NoSQL, no Redis)       │
-│  ✅ No user accounts (no login, no registration)    │
-│  ✅ No cookies tracking users                       │
-│  ✅ No analytics tracking individuals               │
-│  ✅ Resume/query lives ONLY in memory               │
-│  ✅ After response → data permanently erased        │
-│  ✅ Refresh browser = clean slate                   │
-│  ✅ Audit logs contain metrics ONLY (never PII)     │
-│  ✅ PII detection in queries AND responses          │
-│  ✅ Prompt injection detection and blocking          │
-│  ✅ TLS 1.2 encryption in transit                   │
-│  ✅ API keys in Azure Key Vault (production)        │
-│  ✅ GDPR compliant by design (nothing to delete)    │
-│  ✅ HIPAA consideration (no PHI persisted)          │
-└────────────────────────────────────────────────────┘
-```
+**Long-term (2060–2125):**
+- Space Habitat Architect · Asteroid Mining Engineer
+- Post-AGI Collaboration Designer · Extended Cognition Interface Engineer
 
 ---
 
-## Quick Start
+## Security
 
-### Prerequisites
-- Python 3.10+ (we use 3.12)
-- Git
+- **Zero PII storage** — resumes processed in memory, never written to disk or database
+- **Input sanitization** — HTML injection, SQL injection, prompt injection all blocked
+- **50KB body guard** — oversized payloads rejected
+- **Rate limiting** — per-IP limits (disabled in dev, enforced in production)
+- **HTTPS only** — Azure enforced TLS 1.2+
+- **CORS locked** — only approved origins accepted
+- **Azure Key Vault** — all API keys managed, never in code
+- **RBAC** — least-privilege access on all Azure resources
 
-### Run Locally (2 minutes)
+---
+
+## Skills Assessment
+
+A separate `/assess` tool (5-step quiz):
+
+1. **Current situation** — working, studying, transitioning
+2. **Industry** — 7 ISCO career categories
+3. **Experience level** — entry to executive
+4. **Strengths** — top 3 self-assessed skills
+5. **Goals** — what you want to achieve
+
+**Output:** 0-100 career readiness score + 70+ personalized career recommendations
+
+---
+
+## Running Locally (V3)
+
 ```bash
-# Clone
-git clone https://github.com/shahzadms7/v3.git
+# Prerequisites: Python 3.11+, Azure Functions Core Tools v4
+
 cd v3
-
-# Install dependencies
 pip install -r requirements.txt
+func start
 
-# Set up environment (create .env file with your API keys)
-cp api/.env.example .env
-# Edit .env with your Gemini and/or Grok keys
-
-# Start API server
-uvicorn app.api.main:app --reload --port 8000
-
-# In another terminal, start Streamlit UI
-streamlit run app/ui/streamlit_app.py
+# Frontend: open static/index.html in browser
+# Or: serve with Live Server (VS Code extension)
 ```
 
-### Test the API
+**Environment variables needed:**
+```
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+AZURE_OPENAI_KEY=your-key
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+GEMINI_API_KEY=your-key
+GEMINI_API_KEY_2=your-key
+GROK_API_KEY=your-key
+SERPER_API_KEY=your-key
+```
+
+---
+
+## Deploying to Azure
+
 ```bash
-# Health check
-curl http://localhost:8000/api/health
+# Deploy function app
+cd v3
+func azure functionapp publish govrag-v3-func
 
-# Ask a question
-curl -X POST http://localhost:8000/api/query \
-  -H "Content-Type: application/json" \
-  -d '{"query": "What is our data retention policy for EU customers?"}'
-
-# See API docs
-open http://localhost:8000/docs
+# Or via GitHub Actions (auto on push to main)
+git push origin main
 ```
 
----
-
-## Project Structure
-
-```
-v3/
-├── .github/workflows/       # CI/CD: test → security scan → deploy
-│   └── deploy.yml
-├── app/                     # Application code (100% Python)
-│   ├── api/
-│   │   └── main.py          # FastAPI — 8 endpoints, all logic
-│   ├── core/
-│   │   ├── config.py        # Central settings (Pydantic)
-│   │   ├── ai_provider.py   # Multi-AI: Gemini → Grok fallback
-│   │   ├── rag_engine.py    # RAG: retrieve, ground, verify
-│   │   ├── safety_engine.py # 3-gate safety pipeline
-│   │   └── audit_logger.py  # Audit trail (metrics only, no PII)
-│   └── ui/
-│       └── streamlit_app.py # Streamlit frontend (3 tabs)
-├── data/
-│   ├── career/              # 7 career intelligence documents
-│   └── compliance/          # 3 compliance documents
-├── requirements.txt         # Python dependencies
-├── startup.sh              # Azure App Service startup
-└── README.md               # This file
-```
+CI/CD: `.github/workflows/` auto-deploys frontend + backend on push to main.
 
 ---
 
-## Roadmap: PoC → Pilot → Production
+## Contributing
 
-| Phase | Scope | Status |
-|-------|-------|--------|
-| **PoC** (Hackathon) | 10 docs, single instance, TF-IDF search, free AI | ✅ Built |
-| **Pilot** | 100+ docs, Azure AI Search, vector embeddings, RBAC | 📋 Planned |
-| **Production** | Multi-tenant, SSO, compliance dashboard, SLA 99.9% | 📋 Future |
+This is a free, open-source project serving humanity.
 
-### Production Evolution Path
-- Replace TF-IDF with **Azure AI Search semantic ranking** (already integrated)
-- Add **Azure OpenAI** with managed identity (zero keys in code)
-- Add **Entra ID B2C** for enterprise SSO
-- Add **Azure API Management** for rate limiting and analytics
-- Add **Cosmos DB** for enterprise audit trail (with TTL auto-delete)
-- Add **Azure Front Door** for global CDN and WAF
+**No bias. No racism. No religious discrimination. No political agenda.**
 
----
-
-## Team
-
-| Role | Name | Contribution |
-|------|------|-------------|
-| **Principal Solution Architect** | Shahzad Muhammad | Architecture, Azure, GRC compliance, vision |
-| **AI Engineering** | Claude Opus 4.6 | Full-stack development, RAG engine, safety system |
-| **Student Learner** | Zara (age 12) | Testing ELI12 mode, learning Azure + AI step by step |
-
----
-
-## Built With
-
-- **Python 3.12** — 100% Python, every line
-- **FastAPI** — Backend API framework
-- **Streamlit** — Frontend UI framework
-- **Google Gemini** — Primary AI (free tier)
-- **xAI Grok** — Fallback AI (free tier)
-- **Azure App Service** — Hosting (free tier)
-- **Azure Blob Storage** — Document storage
-- **Azure Key Vault** — Secrets management
-- **Azure Monitor** — Observability
-- **GitHub Actions** — CI/CD pipeline
-- **scikit-learn** — TF-IDF vectorization
-
----
-
-## References
-
-- [Microsoft Responsible AI Toolbox](https://github.com/microsoft/responsible-ai-toolbox)
-- [WCAG 2.2 Accessibility Guidelines](https://www.w3.org/TR/WCAG22/)
-- [Azure Well-Architected Framework](https://learn.microsoft.com/azure/well-architected/)
-- [NIST AI Risk Management Framework](https://www.nist.gov/artificial-intelligence)
+Every contribution should uphold these values:
+- Career tools should work equally well for a nurse in Nigeria and a developer in Norway
+- Salary data should be accurate for local markets, not just Silicon Valley
+- Visa guidance should reflect real pathways, not ideal-world scenarios
+- Skills recommendations should include free learning resources, not just expensive courses
 
 ---
 
 ## License
 
-MIT License — Free for all humanity.
+MIT License — free forever.
 
 ---
 
-<p align="center">
-  <strong>Built with 💙 for the Microsoft Hackathon 2026</strong><br>
-  <em>Shahzad Muhammad · Mississauga, Ontario, Canada</em><br>
-  <em>Serving all 8 billion humans — East to West</em>
-</p>
+## Built by
+
+**Shahzad Muhammad**
+Mississauga, Ontario, Canada
+Mission: Free AI tools for all 8 billion humans on Earth.
+
+*Alfalah (الفلاح) — Arabic/Urdu for "Come to Success"*
+*Used in the Islamic call to prayer: "Come to prayer, come to success"*
+*A word that belongs to all humanity — success has no borders.*
+
+---
+
+*V3 last updated: March 2026*
