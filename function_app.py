@@ -558,11 +558,18 @@ def responsible_ai(req: func.HttpRequest) -> func.HttpResponse:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ENDPOINT: /api/home — Serve the frontend HTML
+# ENDPOINT: / and /home — Serve the frontend HTML
 # ══════════════════════════════════════════════════════════════════════════════
-@app.route("home", methods=["GET"])
-def home(req: func.HttpRequest) -> func.HttpResponse:
+def _serve_html():
     html_path = Path(__file__).parent / "static" / "index.html"
     if html_path.exists():
         return func.HttpResponse(html_path.read_text(encoding="utf-8"), mimetype="text/html")
     return func.HttpResponse("<h1>GovRAG V3 — Frontend not found</h1>", mimetype="text/html", status_code=404)
+
+@app.route("home", methods=["GET"])
+def home(req: func.HttpRequest) -> func.HttpResponse:
+    return _serve_html()
+
+@app.route("", methods=["GET"])
+def root(req: func.HttpRequest) -> func.HttpResponse:
+    return _serve_html()

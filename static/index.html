@@ -541,7 +541,7 @@
             try {
                 const formData = new FormData();
                 formData.append('file', file);
-                const resp = await fetch(API + '/api/upload', { method: 'POST', body: formData });
+                const resp = await fetch(API + '/upload', { method: 'POST', body: formData });
                 const data = await resp.json();
                 if (data.error) {
                     statusDiv.style.background = 'rgba(255,107,107,0.08)';
@@ -580,7 +580,7 @@
             document.getElementById('query-result').style.display = 'none';
             document.getElementById('eli12-result').style.display = 'none';
             try {
-                const res = await fetch(API + '/api/query', {
+                const res = await fetch(API + '/query', {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({query: q})
                 });
@@ -625,7 +625,7 @@
         async function simplifyLast() {
             if (!lastAnswer) return alert('Ask a question first, then simplify');
             try {
-                const res = await fetch(API + '/api/simplify', {
+                const res = await fetch(API + '/simplify', {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({text: lastAnswer, reading_level: 'grade6'})
                 });
@@ -641,7 +641,7 @@
             document.querySelectorAll('.rl-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             if (lastAnswer) {
-                fetch(API + '/api/simplify', {
+                fetch(API + '/simplify', {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({text: lastAnswer, reading_level: level})
                 }).then(r => r.json()).then(data => {
@@ -790,7 +790,7 @@
             document.getElementById('career-result').style.display = 'none';
 
             try {
-                const res = await fetch(API + '/api/career', {
+                const res = await fetch(API + '/career', {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         resume,
@@ -902,8 +902,8 @@
         async function loadAudit() {
             try {
                 const [h, r] = await Promise.all([
-                    fetch(API + '/api/health').then(r=>r.json()),
-                    fetch(API + '/api/responsible-ai').then(r=>r.json()),
+                    fetch(API + '/health').then(r=>r.json()),
+                    fetch(API + '/responsible-ai').then(r=>r.json()),
                 ]);
                 document.getElementById('health-data').innerHTML = `
                     <div class="metrics">
