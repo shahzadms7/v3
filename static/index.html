@@ -272,6 +272,43 @@
 
         .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+        /* ── AI Card accordion ── */
+        .ai-card {
+            background: rgba(17,17,51,0.7); backdrop-filter: blur(12px);
+            border: 1px solid rgba(79,140,255,0.12); border-radius: 14px;
+            margin-bottom: 0.6rem; overflow: hidden; transition: all 0.3s ease;
+        }
+        .ai-card-header {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.9rem 1.1rem; cursor: pointer; user-select: none;
+            transition: background 0.2s;
+        }
+        .ai-card-header:hover { background: rgba(79,140,255,0.08); }
+        .ai-card-icon { font-size: 1.3rem; width: 1.6rem; text-align: center; flex-shrink: 0; }
+        .ai-card-title { font-weight: 700; font-size: 0.95rem; flex: 1; }
+        .ai-card-badge {
+            font-size: 0.68rem; padding: 0.15rem 0.55rem; border-radius: 10px;
+            font-weight: 600; letter-spacing: 0.3px;
+        }
+        .badge-score { background: rgba(78,205,196,0.15); color: var(--green); border: 1px solid rgba(78,205,196,0.25); }
+        .badge-ai { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.25); }
+        .ai-card-chevron { color: var(--muted); font-size: 0.8rem; transition: transform 0.3s; flex-shrink: 0; }
+        .ai-card.open .ai-card-chevron { transform: rotate(180deg); }
+        .ai-card-body {
+            display: none; padding: 0 1.1rem 1rem; border-top: 1px solid rgba(79,140,255,0.08);
+        }
+        .ai-card.open .ai-card-body { display: block; animation: fadeInUp 0.3s ease-out; }
+        .ai-card-body ul { margin: 0.5rem 0 0 1.1rem; line-height: 1.9; }
+        .ai-card-body ul li { margin-bottom: 0.2rem; }
+        .ai-card-body .pretext { white-space: pre-wrap; font-size: 0.88rem; line-height: 1.8; background: rgba(13,13,43,0.5); border-radius: 8px; padding: 0.8rem; margin-top: 0.6rem; }
+        .ai-card-body table { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.85rem; }
+        .ai-card-body th { background: rgba(79,140,255,0.1); padding: 0.5rem 0.75rem; text-align: left; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+        .ai-card-body td { padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(79,140,255,0.06); }
+        .card-dim-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(150px,1fr)); gap: 0.5rem; margin-top: 0.6rem; }
+        .card-dim { background: rgba(13,13,43,0.6); border-radius: 8px; padding: 0.6rem; text-align: center; border: 1px solid rgba(79,140,255,0.08); }
+        .card-dim .dv { font-size: 1.4rem; font-weight: 800; }
+        .card-dim .dl { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; margin-top: 0.2rem; }
     </style>
 </head>
 <body>
@@ -428,10 +465,20 @@
 
             <div id="career-result" style="display:none;">
                 <div class="metrics" id="career-metrics"></div>
-                <div class="card">
-                    <h3>Naked Truth Analysis</h3>
-                    <div class="answer-box" id="career-text"></div>
-                    <button class="btn" onclick="downloadResults()" style="margin-top:1rem;">Download Results (.txt)</button>
+
+                <!-- Score card -->
+                <div class="card" id="card-score" style="display:none;">
+                    <h3>Resume Score — Naked Truth</h3>
+                    <div class="answer-box" id="career-score-text"></div>
+                </div>
+
+                <!-- 17 AI Cards -->
+                <div id="ai-cards-grid" style="display:none;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin:1rem 0 0.5rem;">
+                        <h3 style="background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:1.2rem;font-weight:800;">17 AI Engines — Complete Analysis</h3>
+                        <button class="btn" onclick="downloadResults()" style="padding:0.5rem 1rem;font-size:0.82rem;">Download All (.txt)</button>
+                    </div>
+                    <div id="cards-container"></div>
                 </div>
             </div>
         </div>
@@ -603,6 +650,136 @@
             }
         }
 
+        // ── Card definitions: key, icon, title, color ──
+        const CARD_DEFS = [
+            {key:'recruiterPov',    icon:'👁️', title:'Recruiter POV — 6-Second Test',        color:'var(--accent2)'},
+            {key:'skillsGap',       icon:'📊', title:'Skills Gap Analysis',                   color:'var(--gold)'},
+            {key:'resumeRewrite',   icon:'✏️', title:'Resume Rewrite — Top 1%',               color:'var(--accent)'},
+            {key:'coverLetter',     icon:'📝', title:'Cover Letter — Tailored',               color:'var(--green)'},
+            {key:'interviewPrep',   icon:'🎯', title:'Interview Prep — 5 Q&A',                color:'var(--purple)'},
+            {key:'starStories',     icon:'⭐', title:'STAR Behavioral Stories',               color:'var(--gold)'},
+            {key:'linkedinSummary', icon:'💼', title:'LinkedIn Summary',                      color:'var(--accent)'},
+            {key:'introScripts',    icon:'🎤', title:'Introduction Scripts (1/2/3 min)',       color:'var(--pink)'},
+            {key:'thankYouEmail',   icon:'📧', title:'Post-Interview Thank You Email',         color:'var(--green)'},
+            {key:'salaryNegotiation',icon:'💰',title:'Salary Negotiation — Local Currency',   color:'var(--gold)'},
+            {key:'actionPlan',      icon:'📅', title:'30-60-90 Day Action Plan',              color:'var(--accent)'},
+            {key:'coldOutreach',    icon:'🚀', title:'Cold Outreach — LinkedIn + Email',       color:'var(--purple)'},
+            {key:'careerPivot',     icon:'🔄', title:'Career Pivot Analysis',                 color:'var(--pink)'},
+            {key:'visaPathways',    icon:'🌍', title:'Visa Pathways — All Routes',            color:'var(--green)'},
+            {key:'countryLaws',     icon:'⚖️', title:'Country Labor Laws + GRC',              color:'var(--muted)'},
+            {key:'matchingJobs',    icon:'🔍', title:'Matching Jobs + Recruiters',             color:'var(--accent2)'},
+        ];
+
+        function toggleCard(el) {
+            el.closest('.ai-card').classList.toggle('open');
+        }
+
+        function renderCardBody(key, data) {
+            if (!data || (typeof data === 'string' && !data.trim())) return '<p style="color:var(--muted);padding-top:0.6rem;">No data returned for this section.</p>';
+            if (typeof data === 'string') return `<div class="pretext">${data}</div>`;
+
+            switch(key) {
+                case 'recruiterPov':
+                    return `
+                    ${data.first_impression ? `<div style="border-left:3px solid var(--accent2);padding:0.5rem 0.8rem;margin:0.6rem 0;font-weight:600;color:var(--accent2)">${data.first_impression}</div>` : ''}
+                    ${data.top_third?.length ? `<h5 style="color:var(--green);margin-top:0.8rem;">✓ What Recruiter Sees (Top Third)</h5><ul>${data.top_third.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.buried?.length ? `<h5 style="color:var(--gold);margin-top:0.8rem;">⚠ Buried (Should Be Visible)</h5><ul>${data.buried.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.red_flags?.length ? `<h5 style="color:var(--accent2);margin-top:0.8rem;">🚩 Red Flags</h5><ul>${data.red_flags.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.quick_wins?.length ? `<h5 style="color:var(--accent);margin-top:0.8rem;">⚡ Quick Wins (Fix Today)</h5><ul>${data.quick_wins.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}`;
+
+                case 'skillsGap':
+                    return `
+                    ${data.matched_hard?.length ? `<h5 style="color:var(--green);margin-top:0.6rem;">✓ Hard Skills Matched</h5><ul>${data.matched_hard.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.missing_hard?.length ? `<h5 style="color:var(--accent2);margin-top:0.6rem;">✗ Hard Skills Missing</h5><ul>${data.missing_hard.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.soft_missing?.length ? `<h5 style="color:var(--gold);margin-top:0.6rem;">Soft Skills to Develop</h5><ul>${data.soft_missing.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.certs_to_pursue?.length ? `<h5 style="color:var(--accent);margin-top:0.6rem;">🎓 Certifications to Pursue</h5><ul>${data.certs_to_pursue.map(c=>typeof c==='object'?`<li><strong>${c.name}</strong> <span style="color:var(--accent2)">[${c.priority||''}]</span>${c.url?` — <a href="${c.url}" target="_blank" style="color:var(--accent)">Official Link</a>`:''}` : '<li>'+c+'</li>').join('')}</ul>` : ''}
+                    ${data.roadmap?.length ? `<h5 style="color:var(--purple);margin-top:0.6rem;">Upskilling Roadmap</h5><ol style="margin:0.4rem 0 0 1.1rem;line-height:1.9">${data.roadmap.map(s=>'<li>'+s+'</li>').join('')}</ol>` : ''}`;
+
+                case 'interviewPrep':
+                    return `
+                    ${(data.qa||[]).map((item,i)=>`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.6rem;border:1px solid rgba(79,140,255,0.1);">
+                        <div style="color:var(--accent);font-weight:700;font-size:0.88rem;">Q${i+1}: ${item.q||item.question||''}</div>
+                        <div style="margin-top:0.4rem;font-size:0.88rem;line-height:1.7">${item.a||item.answer||''}</div>
+                    </div>`).join('')}
+                    ${data.questions_to_ask?.length ? `<h5 style="color:var(--green);margin-top:0.8rem;">Questions to Ask the Interviewer</h5><ul>${data.questions_to_ask.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}`;
+
+                case 'starStories':
+                    return (data||[]).map((story,i)=>`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.6rem;border:1px solid rgba(255,217,61,0.1);">
+                        <div style="color:var(--gold);font-weight:700;font-size:0.9rem;">Story ${i+1}: ${story.title||''}</div>
+                        <div style="display:grid;grid-template-columns:auto 1fr;gap:0.3rem 0.75rem;margin-top:0.5rem;font-size:0.86rem;line-height:1.7">
+                            ${story.s?`<span style="color:var(--accent);font-weight:700">S:</span><span>${story.s}</span>`:''}
+                            ${story.t?`<span style="color:var(--accent);font-weight:700">T:</span><span>${story.t}</span>`:''}
+                            ${story.a?`<span style="color:var(--accent);font-weight:700">A:</span><span>${story.a}</span>`:''}
+                            ${story.r?`<span style="color:var(--green);font-weight:700">R:</span><span style="color:var(--green)">${story.r}</span>`:''}
+                        </div>
+                    </div>`).join('') || `<div class="pretext">${JSON.stringify(data,null,2)}</div>`;
+
+                case 'introScripts':
+                    return `
+                    ${data.min1?`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.6rem;"><div style="color:var(--accent);font-weight:700;margin-bottom:0.4rem;">⏱ 1-Minute (Phone Screen)</div><div style="font-size:0.87rem;line-height:1.8">${data.min1}</div></div>`:''}
+                    ${data.min2?`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--purple);font-weight:700;margin-bottom:0.4rem;">⏱ 2-Minute (Hiring Manager)</div><div style="font-size:0.87rem;line-height:1.8">${data.min2}</div></div>`:''}
+                    ${data.min3?`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--green);font-weight:700;margin-bottom:0.4rem;">⏱ 3-Minute (Technical Round)</div><div style="font-size:0.87rem;line-height:1.8">${data.min3}</div></div>`:''}`;
+
+                case 'salaryNegotiation':
+                    return `
+                    ${data.table?.length ? `<table><thead><tr><th>Level</th><th>Salary Range</th></tr></thead><tbody>${data.table.map(r=>`<tr><td><strong>${r.level||r.Level||''}</strong></td><td>${r.range||r.Range||''}</td></tr>`).join('')}</tbody></table>` : ''}
+                    ${data.script ? `<div style="background:rgba(79,140,255,0.06);border-radius:8px;padding:0.8rem;margin-top:0.8rem;border:1px solid rgba(79,140,255,0.1);"><div style="color:var(--accent);font-weight:700;margin-bottom:0.4rem;">Negotiation Script</div><div style="font-size:0.87rem;line-height:1.8">${data.script}</div></div>` : ''}
+                    ${data.counter_script ? `<div style="background:rgba(255,217,61,0.05);border-radius:8px;padding:0.8rem;margin-top:0.5rem;border:1px solid rgba(255,217,61,0.1);"><div style="color:var(--gold);font-weight:700;margin-bottom:0.4rem;">Counter-Offer Script</div><div style="font-size:0.87rem;line-height:1.8">${data.counter_script}</div></div>` : ''}`;
+
+                case 'actionPlan':
+                    return `
+                    ${data.day30?.length ? `<div style="border-left:3px solid var(--green);padding:0.5rem 0.8rem;margin-top:0.6rem;"><strong style="color:var(--green)">Days 1-30</strong><ul style="margin-top:0.3rem">${data.day30.map(s=>'<li>'+s+'</li>').join('')}</ul></div>` : ''}
+                    ${data.day60?.length ? `<div style="border-left:3px solid var(--gold);padding:0.5rem 0.8rem;margin-top:0.5rem;"><strong style="color:var(--gold)">Days 31-60</strong><ul style="margin-top:0.3rem">${data.day60.map(s=>'<li>'+s+'</li>').join('')}</ul></div>` : ''}
+                    ${data.day90?.length ? `<div style="border-left:3px solid var(--accent);padding:0.5rem 0.8rem;margin-top:0.5rem;"><strong style="color:var(--accent)">Days 61-90</strong><ul style="margin-top:0.3rem">${data.day90.map(s=>'<li>'+s+'</li>').join('')}</ul></div>` : ''}`;
+
+                case 'coldOutreach':
+                    return `
+                    ${data.linkedin_request ? `<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.6rem;"><div style="color:var(--accent);font-weight:700;margin-bottom:0.3rem;">LinkedIn Connection Request (300 chars)</div><div style="font-size:0.87rem;line-height:1.8">${data.linkedin_request}</div></div>` : ''}
+                    ${data.linkedin_dm ? `<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--purple);font-weight:700;margin-bottom:0.3rem;">LinkedIn DM</div><div style="font-size:0.87rem;line-height:1.8">${data.linkedin_dm}</div></div>` : ''}
+                    ${data.cold_email ? `<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--green);font-weight:700;margin-bottom:0.3rem;">Cold Email</div><div style="font-size:0.87rem;line-height:1.8">${data.cold_email}</div></div>` : ''}
+                    ${data.follow_up ? `<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-top:0.5rem;"><div style="color:var(--gold);font-weight:700;margin-bottom:0.3rem;">1-Week Follow-Up</div><div style="font-size:0.87rem;line-height:1.8">${data.follow_up}</div></div>` : ''}`;
+
+                case 'careerPivot':
+                    return `
+                    ${data.pivot_score ? `<div style="font-size:1.1rem;font-weight:800;color:${data.pivot_score==='Easy'?'var(--green)':data.pivot_score==='Moderate'?'var(--gold)':'var(--accent2)'};padding:0.5rem 0">Pivot Difficulty: ${data.pivot_score}</div>` : ''}
+                    ${data.reason ? `<p style="color:var(--muted);font-size:0.87rem;margin-bottom:0.6rem">${data.reason}</p>` : ''}
+                    ${data.adjacent_roles?.map(r=>`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border:1px solid rgba(168,85,247,0.1);">
+                        <strong style="color:var(--purple)">${r.title||''}</strong> <span style="color:var(--muted);font-size:0.82rem">· ${r.time_to_qualify||''}</span>
+                        ${r.transferable?.length ? `<div style="font-size:0.83rem;margin-top:0.3rem;color:var(--green)">✓ ${r.transferable.join(' · ')}</div>` : ''}
+                        ${r.gaps?.length ? `<div style="font-size:0.83rem;margin-top:0.2rem;color:var(--accent2)">Gap: ${r.gaps.join(' · ')}</div>` : ''}
+                    </div>`).join('') || ''}
+                    ${data.plan_90_day?.length ? `<h5 style="color:var(--accent);margin-top:0.6rem;">90-Day Pivot Plan</h5><ol style="margin:0.4rem 0 0 1.1rem;line-height:1.9">${data.plan_90_day.map(s=>'<li>'+s+'</li>').join('')}</ol>` : ''}`;
+
+                case 'visaPathways':
+                    return `
+                    ${data.in_country?.length ? `<h5 style="color:var(--green);margin-top:0.6rem;">In-Country Requirements</h5><ul>${data.in_country.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.outside_country?.length ? `<h5 style="color:var(--accent);margin-top:0.6rem;">Outside Country — All Visa Routes</h5>${data.outside_country.map(v=>typeof v==='object'?`<div style="background:rgba(13,13,43,0.5);border-radius:8px;padding:0.7rem;margin-top:0.4rem;"><strong style="color:var(--accent)">${v.type||''}</strong> ${v.url?`<a href="${v.url}" target="_blank" style="color:var(--purple);font-size:0.8rem;margin-left:0.5rem">Official →</a>`:''}<div style="font-size:0.85rem;margin-top:0.3rem;color:var(--muted)">${v.description||''}</div></div>`:'<li>'+v+'</li>').join('')}` : ''}
+                    ${data.digital_nomad ? `<p style="margin-top:0.6rem;font-size:0.85rem;"><strong style="color:var(--purple)">Digital Nomad:</strong> ${data.digital_nomad}</p>` : ''}
+                    ${data.working_holiday ? `<p style="font-size:0.85rem;"><strong style="color:var(--gold)">Working Holiday:</strong> ${data.working_holiday}</p>` : ''}`;
+
+                case 'countryLaws':
+                    return `
+                    ${data.notice_period ? `<p><strong style="color:var(--accent)">Notice Period:</strong> ${data.notice_period}</p>` : ''}
+                    ${data.termination_rights ? `<p style="margin-top:0.4rem;"><strong style="color:var(--gold)">Termination:</strong> ${data.termination_rights}</p>` : ''}
+                    ${data.non_compete ? `<p style="margin-top:0.4rem;"><strong style="color:var(--muted)">Non-Compete:</strong> ${data.non_compete}</p>` : ''}
+                    ${data.resume_compliance?.length ? `<h5 style="color:var(--accent);margin-top:0.8rem;">Resume Compliance Rules</h5><ul>${data.resume_compliance.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.worker_rights?.length ? `<h5 style="color:var(--green);margin-top:0.6rem;">Worker Rights</h5><ul>${data.worker_rights.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}`;
+
+                case 'matchingJobs':
+                    return `
+                    ${data.titles?.length ? `<h5 style="color:var(--accent);margin-top:0.6rem;">Job Titles to Target</h5><ul>${data.titles.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.companies?.length ? `<h5 style="color:var(--green);margin-top:0.6rem;">Target Companies</h5><ul>${data.companies.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.job_boards?.length ? `<h5 style="color:var(--purple);margin-top:0.6rem;">Job Boards</h5><ul>${data.job_boards.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}
+                    ${data.recruiters_by_country?.length ? `<h5 style="color:var(--gold);margin-top:0.6rem;">Recruiters</h5>${data.recruiters_by_country.map(r=>`<div style="font-size:0.85rem;margin-top:0.3rem"><strong>${r.country}:</strong> ${(r.firms||[]).join(', ')}</div>`).join('')}` : ''}
+                    ${data.freelance_platforms?.length ? `<h5 style="color:var(--accent2);margin-top:0.6rem;">Freelance Platforms</h5><ul>${data.freelance_platforms.map(s=>'<li>'+s+'</li>').join('')}</ul>` : ''}`;
+
+                default:
+                    // coverLetter, resumeRewrite, linkedinSummary, thankYouEmail — plain text
+                    if (typeof data === 'string') return `<div class="pretext">${data}</div>`;
+                    return `<div class="pretext">${JSON.stringify(data, null, 2)}</div>`;
+            }
+        }
+
         async function analyzeCareer() {
             const resume = document.getElementById('resume-input').value.trim();
             if (!resume) return alert('Please upload or paste your resume first');
@@ -611,118 +788,94 @@
 
             document.getElementById('loading-career').classList.add('show');
             document.getElementById('career-result').style.display = 'none';
+
             try {
                 const res = await fetch(API + '/api/career', {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        resume: resume,
+                        resume,
                         job_description: document.getElementById('job-input').value.trim(),
                         country: document.getElementById('country-input').value.trim(),
                         industry: document.getElementById('industry-input').value.trim(),
-                        include_ai_narrative: true,
                     })
                 });
                 const data = await res.json();
                 if (data.error) {
-                    document.getElementById('career-text').innerHTML = '<p style="color:var(--accent2)">Error: ' + data.error + '</p>';
+                    document.getElementById('career-score-text').innerHTML = '<p style="color:var(--accent2)">Error: ' + data.error + '</p>';
+                    document.getElementById('card-score').style.display = 'block';
                     document.getElementById('career-result').style.display = 'block';
                     document.getElementById('loading-career').classList.remove('show');
                     return;
                 }
 
-                // ── Read naked_truth (the real API response) ──
+                // ── Naked truth scores ──
                 const nt = data.naked_truth || {};
                 const ats = data.ats_match || {};
-                const score = nt.composite_score ?? nt.score ?? 0;
+                const score = nt.composite_score ?? 0;
                 const verdict = nt.verdict || '';
                 const dims = nt.dimension_scores || {};
-                const strengths = nt.strengths || [];
-                const weaknesses = nt.weaknesses || [];
-                const hidden = nt.hidden_issues || nt.hidden || [];
-                const opportunities = nt.opportunities || [];
                 const latency = data.metrics?.latency_ms || 0;
-                const method = data.metrics?.method || '';
+                const atsScore = ats.ats_score;
+                const scoreColor = score >= 70 ? 'green' : score >= 40 ? 'gold' : 'red';
 
                 // Metrics bar
-                const scoreColor = score >= 70 ? 'green' : score >= 40 ? 'gold' : 'red';
-                const atsScore = ats.ats_score ?? ats.score;
                 document.getElementById('career-metrics').innerHTML = `
                     <div class="metric ${scoreColor}"><div class="value">${score}</div><div class="label">Resume Score / 100</div></div>
-                    ${atsScore !== null && atsScore !== undefined ? `<div class="metric ${atsScore >= 70 ? 'green' : 'gold'}"><div class="value">${atsScore}%</div><div class="label">ATS Match</div></div>` : ''}
-                    <div class="metric"><div class="value">${(latency/1000).toFixed(1)}s</div><div class="label">Analysis Time</div></div>
-                    <div class="metric ${scoreColor}"><div class="value">${score >= 70 ? 'TOP 25%' : score >= 50 ? 'AVERAGE' : 'NEEDS WORK'}</div><div class="label">Market Rank</div></div>
+                    ${atsScore != null ? `<div class="metric ${atsScore>=70?'green':'gold'}"><div class="value">${atsScore}%</div><div class="label">ATS Match</div></div>` : ''}
+                    <div class="metric"><div class="value">${(latency/1000).toFixed(1)}s</div><div class="label">Total Time</div></div>
+                    <div class="metric"><div class="value">${data.ai_provider||'AI'}</div><div class="label">AI Provider</div></div>
                 `;
 
-                // Build result HTML
-                let html = '';
-
-                // Verdict banner
+                // Score card body
+                let scoreHtml = '';
                 if (verdict) {
-                    const vColor = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--gold)' : 'var(--accent2)';
-                    html += `<div style="background:rgba(255,255,255,0.04);border-left:4px solid ${vColor};padding:0.8rem 1rem;border-radius:6px;margin-bottom:1rem;font-weight:700;font-size:1.05rem;color:${vColor}">${verdict}</div>`;
+                    const vc = score>=70?'var(--green)':score>=40?'var(--gold)':'var(--accent2)';
+                    scoreHtml += `<div style="border-left:4px solid ${vc};padding:0.7rem 1rem;border-radius:6px;margin-bottom:1rem;font-weight:700;font-size:1.05rem;color:${vc}">${verdict}</div>`;
                 }
-
-                // Dimension scores table
                 if (Object.keys(dims).length) {
-                    html += `<h4 style="color:var(--accent);margin:1rem 0 0.5rem;">Dimension Scores</h4>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.5rem;margin-bottom:1rem;">`;
+                    scoreHtml += `<div class="card-dim-grid">`;
                     for (const [dim, val] of Object.entries(dims)) {
                         const pct = typeof val === 'object' ? (val.score ?? val) : val;
                         const dc = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--gold)' : 'var(--accent2)';
-                        html += `<div style="background:rgba(13,13,43,0.6);border-radius:8px;padding:0.6rem;border:1px solid rgba(79,140,255,0.1);">
-                            <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">${dim.replace(/_/g,' ')}</div>
-                            <div style="font-size:1.3rem;font-weight:800;color:${dc}">${typeof pct === 'number' ? pct : JSON.stringify(pct)}</div>
-                        </div>`;
+                        scoreHtml += `<div class="card-dim"><div class="dv" style="color:${dc}">${typeof pct==='number'?pct:'-'}</div><div class="dl">${dim.replace(/_/g,' ')}</div></div>`;
                     }
-                    html += `</div>`;
+                    scoreHtml += `</div>`;
+                }
+                const strengths = nt.strengths || []; const weaknesses = nt.weaknesses || []; const hidden = nt.hidden_issues || [];
+                if (strengths.length) scoreHtml += `<h5 style="color:var(--green);margin-top:1rem;">✓ Strengths</h5><ul>${strengths.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                if (weaknesses.length) scoreHtml += `<h5 style="color:var(--accent2);margin-top:0.8rem;">✗ Weaknesses</h5><ul>${weaknesses.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                if (hidden.length) scoreHtml += `<h5 style="color:var(--gold);margin-top:0.8rem;">⚠ Hidden Issues</h5><ul>${hidden.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                if (ats.matched_keywords?.length) scoreHtml += `<h5 style="color:var(--accent);margin-top:0.8rem;">ATS Matched Keywords</h5><p style="font-size:0.85rem;color:var(--green)">${ats.matched_keywords.join(', ')}</p>`;
+                if (ats.missing_keywords?.length) scoreHtml += `<h5 style="color:var(--accent2);margin-top:0.5rem;">ATS Missing Keywords</h5><p style="font-size:0.85rem;color:var(--accent2)">${ats.missing_keywords.join(', ')}</p>`;
+                document.getElementById('career-score-text').innerHTML = scoreHtml;
+                document.getElementById('card-score').style.display = 'block';
+
+                // ── 17 AI Cards ──
+                const cards = data.cards || {};
+                if (Object.keys(cards).length > 0) {
+                    const container = document.getElementById('cards-container');
+                    container.innerHTML = CARD_DEFS.map(def => {
+                        const cardData = cards[def.key];
+                        const hasData = cardData && (typeof cardData === 'string' ? cardData.trim() : Object.keys(cardData).length > 0);
+                        return `<div class="ai-card">
+                            <div class="ai-card-header" onclick="toggleCard(this)">
+                                <span class="ai-card-icon">${def.icon}</span>
+                                <span class="ai-card-title" style="color:${def.color}">${def.title}</span>
+                                <span class="ai-card-badge ${hasData?'badge-ai':'badge-score'}">${hasData?'AI READY':'No data'}</span>
+                                <span class="ai-card-chevron">▼</span>
+                            </div>
+                            <div class="ai-card-body">${renderCardBody(def.key, cardData)}</div>
+                        </div>`;
+                    }).join('');
+                    document.getElementById('ai-cards-grid').style.display = 'block';
+                    // Auto-open first card
+                    document.querySelector('.ai-card')?.classList.add('open');
                 }
 
-                // Strengths
-                if (strengths.length) {
-                    html += `<h4 style="color:var(--green);margin-top:1rem;">✓ Strengths</h4><ul style="margin:0.5rem 0 0 1rem;line-height:1.9;">${strengths.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                }
-                // Weaknesses
-                if (weaknesses.length) {
-                    html += `<h4 style="color:var(--accent2);margin-top:1rem;">✗ Weaknesses</h4><ul style="margin:0.5rem 0 0 1rem;line-height:1.9;">${weaknesses.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                }
-                // Hidden issues
-                if (hidden.length) {
-                    html += `<h4 style="color:var(--gold);margin-top:1rem;">⚠ Hidden Issues</h4><ul style="margin:0.5rem 0 0 1rem;line-height:1.9;">${hidden.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                }
-                // Opportunities
-                if (opportunities.length) {
-                    html += `<h4 style="color:var(--purple);margin-top:1rem;">→ Opportunities</h4><ul style="margin:0.5rem 0 0 1rem;line-height:1.9;">${opportunities.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                }
-
-                // ATS details
-                if (Object.keys(ats).length && ats.ats_score !== undefined) {
-                    html += `<h4 style="color:var(--accent);margin-top:1rem;">ATS Keyword Match</h4>
-                    <p style="color:var(--muted);font-size:0.85rem;margin-top:0.3rem;">Score: <strong style="color:var(--text)">${ats.ats_score}%</strong>`;
-                    if (ats.matched_keywords?.length) html += ` · Matched: <span style="color:var(--green)">${ats.matched_keywords.slice(0,10).join(', ')}</span>`;
-                    if (ats.missing_keywords?.length) html += `<br>Missing: <span style="color:var(--accent2)">${ats.missing_keywords.slice(0,10).join(', ')}</span>`;
-                    html += `</p>`;
-                }
-
-                // AI narrative
-                if (data.ai_narrative?.text) {
-                    html += `<h4 style="color:var(--purple);margin-top:1.5rem;">AI Narrative (${data.ai_narrative.provider} · ${data.ai_narrative.model})</h4>
-                    <div style="margin-top:0.5rem;white-space:pre-wrap;font-size:0.9rem;line-height:1.8;color:var(--text)">${data.ai_narrative.text}</div>`;
-                }
-
-                // Career intelligence sources
-                if (data.career_intelligence?.length) {
-                    html += `<h4 style="color:var(--muted);margin-top:1.5rem;font-size:0.85rem;">Career Intelligence Sources Used</h4>`;
-                    data.career_intelligence.slice(0,4).forEach(ci => {
-                        html += `<div class="source-item"><div class="src-header"><span class="num">${ci.source}</span><span class="score">${(ci.relevance*100).toFixed(0)}%</span></div><div><strong>${ci.section}</strong></div><div class="preview">${ci.preview}</div></div>`;
-                    });
-                }
-
-                html += `<p style="color:var(--green);margin-top:1.5rem;font-size:0.82rem;border-top:1px solid rgba(78,205,196,0.1);padding-top:0.75rem;">${data.privacy || 'Your resume was NOT stored. Zero database. Already erased.'}</p>`;
-
-                document.getElementById('career-text').innerHTML = html;
                 document.getElementById('career-result').style.display = 'block';
             } catch (e) {
-                document.getElementById('career-text').innerHTML = '<p style="color:var(--accent2)">Error: ' + e.message + '</p>';
+                document.getElementById('career-score-text').innerHTML = '<p style="color:var(--accent2)">Error: ' + e.message + '. Please try again.</p>';
+                document.getElementById('card-score').style.display = 'block';
                 document.getElementById('career-result').style.display = 'block';
             }
             document.getElementById('loading-career').classList.remove('show');

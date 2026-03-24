@@ -310,20 +310,62 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
                          "relevance": r["score"], "preview": r["chunk"]["content"][:200]}
                         for r in results]
 
-        # ── STEP 5: AI narrative ONLY if requested (1% AI cost) ──
-        ai_narrative = None
-        if body.get("include_ai_narrative", False):
-            ctx = "\n\n".join([f"[Source {i+1}: {r['chunk']['source']}]\n{r['chunk']['content']}" for i, r in enumerate(results)])
-            system = f"You are GovRAG Career — top 1% advisor. Country: {country or 'Global'}. Industry: {industry or 'General'}. CAREER DATA:\n{ctx}\nWrite 3 paragraphs: 1) What's good 2) What's killing this resume 3) Exact action items. Cite [Source N]. Be brutal."
-            ai = _call_ai(system, f"RESUME STATS:\nScore: {truth['composite_score']}/100\nWeaknesses: {truth['weaknesses']}\nStrengths: {truth['strengths']}\nHidden: {truth['hidden_issues']}")
-            ai_narrative = {"text": ai["text"], "provider": ai["provider"], "model": ai["model"]}
+        # ── STEP 5: ALL 17 AI CARDS — One call, full power ──
+        ctx = "\n\n".join([
+            f"[Source {i+1}: {r['chunk']['source']} | {r['chunk']['section']}]\n{r['chunk']['content'][:400]}"
+            for i, r in enumerate(results)
+        ])
+        score = truth.get("composite_score", 0)
+        system = f"""You are GovRAG Career — the world's most powerful career AI engine. Top 1% standard. Brutal honesty. Data-driven.
+
+COUNTRY: {country or 'Global'} | INDUSTRY: {industry or 'General'}
+RESUME SCORE: {score}/100 | VERDICT: {truth.get('verdict','')}
+STRENGTHS: {truth.get('strengths',[])}
+WEAKNESSES: {truth.get('weaknesses',[])}
+HIDDEN ISSUES: {truth.get('hidden_issues',[])}
+
+CAREER INTELLIGENCE (RAG):
+{ctx}
+
+JOB DESCRIPTION PROVIDED: {'YES' if job_desc else 'NO'}
+
+Return ONLY a valid JSON object with ALL 17 keys below. No markdown, no explanation, ONLY the JSON:
+{{
+  "recruiterPov": {{"first_impression":"6-second verdict","top_third":["what recruiter sees first","..."],"buried":["what's hidden","..."],"red_flags":["flag1","..."],"quick_wins":["fix1","..."]}},
+  "coverLetter": "Full 3-paragraph cover letter tailored to job/country. Hook + 3 wins + confident close.",
+  "resumeRewrite": "Rewritten resume bullets only — top 3 strongest results moved to first half. Every bullet has a number (%, $, time, team size).",
+  "skillsGap": {{"matched_hard":["skill1","..."],"missing_hard":["gap1","..."],"soft_matched":["..."],"soft_missing":["..."],"certs_to_pursue":[{{"name":"cert","url":"official-url","priority":"HIGH/MED"}}],"roadmap":["step1","..."]}},
+  "interviewPrep": {{"qa":[{{"q":"question","a":"answer with STAR"}}],"questions_to_ask":["q1","..."]}},
+  "starStories": [{{"title":"story title","s":"situation","t":"task","a":"action","r":"quantified result"}}],
+  "linkedinSummary": "First-person LinkedIn About: bold hook + 3 top skills + impact + seeking statement. 3-4 sentences.",
+  "introScripts": {{"min1":"1-minute phone screen script","min2":"2-minute hiring manager script","min3":"3-minute technical round script"}},
+  "thankYouEmail": "Post-interview email: thank + specific reference + reinforce 2 qualifications + confirm readiness.",
+  "salaryNegotiation": {{"table":[{{"level":"Entry","range":"local currency range"}},{{"level":"Mid","range":"..."}},{{"level":"Senior","range":"..."}},{{"level":"Lead","range":"..."}},{{"level":"Director","range":"..."}}],"script":"negotiation script","counter_script":"counter-offer script"}},
+  "actionPlan": {{"day30":["action1","..."],"day60":["action1","..."],"day90":["action1","..."]}},
+  "coldOutreach": {{"linkedin_request":"connection note (300 char max)","linkedin_dm":"full DM","cold_email":"subject + body","follow_up":"1-week follow-up email"}},
+  "careerPivot": {{"pivot_score":"Easy/Moderate/Challenging","reason":"why","adjacent_roles":[{{"title":"role","transferable":["skill1"],"gaps":["gap1"],"time_to_qualify":"X months"}}],"plan_90_day":["step1","..."]}},
+  "countryLaws": {{"notice_period":"...","termination_rights":"...","non_compete":"...","resume_compliance":["rule1","..."],"tax_forms":["form1","..."],"worker_rights":["right1","..."]}},
+  "visaPathways": {{"scenario":"in_country/outside_country","in_country":["local requirement1","..."],"outside_country":[{{"type":"visa type","description":"...","url":"official gov url"}}],"digital_nomad":"availability","working_holiday":"availability"}},
+  "matchingJobs": {{"titles":["job title 1","..."],"companies":["company1","..."],"job_boards":["board with url","..."],"recruiters_by_country":[{{"country":"{country}","firms":["firm1","firm2"]}}],"freelance_platforms":["platform1","..."]}}
+}}"""
+
+        ai = _call_ai(system, f"Resume (first 3000 chars):\n{resume[:3000]}\n\nJob Description:\n{job_desc[:1500] if job_desc else 'Not provided'}\n\nReturn the JSON now.")
+        cards = _parse_json(ai["text"])
 
         return func.HttpResponse(json.dumps({
             "naked_truth": truth,
             "ats_match": ats,
+            "cards": cards,
             "career_intelligence": career_intel,
-            "ai_narrative": ai_narrative,
-            "metrics": {"latency_ms": int((time.time()-start)*1000), "method": "99% algorithm + data, 1% AI"},
+            "ai_provider": ai["provider"],
+            "ai_model": ai["model"],
+            "metrics": {
+                "latency_ms": int((time.time()-start)*1000),
+                "method": "Algorithmic scoring + RAG + 17-card AI engine",
+                "resume_score": score,
+                "provider": ai["provider"],
+                "model": ai["model"],
+            },
             "privacy": "Your resume was NOT stored. Gone from memory after this response.",
         }, indent=2), mimetype="application/json")
     except Exception as e:
