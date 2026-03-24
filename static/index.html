@@ -381,32 +381,55 @@
 
         <!-- ═══ TAB 2: CAREER INTELLIGENCE ═══ -->
         <div class="tab-content" id="tab-career">
+
+            <!-- RESUME UPLOAD BOX -->
             <div class="card">
-                <h3>Career Analyzer — Top 1% Standard</h3>
-                <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.75rem">Upload your resume (PDF/DOCX/TXT) or paste text. Get brutally honest feedback.</p>
+                <h3>📄 Resume — Upload or Paste</h3>
+                <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.75rem">PDF, DOCX, or TXT · Max 12 pages (~7,000 words)</p>
                 <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">
-                    <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:#0d0d2b;border:1px solid #333;border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.85rem;">
-                    <button class="btn" onclick="uploadFile()" style="padding:0.5rem 1rem;font-size:0.85rem;">Upload & Extract</button>
+                    <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:#0d0d2b;border:1px solid rgba(79,140,255,0.2);border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.85rem;">
+                    <button class="btn" onclick="uploadResume()" style="padding:0.6rem 1.2rem;font-size:0.85rem;white-space:nowrap;">Upload Resume</button>
                 </div>
-                <div id="upload-status" style="display:none;font-size:0.8rem;color:var(--green);margin-bottom:0.5rem;"></div>
-                <textarea id="resume-input" rows="6" placeholder="Or paste your resume text here..."></textarea>
-                <textarea id="job-input" rows="3" placeholder="(Optional) Paste the job description you're targeting..." style="margin-top:0.5rem;"></textarea>
-                <div class="two-col" style="margin-top:0.5rem;">
+                <div id="resume-upload-status" style="display:none;font-size:0.8rem;padding:0.4rem 0.6rem;border-radius:6px;margin-bottom:0.5rem;"></div>
+                <textarea id="resume-input" rows="7" placeholder="Or paste your resume text here (copy from Word, PDF, or LinkedIn)..."></textarea>
+                <div id="resume-word-count" style="font-size:0.75rem;color:var(--muted);text-align:right;margin-top:0.25rem;"></div>
+            </div>
+
+            <!-- JOB DESCRIPTION UPLOAD BOX -->
+            <div class="card">
+                <h3>💼 Job Description — Upload or Paste</h3>
+                <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.75rem">PDF, DOCX, or TXT · Max 12 pages (~7,000 words) · Optional but improves ATS scoring</p>
+                <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">
+                    <input type="file" id="jd-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:#0d0d2b;border:1px solid rgba(79,140,255,0.2);border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.85rem;">
+                    <button class="btn" onclick="uploadJD()" style="padding:0.6rem 1.2rem;font-size:0.85rem;white-space:nowrap;">Upload JD</button>
+                </div>
+                <div id="jd-upload-status" style="display:none;font-size:0.8rem;padding:0.4rem 0.6rem;border-radius:6px;margin-bottom:0.5rem;"></div>
+                <textarea id="job-input" rows="5" placeholder="Or paste the job description here..."></textarea>
+                <div id="jd-word-count" style="font-size:0.75rem;color:var(--muted);text-align:right;margin-top:0.25rem;"></div>
+            </div>
+
+            <!-- COUNTRY + INDUSTRY + ANALYZE -->
+            <div class="card">
+                <h3>Context</h3>
+                <div class="two-col" style="margin-bottom:0.75rem;">
                     <input type="text" id="country-input" placeholder="Your country (e.g., Canada)">
                     <input type="text" id="industry-input" placeholder="Industry (e.g., IT, Healthcare)">
                 </div>
-                <button class="btn btn-career" onclick="analyzeCareer()" style="margin-top:0.75rem;">Analyze Resume</button>
+                <button class="btn btn-career" onclick="analyzeCareer()" style="width:100%;font-size:1.05rem;padding:1rem;">
+                    Analyze — Run All 17 Engines
+                </button>
+                <p style="color:var(--muted);font-size:0.75rem;text-align:center;margin-top:0.5rem;">ATS · Recruiter PoV · Skills Gap · Visa · Salary · Cover Letter · Interview Prep · 11 more</p>
             </div>
 
             <div class="loading" id="loading-career">
                 <div class="spinner"></div>
-                <p style="margin-top:0.5rem;color:var(--muted)">Analyzing against career intelligence data...</p>
+                <p style="margin-top:0.5rem;color:var(--muted)">Running all 17 engines...</p>
             </div>
 
             <div id="career-result" style="display:none;">
                 <div class="metrics" id="career-metrics"></div>
                 <div class="card">
-                    <h3>Analysis</h3>
+                    <h3>Naked Truth Analysis</h3>
                     <div class="answer-box" id="career-text"></div>
                     <button class="btn" onclick="downloadResults()" style="margin-top:1rem;">Download Results (.txt)</button>
                 </div>
@@ -435,29 +458,38 @@
     <script>
         const API = window.location.origin;
         let lastAnswer = '';
-        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB max
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
         const ALLOWED_TYPES = ['.pdf', '.docx', '.txt', '.md'];
+        const MAX_WORDS = 7000;
 
-        async function uploadFile() {
-            const fileInput = document.getElementById('resume-file');
-            const statusDiv = document.getElementById('upload-status');
-            if (!fileInput.files.length) return alert('Please select a file first');
+        function wordCount(text) { return text.trim() ? text.trim().split(/\s+/).length : 0; }
+
+        function updateWordCount(textareaId, counterId) {
+            const ta = document.getElementById(textareaId);
+            const counter = document.getElementById(counterId);
+            if (!ta || !counter) return;
+            ta.addEventListener('input', () => {
+                const wc = wordCount(ta.value);
+                counter.textContent = wc + ' words' + (wc > MAX_WORDS ? ' ⚠️ exceeds 12-page limit' : '');
+                counter.style.color = wc > MAX_WORDS ? 'var(--accent2)' : 'var(--muted)';
+            });
+        }
+        updateWordCount('resume-input', 'resume-word-count');
+        updateWordCount('job-input', 'jd-word-count');
+
+        async function doUpload(fileInputId, textareaId, statusId) {
+            const fileInput = document.getElementById(fileInputId);
+            const statusDiv = document.getElementById(statusId);
+            if (!fileInput.files.length) { alert('Please select a file first'); return; }
             const file = fileInput.files[0];
-
-            // Security checks
             const ext = '.' + file.name.split('.').pop().toLowerCase();
-            if (!ALLOWED_TYPES.includes(ext)) {
-                alert('Only PDF, DOCX, TXT, MD files allowed. Selected: ' + ext);
-                return;
-            }
-            if (file.size > MAX_FILE_SIZE) {
-                alert('File too large! Maximum 5MB (about 20 pages). Your file: ' + (file.size/1024/1024).toFixed(1) + 'MB');
-                return;
-            }
+            if (!ALLOWED_TYPES.includes(ext)) { alert('Only PDF, DOCX, TXT files allowed. Got: ' + ext); return; }
+            if (file.size > MAX_FILE_SIZE) { alert('File too large! Max 5MB. Your file: ' + (file.size/1024/1024).toFixed(1) + 'MB'); return; }
 
             statusDiv.style.display = 'block';
-            statusDiv.textContent = 'Uploading and extracting text...';
+            statusDiv.style.background = 'rgba(255,217,61,0.08)';
             statusDiv.style.color = 'var(--gold)';
+            statusDiv.textContent = 'Uploading and extracting text...';
 
             try {
                 const formData = new FormData();
@@ -465,18 +497,26 @@
                 const resp = await fetch(API + '/api/upload', { method: 'POST', body: formData });
                 const data = await resp.json();
                 if (data.error) {
-                    statusDiv.textContent = 'Error: ' + data.error;
+                    statusDiv.style.background = 'rgba(255,107,107,0.08)';
                     statusDiv.style.color = 'var(--accent2)';
+                    statusDiv.textContent = 'Error: ' + data.error;
                     return;
                 }
-                document.getElementById('resume-input').value = data.text;
-                statusDiv.textContent = 'Extracted ' + data.words_extracted + ' words from ' + data.file + ' (' + data.extraction_method + '). File erased from memory.';
+                document.getElementById(textareaId).value = data.text;
+                // Trigger word count update
+                document.getElementById(textareaId).dispatchEvent(new Event('input'));
+                statusDiv.style.background = 'rgba(78,205,196,0.08)';
                 statusDiv.style.color = 'var(--green)';
+                statusDiv.textContent = '✓ Extracted ' + data.words_extracted.toLocaleString() + ' words from "' + data.file + '" · Method: ' + data.extraction_method + ' · File erased from memory.';
             } catch (e) {
-                statusDiv.textContent = 'Upload failed: ' + e.message;
+                statusDiv.style.background = 'rgba(255,107,107,0.08)';
                 statusDiv.style.color = 'var(--accent2)';
+                statusDiv.textContent = 'Upload failed: ' + e.message;
             }
         }
+
+        function uploadResume() { doUpload('resume-file', 'resume-input', 'resume-upload-status'); }
+        function uploadJD()     { doUpload('jd-file', 'job-input', 'jd-upload-status'); }
 
         function switchTab(name) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -565,7 +605,10 @@
 
         async function analyzeCareer() {
             const resume = document.getElementById('resume-input').value.trim();
-            if (!resume) return alert('Please paste your resume');
+            if (!resume) return alert('Please upload or paste your resume first');
+            const wc = wordCount(resume);
+            if (wc > MAX_WORDS + 500) return alert('Resume exceeds 12-page limit (' + wc + ' words). Please trim it down.');
+
             document.getElementById('loading-career').classList.add('show');
             document.getElementById('career-result').style.display = 'none';
             try {
@@ -573,29 +616,113 @@
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         resume: resume,
-                        job_description: document.getElementById('job-input').value,
-                        country: document.getElementById('country-input').value,
-                        industry: document.getElementById('industry-input').value,
+                        job_description: document.getElementById('job-input').value.trim(),
+                        country: document.getElementById('country-input').value.trim(),
+                        industry: document.getElementById('industry-input').value.trim(),
+                        include_ai_narrative: true,
                     })
                 });
                 const data = await res.json();
-                const a = data.analysis || {};
+                if (data.error) {
+                    document.getElementById('career-text').innerHTML = '<p style="color:var(--accent2)">Error: ' + data.error + '</p>';
+                    document.getElementById('career-result').style.display = 'block';
+                    document.getElementById('loading-career').classList.remove('show');
+                    return;
+                }
+
+                // ── Read naked_truth (the real API response) ──
+                const nt = data.naked_truth || {};
+                const ats = data.ats_match || {};
+                const score = nt.composite_score ?? nt.score ?? 0;
+                const verdict = nt.verdict || '';
+                const dims = nt.dimension_scores || {};
+                const strengths = nt.strengths || [];
+                const weaknesses = nt.weaknesses || [];
+                const hidden = nt.hidden_issues || nt.hidden || [];
+                const opportunities = nt.opportunities || [];
+                const latency = data.metrics?.latency_ms || 0;
+                const method = data.metrics?.method || '';
+
+                // Metrics bar
+                const scoreColor = score >= 70 ? 'green' : score >= 40 ? 'gold' : 'red';
+                const atsScore = ats.ats_score ?? ats.score;
                 document.getElementById('career-metrics').innerHTML = `
-                    <div class="metric ${(a.score||0) > 70 ? 'green' : 'gold'}"><div class="value">${a.score || 'N/A'}</div><div class="label">Resume Score</div></div>
-                    <div class="metric green"><div class="value">${a.confidence || 'N/A'}%</div><div class="label">Confidence</div></div>
-                    <div class="metric"><div class="value">${data.metrics?.provider || 'AI'}</div><div class="label">Provider</div></div>
+                    <div class="metric ${scoreColor}"><div class="value">${score}</div><div class="label">Resume Score / 100</div></div>
+                    ${atsScore !== null && atsScore !== undefined ? `<div class="metric ${atsScore >= 70 ? 'green' : 'gold'}"><div class="value">${atsScore}%</div><div class="label">ATS Match</div></div>` : ''}
+                    <div class="metric"><div class="value">${(latency/1000).toFixed(1)}s</div><div class="label">Analysis Time</div></div>
+                    <div class="metric ${scoreColor}"><div class="value">${score >= 70 ? 'TOP 25%' : score >= 50 ? 'AVERAGE' : 'NEEDS WORK'}</div><div class="label">Market Rank</div></div>
                 `;
-                let html = `<p><strong>Summary:</strong> ${a.summary || 'N/A'}</p>`;
-                if (a.strengths?.length) html += `<h4 style="color:var(--green);margin-top:1rem;">Strengths</h4><ul>${a.strengths.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                if (a.weaknesses?.length) html += `<h4 style="color:var(--accent2);margin-top:1rem;">Weaknesses</h4><ul>${a.weaknesses.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                if (a.missing_skills?.length) html += `<h4 style="color:var(--gold);margin-top:1rem;">Missing Skills</h4><ul>${a.missing_skills.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                if (a.recommended_certs?.length) html += `<h4 style="color:var(--accent);margin-top:1rem;">Recommended Certifications</h4><ul>${a.recommended_certs.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
-                if (a.action_items?.length) html += `<h4 style="margin-top:1rem;">Action Items</h4><ol>${a.action_items.map(s=>'<li>'+s+'</li>').join('')}</ol>`;
-                html += `<p style="color:var(--green);margin-top:1rem;font-size:0.85rem;">${data.privacy || ''}</p>`;
+
+                // Build result HTML
+                let html = '';
+
+                // Verdict banner
+                if (verdict) {
+                    const vColor = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--gold)' : 'var(--accent2)';
+                    html += `<div style="background:rgba(255,255,255,0.04);border-left:4px solid ${vColor};padding:0.8rem 1rem;border-radius:6px;margin-bottom:1rem;font-weight:700;font-size:1.05rem;color:${vColor}">${verdict}</div>`;
+                }
+
+                // Dimension scores table
+                if (Object.keys(dims).length) {
+                    html += `<h4 style="color:var(--accent);margin:1rem 0 0.5rem;">Dimension Scores</h4>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.5rem;margin-bottom:1rem;">`;
+                    for (const [dim, val] of Object.entries(dims)) {
+                        const pct = typeof val === 'object' ? (val.score ?? val) : val;
+                        const dc = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--gold)' : 'var(--accent2)';
+                        html += `<div style="background:rgba(13,13,43,0.6);border-radius:8px;padding:0.6rem;border:1px solid rgba(79,140,255,0.1);">
+                            <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">${dim.replace(/_/g,' ')}</div>
+                            <div style="font-size:1.3rem;font-weight:800;color:${dc}">${typeof pct === 'number' ? pct : JSON.stringify(pct)}</div>
+                        </div>`;
+                    }
+                    html += `</div>`;
+                }
+
+                // Strengths
+                if (strengths.length) {
+                    html += `<h4 style="color:var(--green);margin-top:1rem;">✓ Strengths</h4><ul style="margin:0.5rem 0 0 1rem;line-height:1.9;">${strengths.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                }
+                // Weaknesses
+                if (weaknesses.length) {
+                    html += `<h4 style="color:var(--accent2);margin-top:1rem;">✗ Weaknesses</h4><ul style="margin:0.5rem 0 0 1rem;line-height:1.9;">${weaknesses.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                }
+                // Hidden issues
+                if (hidden.length) {
+                    html += `<h4 style="color:var(--gold);margin-top:1rem;">⚠ Hidden Issues</h4><ul style="margin:0.5rem 0 0 1rem;line-height:1.9;">${hidden.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                }
+                // Opportunities
+                if (opportunities.length) {
+                    html += `<h4 style="color:var(--purple);margin-top:1rem;">→ Opportunities</h4><ul style="margin:0.5rem 0 0 1rem;line-height:1.9;">${opportunities.map(s=>'<li>'+s+'</li>').join('')}</ul>`;
+                }
+
+                // ATS details
+                if (Object.keys(ats).length && ats.ats_score !== undefined) {
+                    html += `<h4 style="color:var(--accent);margin-top:1rem;">ATS Keyword Match</h4>
+                    <p style="color:var(--muted);font-size:0.85rem;margin-top:0.3rem;">Score: <strong style="color:var(--text)">${ats.ats_score}%</strong>`;
+                    if (ats.matched_keywords?.length) html += ` · Matched: <span style="color:var(--green)">${ats.matched_keywords.slice(0,10).join(', ')}</span>`;
+                    if (ats.missing_keywords?.length) html += `<br>Missing: <span style="color:var(--accent2)">${ats.missing_keywords.slice(0,10).join(', ')}</span>`;
+                    html += `</p>`;
+                }
+
+                // AI narrative
+                if (data.ai_narrative?.text) {
+                    html += `<h4 style="color:var(--purple);margin-top:1.5rem;">AI Narrative (${data.ai_narrative.provider} · ${data.ai_narrative.model})</h4>
+                    <div style="margin-top:0.5rem;white-space:pre-wrap;font-size:0.9rem;line-height:1.8;color:var(--text)">${data.ai_narrative.text}</div>`;
+                }
+
+                // Career intelligence sources
+                if (data.career_intelligence?.length) {
+                    html += `<h4 style="color:var(--muted);margin-top:1.5rem;font-size:0.85rem;">Career Intelligence Sources Used</h4>`;
+                    data.career_intelligence.slice(0,4).forEach(ci => {
+                        html += `<div class="source-item"><div class="src-header"><span class="num">${ci.source}</span><span class="score">${(ci.relevance*100).toFixed(0)}%</span></div><div><strong>${ci.section}</strong></div><div class="preview">${ci.preview}</div></div>`;
+                    });
+                }
+
+                html += `<p style="color:var(--green);margin-top:1.5rem;font-size:0.82rem;border-top:1px solid rgba(78,205,196,0.1);padding-top:0.75rem;">${data.privacy || 'Your resume was NOT stored. Zero database. Already erased.'}</p>`;
+
                 document.getElementById('career-text').innerHTML = html;
                 document.getElementById('career-result').style.display = 'block';
             } catch (e) {
-                document.getElementById('career-text').innerHTML = 'Error: ' + e.message;
+                document.getElementById('career-text').innerHTML = '<p style="color:var(--accent2)">Error: ' + e.message + '</p>';
                 document.getElementById('career-result').style.display = 'block';
             }
             document.getElementById('loading-career').classList.remove('show');

@@ -286,8 +286,8 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
     start = time.time()
     try:
         body = req.get_json()
-        resume = (body.get("resume") or "")[:8000]
-        job_desc = (body.get("job_description") or "")[:4000]
+        resume = (body.get("resume") or "")[:45000]
+        job_desc = (body.get("job_description") or "")[:10000]
         country = body.get("country", "")
         industry = body.get("industry", "")
         if not resume:
@@ -341,7 +341,7 @@ def decision(req: func.HttpRequest) -> func.HttpResponse:
     start = time.time()
     try:
         body = req.get_json()
-        resume = (body.get("resume") or "")[:8000]
+        resume = (body.get("resume") or "")[:45000]
         if not resume:
             return func.HttpResponse(json.dumps({"error": "Resume required"}), status_code=400, mimetype="application/json")
 
@@ -463,8 +463,14 @@ def upload(req: func.HttpRequest) -> func.HttpResponse:
                 "error": f"Unsupported file type: .{file_ext}. Supported: PDF, DOCX, TXT, MD"
             }), status_code=400, mimetype="application/json")
 
-        # Truncate to 10K chars
-        text = text[:10000].strip()
+        # Truncate to 45K chars (~12 pages at zero margin)
+        MAX_WORDS = 7000
+        MAX_CHARS = 45000
+        text = text[:MAX_CHARS].strip()
+        word_count = len(text.split())
+        if word_count > MAX_WORDS:
+            # Truncate by word count
+            text = " ".join(text.split()[:MAX_WORDS])
 
         if not text or len(text) < 20:
             return func.HttpResponse(json.dumps({
