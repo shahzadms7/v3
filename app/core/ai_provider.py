@@ -17,7 +17,12 @@ import asyncio
 import httpx
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
-import google.generativeai as genai
+try:
+    import google.generativeai as genai
+    _GENAI_AVAILABLE = True
+except ImportError:
+    genai = None
+    _GENAI_AVAILABLE = False
 from .config import settings
 
 
