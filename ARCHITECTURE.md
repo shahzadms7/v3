@@ -1,5 +1,5 @@
-# Alfalah AI 2026 V3 — System Architecture
-### *End-to-End Technical Architecture · Built for 8 Billion People*
+# Alfalah Job Career Intelligent AI 2026 V3 — System Architecture
+### *End-to-End Technical Architecture · Built for 8 Billion People · Powered by Microsoft Azure*
 
 <div align="center">
 
@@ -504,5 +504,5 @@ Knowledge Base  → Static .md files — loaded once, cached in Function memory
 
 ---
 
-*Alfalah AI 2026 V3 · Architecture Documentation · © 2026 · Mississauga, Ontario, Canada*
+*Alfalah Job Career Intelligent AI 2026 V3 · Architecture Documentation · © 2026 · Mississauga, Ontario, Canada*
 *Built for 8 Billion People · 100% Microsoft Azure · Responsible AI by Design*

@@ -1,6 +1,6 @@
 """
-Alfalah AI 2026 V3 — PowerPoint Presentation Generator
-Microsoft Hackathon — 10-15 Minute Presentation
+Alfalah Job Career Intelligent AI 2026 V3 — PowerPoint Presentation Generator
+Microsoft Azure Innovation Challenge — 10-15 Minute Presentation
 Built for 8 Billion People
 """
 
@@ -96,7 +96,7 @@ add_rect(s, 0, 7.42, 13.33, 0.08, ORANGE)
 add_textbox(s, "الفلاح", 0, 0.4, 13.33, 1.2,
             font_size=54, bold=True, color=GOLD, align=PP_ALIGN.CENTER)
 
-add_textbox(s, "ALFALAH AI  2026  V3", 0, 1.45, 13.33, 0.7,
+add_textbox(s, "ALFALAH JOB CAREER INTELLIGENT AI  2026  V3", 0, 1.45, 13.33, 0.7,
             font_size=36, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
 
 add_textbox(s, "Career Intelligence Platform", 0, 2.1, 13.33, 0.5,
@@ -683,8 +683,8 @@ add_rect(s, 0, 0, 13.33, 0.08, GOLD)
 
 add_textbox(s, "LIVE DEMO", 0.5, 0.15, 12, 0.6,
             font_size=32, bold=True, color=WHITE)
-add_textbox(s, "https://shahzad-job-coach-ai.vercel.app",
-            0.5, 0.75, 12, 0.45, font_size=18, color=GOLD, align=PP_ALIGN.LEFT)
+add_textbox(s, "Live: shahzad-job-coach-ai.vercel.app  |  API: govrag-v3-func.azurewebsites.net",
+            0.5, 0.75, 12, 0.45, font_size=16, color=GOLD, align=PP_ALIGN.LEFT)
 
 demo_steps = [
     ("STEP 1 — SPLASH SCREEN",     AZURE_BLUE,  "Show the 5-phase smart splash: IP auto-detection → country confirmed → industry selected.\nPoint out: 195-country coverage, zero login required."),
@@ -862,7 +862,7 @@ add_rect(s, 0, 0, 13.33, 0.08, PURPLE)
 
 add_textbox(s, "ROADMAP", 0.5, 0.15, 12, 0.6,
             font_size=28, bold=True, color=WHITE)
-add_textbox(s, "Where we have been. Where we are going. Why the prize accelerates everything.",
+add_textbox(s, "Where we have been. Where we are going. What comes next.",
             0.5, 0.72, 12, 0.4, font_size=14, italic=True, color=PURPLE)
 
 phases = [
@@ -892,7 +892,7 @@ for i, (version, date, status, color, items) in enumerate(phases):
                    font_size=11, color=LIGHT_GRAY, bullet="·")
 
 add_rect(s, 0.3, 6.55, 12.5, 0.65, RGBColor(0x0D, 0x1B, 0x3E))
-add_textbox(s, "With the $10,000 prize: V4 React Native launch + alfalah.app domain + Azure Marketplace + 40-language rollout",
+add_textbox(s, "Next: React Native mobile app · alfalah.app domain · Azure Marketplace listing · 40-language global rollout",
             0.5, 6.6, 12.3, 0.55,
             font_size=13, bold=True, color=GOLD, align=PP_ALIGN.CENTER)
 
@@ -915,12 +915,13 @@ Swahili speakers deserve guidance in their own language.
 V5 closes out 2026 with alfalah.app live, Azure Marketplace listing,
 and a target of 1 million users.
 
-And I want to be direct about the $10,000 prize.
-Every dollar goes directly into accelerating V4 and V5.
-React Native development. The 40-language rollout.
-The Azure Marketplace listing that puts us in front of enterprises.
+V4 is the next milestone: React Native mobile app for Android and iOS,
+Cosmos DB for anonymous analytics, and 40-language rollout —
+because Arabic speakers, Hindi speakers, Swahili speakers deserve
+guidance in their own language.
 
-This prize is not for me. It is for the 8 billion people this platform serves.
+V5 closes 2026 with alfalah.app live, Azure Marketplace listing,
+and a target of 1 million users served.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
@@ -931,55 +932,58 @@ set_bg(s, DARK_BG)
 add_rect(s, 0, 0, 13.33, 0.08, GOLD)
 add_rect(s, 0, 7.42, 13.33, 0.08, GOLD)
 
-add_textbox(s, "THE ASK", 0.5, 0.25, 12, 0.65,
+add_textbox(s, "COMMUNITY CONTRIBUTION", 0.5, 0.25, 12, 0.65,
             font_size=32, bold=True, color=WHITE)
 
-add_textbox(s, "\"We ask not for recognition — we ask for the resources\nto reach the next billion people who need this.\"",
-            0.5, 1.0, 12.3, 1.1,
-            font_size=20, italic=True, bold=True, color=GOLD, align=PP_ALIGN.CENTER)
+add_textbox(s, "\"Built for humanity. Open source. Free forever.\"",
+            0.5, 1.0, 12.3, 0.7,
+            font_size=22, italic=True, bold=True, color=GOLD, align=PP_ALIGN.CENTER)
 
-ask_items = [
-    ("$10,000 PRIZE", AZURE_BLUE, "V4 React Native app + 40-language rollout + alfalah.app domain + Azure Marketplace listing"),
-    ("AZURE CREDITS", GREEN,      "Scaling Azure AI Search to index full 28-file knowledge base at production volume"),
-    ("MICROSOFT NETWORK", PURPLE, "Introductions to Microsoft for Startups, AI for Good, and social impact partnerships"),
-    ("VISIBILITY",    ORANGE,     "Case study on Microsoft Azure blog — so other builders know what is possible"),
+contribution_items = [
+    ("OPEN SOURCE — MIT", AZURE_BLUE,
+     "Full source code at github.com/shahzadms7/v3 — fork it, learn from it, build on it.\nAny developer anywhere can extend this platform for their community."),
+    ("FREE FOREVER", GREEN,
+     "No subscription. No login. No paywall. No data harvested.\nEvery feature available to every professional in every country, at zero cost."),
+    ("AZURE ECOSYSTEM SHOWCASE", PURPLE,
+     "A production reference architecture for Azure Static Web Apps + Functions + OpenAI +\nAI Search + Key Vault + Content Safety — all working together at real scale."),
+    ("RESPONSIBLE AI IN PRACTICE", ORANGE,
+     "Microsoft Responsible AI Standard v2 implemented end-to-end.\nZero hallucination via RAG grounding. Privacy by architecture. GRC compliance framework."),
 ]
-for i, (title, color, desc) in enumerate(ask_items):
-    y = 2.25 + i * 1.15
-    add_rect(s, 0.4, y, 12.2, 0.98, RGBColor(0x0D, 0x1B, 0x3E))
-    add_rect(s, 0.4, y, 0.2, 0.98, color)
+for i, (title, color, desc) in enumerate(contribution_items):
+    y = 1.9 + i * 1.18
+    add_rect(s, 0.4, y, 12.2, 1.05, RGBColor(0x0D, 0x1B, 0x3E))
+    add_rect(s, 0.4, y, 0.2, 1.05, color)
     add_textbox(s, title, 0.75, y+0.07, 3.2, 0.38,
                 font_size=14, bold=True, color=color)
-    add_textbox(s, desc, 4.1, y+0.12, 8.4, 0.7,
-                font_size=13, color=LIGHT_GRAY)
+    add_textbox(s, desc, 4.1, y+0.1, 8.4, 0.85,
+                font_size=12, color=LIGHT_GRAY)
 
-add_textbox(s, "What we give back: A free platform for 8 billion people, built on Azure, demonstrating the full AI stack.",
+add_textbox(s, "govrag-v3-func.azurewebsites.net/api/health  ·  github.com/shahzadms7/v3  ·  shahzad-job-coach-ai.vercel.app",
             0.5, 6.65, 12.3, 0.55,
-            font_size=13, italic=True, color=LIGHT_GRAY, align=PP_ALIGN.CENTER)
+            font_size=12, color=MID_GRAY, align=PP_ALIGN.CENTER)
 
 add_notes(s, """SPEAKER SCRIPT — SLIDE 13 (45 seconds)
 
-We are asking for four things.
+I want to close the content portion of this presentation with what this project gives back.
 
-First, the $10,000 prize — which goes directly into V4 development:
-React Native mobile app, 40-language rollout, and the alfalah.app domain
-so this platform has a permanent home.
+First — it is open source under MIT license. Every line of code, every knowledge file,
+every architectural decision is public at github.com/shahzadms7/v3.
+Any developer in any country can fork this and build a version for their community.
 
-Second, Azure credits to scale our AI Search indexing to handle
-production-level traffic across all 28 knowledge files.
+Second — it is free forever. We have never charged for it.
+We will never charge for it. The mission is the product.
 
-Third, introductions to the Microsoft for Startups program and the AI for Good initiative —
-because this project belongs in that ecosystem.
+Third — this is a complete, production-grade reference architecture for the full
+Azure AI stack. Azure Functions + Static Web Apps + OpenAI + AI Search +
+Key Vault + Content Safety — all working together, all documented,
+all available for the community to learn from.
 
-Fourth, visibility. A case study on the Azure blog or GitHub Showcase
-so that other builders can see what is possible on Azure
-when you combine Functions, OpenAI, AI Search, and Key Vault.
+Fourth — it demonstrates that Responsible AI is not a theoretical principle.
+It is an architectural decision. Zero data storage. RAG grounding.
+Content Safety on every output. GRC compliance framework.
+These are not policies. They are design choices baked into every line of code.
 
-In return, we give Microsoft an open-source, production-grade demonstration
-of the full Azure AI stack — serving 8 billion people —
-that anyone can fork, learn from, and build upon.
-
-That is the deal. And I believe it is a good one.
+That is what we built. That is what we give back.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1001,13 +1005,13 @@ add_textbox(s, "For every human on Earth.", 0, 3.05, 13.33, 0.6,
 
 add_rect(s, 3, 3.8, 7.33, 0.04, ORANGE)
 
-add_textbox(s, "ALFALAH AI 2026 V3", 0, 3.95, 13.33, 0.6,
-            font_size=20, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
+add_textbox(s, "ALFALAH JOB CAREER INTELLIGENT AI  2026  V3", 0, 3.95, 13.33, 0.6,
+            font_size=18, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
 
 links = [
-    "🌐 shahzad-job-coach-ai.vercel.app",
-    "💻 github.com/shahzadms7/v3",
-    "📐 See ARCHITECTURE.md for full system diagram",
+    "Platform: shahzad-job-coach-ai.vercel.app",
+    "API: govrag-v3-func.azurewebsites.net/api/health",
+    "Source: github.com/shahzadms7/v3  |  Architecture: ARCHITECTURE.md",
 ]
 for i, link in enumerate(links):
     add_textbox(s, link, 0, 4.65 + i * 0.42, 13.33, 0.38,
@@ -1050,7 +1054,7 @@ Thank you. I am happy to take questions.
 """)
 
 # ── Save ────────────────────────────────────────────────────────────
-output_path = r"g:\My Drive\Claude Projects 2026\shahzad-job-coach-ai\v3\Alfalah_AI_2026_V3_Presentation.pptx"
+output_path = r"g:\My Drive\Claude Projects 2026\shahzad-job-coach-ai\v3\Alfalah_Job_Career_Intelligent_AI_2026_V3.pptx"
 prs.save(output_path)
 print(f"PowerPoint saved: {output_path}")
 print(f"   Slides: {len(prs.slides)}")
