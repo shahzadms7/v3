@@ -9,8 +9,7 @@ azure-functions
 fastapi>=0.115.0
 uvicorn>=0.32.0
 
-# --- AI Providers (all FREE tier) ---
-google-generativeai>=0.8.0
+# --- HTTP Client (Azure OpenAI calls) ---
 httpx>=0.28.0
 
 # --- Document Processing ---

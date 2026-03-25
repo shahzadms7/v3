@@ -198,76 +198,33 @@ def _check_content_safety(text):
 
 
 def _call_ai(system, user):
+    """100% Azure OpenAI — gpt-4o-mini via Azure OpenAI Service (eastus)."""
     import logging
-    import warnings
-    warnings.filterwarnings("ignore")
-    errors = []
-
-    # ── PRIORITY 1: Azure OpenAI (100% Azure — primary provider) ──
     az_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "").rstrip("/")
     az_key      = os.environ.get("AZURE_OPENAI_KEY", "")
     az_deploy   = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini")
-    if az_endpoint and az_key:
-        try:
-            import httpx
-            url = f"{az_endpoint}/openai/deployments/{az_deploy}/chat/completions?api-version=2024-08-01-preview"
-            resp = httpx.post(url,
-                headers={"api-key": az_key, "Content-Type": "application/json"},
-                json={"messages": [
-                    {"role": "system", "content": system},
-                    {"role": "user",   "content": user}
-                ], "temperature": 0.3, "max_tokens": 8192},
-                timeout=55.0)
-            if resp.status_code == 200:
-                text = resp.json()["choices"][0]["message"]["content"]
-                return {"text": text, "provider": "Azure OpenAI", "model": az_deploy}
-            errors.append(f"AzureOpenAI: HTTP {resp.status_code} — {resp.text[:120]}")
-        except Exception as e:
-            errors.append(f"AzureOpenAI: {str(e)[:80]}")
-
-    # ── PRIORITY 2: Gemini (temporary bridge until Azure quota approved) ──
-    gemini_keys = [os.environ.get("GEMINI_API_KEY", ""), os.environ.get("GEMINI_API_KEY_2", ""), os.environ.get("GEMINI_API_KEY_3", "")]
-    for ki, key in enumerate(gemini_keys):
-        if not key:
-            continue
-        try:
-            import google.generativeai as genai
-            genai.configure(api_key=key)
-            for model in ["gemini-2.0-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]:
-                try:
-                    m = genai.GenerativeModel(model)
-                    r = m.generate_content(f"{system}\n\n{user}",
-                        generation_config=genai.GenerationConfig(temperature=0.3, max_output_tokens=8192))
-                    if r.text:
-                        return {"text": r.text, "provider": f"Gemini-Key{ki+1}", "model": model}
-                except Exception as e:
-                    errors.append(f"Gemini-{ki+1}/{model}: {str(e)[:80]}")
-        except Exception as e:
-            errors.append(f"Gemini import: {str(e)[:80]}")
-
-    # ── PRIORITY 3: Grok fallback ──
-    grok_keys = [os.environ.get("GROK_API_KEY", ""), os.environ.get("GROK_API_KEY_2", ""), os.environ.get("GROK_API_KEY_3", "")]
-    for gi, grok_key in enumerate(grok_keys):
-        if not grok_key:
-            continue
-        try:
-            import httpx
-            resp = httpx.post("https://api.x.ai/v1/chat/completions",
-                headers={"Authorization": f"Bearer {grok_key}", "Content-Type": "application/json"},
-                json={"model": "grok-4-1-fast", "messages": [
-                    {"role": "system", "content": system},
-                    {"role": "user",   "content": user}
-                ], "temperature": 0.3, "max_tokens": 8192},
-                timeout=55.0)
-            if resp.status_code == 200:
-                text = resp.json()["choices"][0]["message"]["content"]
-                return {"text": text, "provider": f"Grok-Key{gi+1}", "model": "grok-4-1-fast"}
-            errors.append(f"Grok-{gi+1}: HTTP {resp.status_code}")
-        except Exception as e:
-            errors.append(f"Grok-{gi+1}: {str(e)[:80]}")
-
-    logging.error(f"[GovRAG] All AI providers failed: {errors}")
-    return {"text": f"AI temporarily unavailable. Errors: {'; '.join(errors)}", "provider": "none", "model": "none"}
+    if not az_endpoint or not az_key:
+        logging.error("[GovRAG] AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_KEY not set")
+        return {"text": "Azure OpenAI not configured.", "provider": "none", "model": "none"}
+    try:
+        import httpx
+        url = f"{az_endpoint}/openai/deployments/{az_deploy}/chat/completions?api-version=2024-08-01-preview"
+        resp = httpx.post(url,
+            headers={"api-key": az_key, "Content-Type": "application/json"},
+            json={"messages": [
+                {"role": "system", "content": system},
+                {"role": "user",   "content": user}
+            ], "temperature": 0.3, "max_tokens": 8192},
+            timeout=55.0)
+        if resp.status_code == 200:
+            text = resp.json()["choices"][0]["message"]["content"]
+            return {"text": text, "provider": "Azure OpenAI", "model": az_deploy}
+        err = f"HTTP {resp.status_code} — {resp.text[:200]}"
+        logging.error(f"[GovRAG] Azure OpenAI error: {err}")
+        return {"text": f"Azure OpenAI unavailable: {err}", "provider": "none", "model": "none"}
+    except Exception as e:
+        logging.error(f"[GovRAG] Azure OpenAI exception: {str(e)}")
+        return {"text": f"Azure OpenAI error: {str(e)[:150]}", "provider": "none", "model": "none"}
 
 
 def _parse_json(text):
@@ -772,71 +729,7 @@ def responsible_ai(req: func.HttpRequest) -> func.HttpResponse:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ENDPOINT: /jobs — Google Jobs search via Serper (last 7 days, by country)
-# ══════════════════════════════════════════════════════════════════════════════
-@app.route("jobs", methods=["POST"])
-def jobs(req: func.HttpRequest) -> func.HttpResponse:
-    """Live job search — Google Jobs via Serper API, last 7 days, country-specific."""
-    import logging
-    try:
-        body = req.get_json()
-        role    = (body.get("role") or "")[:200].strip()
-        country = (body.get("country") or "Canada")[:100].strip()
-        if not role:
-            return func.HttpResponse(json.dumps({"error": "Role required"}), status_code=400, mimetype="application/json")
-
-        serper_key = os.environ.get("SERPER_API_KEY", "")
-        if not serper_key:
-            return func.HttpResponse(json.dumps({
-                "jobs": [], "note": "Add SERPER_API_KEY to Azure Function App settings to enable live job search."
-            }), mimetype="application/json")
-
-        import httpx
-        query = f"{role} jobs {country} site:linkedin.com OR site:indeed.com OR site:glassdoor.com"
-        resp = httpx.post("https://google.serper.dev/search",
-            headers={"X-API-KEY": serper_key, "Content-Type": "application/json"},
-            json={"q": query, "num": 10, "tbs": "qdr:w", "gl": "ca"},
-            timeout=15.0)
-
-        if resp.status_code == 200:
-            data = resp.json()
-            organic = data.get("organic", [])
-            jobs_clean = []
-            for j in organic[:10]:
-                title = j.get("title", "")
-                # Filter to job-like results
-                if any(kw in title.lower() for kw in ["job", role.lower().split()[0].lower(), "hiring", "career", "opening", "position", "vacancy"]) or any(kw in j.get("link","").lower() for kw in ["jobs", "careers", "job"]):
-                    jobs_clean.append({
-                        "title": title,
-                        "company": j.get("source", ""),
-                        "location": country,
-                        "date": "Last 7 days",
-                        "link": j.get("link", ""),
-                        "snippet": j.get("snippet", "")[:250],
-                    })
-            # Also try jobs_results if available
-            jobs_results = data.get("jobs", [])
-            for j in jobs_results[:10]:
-                jobs_clean.append({
-                    "title": j.get("title", ""),
-                    "company": j.get("company", ""),
-                    "location": j.get("location", country),
-                    "date": j.get("date", "Recent"),
-                    "link": j.get("link", ""),
-                    "snippet": j.get("snippet", j.get("description", ""))[:250],
-                })
-            return func.HttpResponse(json.dumps({
-                "jobs": jobs_clean[:10],
-                "query": f"{role} in {country}",
-                "total_found": len(jobs_clean),
-                "source": "Google Search (last 7 days)",
-            }), mimetype="application/json")
-        else:
-            logging.error(f"[GovRAG] Serper error: {resp.status_code} {resp.text[:200]}")
-            return func.HttpResponse(json.dumps({"jobs": [], "error": f"Search API error {resp.status_code}"}), mimetype="application/json")
-    except Exception as e:
-        logging.error(f"[GovRAG] Jobs error: {str(e)}")
-        return func.HttpResponse(json.dumps({"jobs": [], "error": str(e)}), mimetype="application/json")
+# /jobs endpoint removed — Serper is not part of the Azure-only architecture
 
 
 # ══════════════════════════════════════════════════════════════════════════════

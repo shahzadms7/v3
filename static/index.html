@@ -297,15 +297,15 @@
             <span class="hi">Alfalah AI — الفلاح</span>
             <span class="gr">436 ISCO-08 Occupations</span><span>3,000+ ESCO Job Types</span>
             <span class="go">123,000 Global Job Titles</span><span>195 Countries Supported</span>
-            <span class="hi">17 Career Intelligence Modules</span><span class="gr">Azure OpenAI Powered</span>
-            <span>Live Google Jobs Search</span><span class="go">Top 1% Hiring Framework</span>
+            <span class="hi">19 Career Intelligence Tools</span><span class="gr">Azure OpenAI Powered</span>
+            <span class="go">Top 1% Hiring Framework</span>
             <span>900+ Skills A-Z</span><span class="hi">Future Occupations 2026–2125</span>
             <span class="gr">Fortune 500 Career Intelligence</span><span>No Account Required · No Data Stored</span>
             <span class="go">Global Industry Coverage</span><span class="hi">Microsoft Azure Cloud</span>
             <span class="gr">436 ISCO-08 Occupations</span><span>3,000+ ESCO Job Types</span>
             <span class="go">123,000 Global Job Titles</span><span>195 Countries Supported</span>
-            <span class="hi">17 Career Intelligence Modules</span><span class="gr">Azure OpenAI Powered</span>
-            <span>Live Google Jobs Search</span><span class="go">Top 1% Hiring Framework</span>
+            <span class="hi">19 Career Intelligence Tools</span><span class="gr">Azure OpenAI Powered</span>
+            <span class="go">Top 1% Hiring Framework</span>
             <span>900+ Skills A-Z</span><span class="hi">Future Occupations 2026–2125</span>
             <span class="gr">Fortune 500 Career Intelligence</span><span>No Account Required · No Data Stored</span>
         </div>
@@ -858,20 +858,8 @@
                 html += buildToolSection({n:'19', title:'Job Description Template', tagline:'What a professional job description for this role should include — use this to align your resume keywords.'}, `<div class="pretext">${stripMd(data.jd_template)}</div>`);
             }
 
-            // Tool 19 — Live Jobs
-            const jobSection = `<p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.5rem;" id="jobs-meta">Searching Google Jobs (last 7 days)...</p>
-                <div id="live-jobs-container"><div style="color:var(--muted);">Loading job listings...</div></div>
-                <button class="btn btn-sm" onclick="refreshJobs()" style="margin-top:0.75rem;">Refresh</button>`;
-            html += buildToolSection({n:'20', title:'Live Job Openings', tagline:'Current openings matching your profile from Google Jobs, filtered by country and published within the last 7 days.'}, jobSection);
-
             out.innerHTML = html;
             document.getElementById('career-result').style.display = 'block';
-
-            // Auto-trigger live job search
-            const jobTitles = cards?.matchingJobs?.titles?.[0] || industry + ' professional';
-            lastJobRole = jobTitles;
-            lastJobCountry = country;
-            searchJobs(jobTitles, country);
 
         } catch(e) {
             document.getElementById('career-score-text').innerHTML = `<span style="color:var(--accent2);">Error: ${e.message}</span>`;
@@ -882,50 +870,12 @@
         }
     }
 
-    // ── JOB SEARCH ──
-    async function searchJobs(role, country) {
-        const container = document.getElementById('live-jobs-container');
-        const meta = document.getElementById('jobs-meta');
-        container.innerHTML = '<div style="color:var(--muted);padding:0.5rem;">🔍 Searching Google Jobs (last 7 days)...</div>';
-        try {
-            const r = await fetch(API + '/jobs', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({role, country})
-            });
-            const data = await r.json();
-            if (data.note) {
-                container.innerHTML = `<p style="color:var(--gold);font-size:0.85rem;">${data.note}</p>`;
-                return;
-            }
-            const jobs = data.jobs || [];
-            meta.textContent = `Found ${jobs.length} jobs matching "${data.query}" · ${data.source || 'Google Search'}`;
-            if (!jobs.length) {
-                container.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">No recent jobs found. Try a different role title.</p>';
-                return;
-            }
-            container.innerHTML = jobs.map(j => `
-                <div class="job-item">
-                    <div class="job-title">${j.link ? `<a href="${j.link}" target="_blank" rel="noopener">${j.title}</a>` : j.title}</div>
-                    <div class="job-meta">${[j.company, j.location, j.date].filter(Boolean).join(' · ')}</div>
-                    ${j.snippet ? `<div class="job-snippet">${j.snippet}</div>` : ''}
-                </div>
-            `).join('');
-        } catch(e) {
-            container.innerHTML = `<p style="color:var(--accent2);font-size:0.85rem;">Job search error: ${e.message}</p>`;
-        }
-    }
-
     function searchJobsFor(role) {
-        const country = document.getElementById('country-input').value.trim() || 'Canada';
-        lastJobRole = role;
-        lastJobCountry = country;
-        const lj = document.getElementById('live-jobs-container');
-        if (lj) lj.scrollIntoView({behavior: 'smooth'});
-        searchJobs(role, country);
+        // Open LinkedIn Jobs search in new tab for the given role
+        const country = document.getElementById('country-input').value.trim() || '';
+        const q = encodeURIComponent(role + (country ? ' ' + country : ''));
+        window.open(`https://www.linkedin.com/jobs/search/?keywords=${q}`, '_blank', 'noopener');
     }
-
-    function refreshJobs() { searchJobs(lastJobRole, lastJobCountry); }
 
     // ── DOWNLOAD ──
     function downloadResults() {
