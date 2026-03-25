@@ -669,23 +669,29 @@
 
     // ── CARD DEFINITIONS (17 AI engines) ──
     const CARD_DEFS = [
-        {key:'recruiterPov',      n:'01', title:'Recruiter Perspective',         tagline:'How a hiring manager evaluates your resume in the first 6 seconds with 200 applications on the desk.'},
-        {key:'skillsGap',         n:'02', title:'Skills Gap Analysis',            tagline:'Hard and soft skills matched against the job description — plus certifications and an upskilling roadmap.'},
-        {key:'resumeRewrite',     n:'03', title:'Resume Rewrite',                 tagline:'Diagnosis, measurable-win extraction, and a rebuilt resume with impact-first bullet points.'},
-        {key:'coverLetter',       n:'04', title:'Cover Letter',                   tagline:'A role-specific cover letter with a strong opening, three quantified achievements, and a clear call to action.'},
-        {key:'interviewPrep',     n:'05', title:'Interview Preparation',          tagline:'Five likely interview questions with model answers, plus strategic questions to ask the interviewer.'},
-        {key:'starStories',       n:'06', title:'Behavioural STAR Stories',       tagline:'Three structured behavioural examples using the Situation–Task–Action–Result framework with metrics.'},
-        {key:'linkedinSummary',   n:'07', title:'LinkedIn About Section',         tagline:'A search-optimised LinkedIn summary written for both recruiter discovery and human readability.'},
-        {key:'introScripts',      n:'08', title:'Professional Introduction',      tagline:'Scripted 1-minute, 2-minute, and 3-minute verbal introductions for different professional contexts.'},
-        {key:'thankYouEmail',     n:'09', title:'Post-Interview Thank You',       tagline:'A follow-up email that reinforces your candidacy and differentiates you from other applicants.'},
-        {key:'salaryNegotiation', n:'10', title:'Salary Negotiation',             tagline:'Market salary ranges by level in local currency, with negotiation and counter-offer scripts.'},
-        {key:'actionPlan',        n:'11', title:'30-60-90 Day Action Plan',       tagline:'A structured onboarding and job-search plan broken into 30, 60, and 90-day milestones.'},
-        {key:'coldOutreach',      n:'12', title:'Cold Outreach Templates',        tagline:'LinkedIn connection note, direct message, cold email, and follow-up email — ready to personalise.'},
-        {key:'careerPivot',       n:'13', title:'Career Pivot Analysis',          tagline:'Pivot difficulty score, three adjacent roles you qualify for, and a 90-day transition roadmap.'},
-        {key:'countryLaws',       n:'14', title:'Labour Law and Compliance',      tagline:'Jurisdiction-specific notice period, termination rights, non-compete rules, and resume compliance norms.'},
-        {key:'visaPathways',      n:'15', title:'Visa and Immigration Pathways',  tagline:'In-country requirements and all cross-border visa routes with official government URLs.'},
-        {key:'matchingJobs',      n:'16', title:'Matching Job Titles and Boards', tagline:'Recommended job titles, target companies, regional job boards, and freelance platforms.'},
+        {key:'recruiterPov',      n:'02', title:'Recruiter Perspective',         tagline:'How a hiring manager evaluates your resume in the first 6 seconds with 200 applications on the desk.'},
+        {key:'skillsGap',         n:'03', title:'Skills Gap Analysis',            tagline:'Hard and soft skills matched against the job description — plus certifications and an upskilling roadmap.'},
+        {key:'resumeRewrite',     n:'04', title:'Resume Rewrite',                 tagline:'Diagnosis, measurable-win extraction, and a rebuilt resume with impact-first bullet points.'},
+        {key:'coverLetter',       n:'05', title:'Cover Letter',                   tagline:'A role-specific cover letter with a strong opening, three quantified achievements, and a clear call to action.'},
+        {key:'interviewPrep',     n:'06', title:'Interview Preparation',          tagline:'Five likely interview questions with model answers, plus strategic questions to ask the interviewer.'},
+        {key:'starStories',       n:'07', title:'STAR Behavioural Stories',       tagline:'Three structured behavioural examples using the Situation–Task–Action–Result framework with metrics.'},
+        {key:'linkedinSummary',   n:'08', title:'LinkedIn About Section',         tagline:'A search-optimised LinkedIn summary written for both recruiter discovery and human readability.'},
+        {key:'introScripts',      n:'09', title:'Professional Introduction Scripts', tagline:'Scripted 1-minute, 2-minute, and 3-minute verbal introductions for different professional contexts.'},
+        {key:'thankYouEmail',     n:'10', title:'Post-Interview Thank You Email', tagline:'A follow-up email that reinforces your candidacy and differentiates you from other applicants.'},
+        {key:'salaryNegotiation', n:'11', title:'Salary Negotiation',             tagline:'Market salary ranges by level in local currency, with negotiation and counter-offer scripts.'},
+        {key:'actionPlan',        n:'12', title:'30-60-90 Day Action Plan',       tagline:'A structured onboarding and job-search plan broken into 30, 60, and 90-day milestones.'},
+        {key:'coldOutreach',      n:'13', title:'Cold Outreach Templates',        tagline:'LinkedIn connection note, direct message, cold email, and follow-up email — ready to personalise.'},
+        {key:'careerPivot',       n:'14', title:'Career Pivot Analysis',          tagline:'Pivot difficulty score, three adjacent roles you qualify for, and a 90-day transition roadmap.'},
+        {key:'countryLaws',       n:'15', title:'Labour Law and Compliance',      tagline:'Jurisdiction-specific notice period, termination rights, non-compete rules, and resume compliance norms.'},
+        {key:'visaPathways',      n:'16', title:'Visa and Immigration Pathways',  tagline:'In-country requirements and all cross-border visa routes with official government URLs.'},
+        {key:'matchingJobs',      n:'17', title:'Matching Job Titles and Boards', tagline:'Recommended job titles, target companies, regional job boards, and freelance platforms.'},
     ];
+
+    // Strip markdown markers (###, **, *) from AI text
+    function stripMd(s) {
+        if (!s) return '';
+        return s.replace(/^#{1,6}\s+/gm,'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*(.+?)\*/g,'$1').replace(/`(.+?)`/g,'$1').trim();
+    }
 
     // Wrap negative list items in red-flag styling
     function wrapNeg(label, items) {
@@ -722,10 +728,17 @@
                 `;
             case 'skillsGap':
                 return `
-                    ${wrapPos('Skills confirmed in your resume:', data.matched_hard, 'var(--green)')}
-                    ${wrapNeg('Critical gaps — required by the role, not found in your resume:', data.missing_hard)}
-                    ${data.certs_to_pursue?.length ? `<p style="color:var(--gold);font-weight:700;font-size:0.85rem;margin-top:0.75rem;">Recommended certifications:</p><ul>${data.certs_to_pursue.map(c=>`<li><strong>${c.name}</strong> <span style="color:var(--${c.priority==='HIGH'?'accent2':'muted'})">[${c.priority}]</span> ${c.url?`<a href="${c.url}" target="_blank" rel="noopener">Official site</a>`:''}</li>`).join('')}</ul>` : ''}
-                    ${data.roadmap?.length ? `<p style="color:var(--accent);font-weight:700;font-size:0.85rem;margin-top:0.75rem;">Upskilling roadmap:</p><ol style="margin-left:1.2rem;">${data.roadmap.map(s=>`<li style="margin-bottom:0.3rem;">${s}</li>`).join('')}</ol>` : ''}
+                    ${wrapPos('Hard skills confirmed in your resume:', data.matched_hard, 'var(--green)')}
+                    ${wrapNeg('Critical hard skill gaps — required but absent:', data.missing_hard)}
+                    ${wrapPos('Soft skills demonstrated:', data.soft_matched, '#4ecdc4')}
+                    ${wrapNeg('Soft skill gaps — missing from your profile:', data.soft_missing)}
+                    ${data.ats_keywords_matched?.length ? `<p style="color:var(--green);font-weight:700;font-size:0.85rem;margin-top:0.75rem;">✅ ATS Keywords matched:</p><div class="occ-chips">${data.ats_keywords_matched.map(k=>`<span class="occ-chip" style="border-color:var(--green);color:var(--green);">${k}</span>`).join('')}</div>` : ''}
+                    ${data.ats_keywords_missing?.length ? `<p style="color:var(--accent2);font-weight:700;font-size:0.85rem;margin-top:0.5rem;">❌ ATS Keywords missing — add these to your resume:</p><div class="occ-chips">${data.ats_keywords_missing.map(k=>`<span class="occ-chip" style="border-color:var(--accent2);color:var(--accent2);">${stripMd(k).replace(/^MISSING ATS KEYWORD:\s*/i,'')}</span>`).join('')}</div>` : ''}
+                    ${data.tools_platforms?.length ? `<p style="color:var(--gold);font-weight:700;font-size:0.85rem;margin-top:0.75rem;">🛠️ Tools &amp; Platforms this role requires:</p><div class="occ-chips">${data.tools_platforms.map(t=>`<span class="occ-chip" style="border-color:var(--gold);color:var(--gold);">${t}</span>`).join('')}</div>` : ''}
+                    ${data.emerging_trends?.length ? `<p style="color:var(--purple);font-weight:700;font-size:0.85rem;margin-top:0.75rem;">📈 Emerging trends in this field (2026):</p><ul>${data.emerging_trends.map(t=>`<li style="color:var(--purple);">${stripMd(t)}</li>`).join('')}</ul>` : ''}
+                    ${data.certs_to_pursue?.length ? `<p style="color:var(--gold);font-weight:700;font-size:0.85rem;margin-top:0.75rem;">🏆 Certifications to pursue:</p><ul>${data.certs_to_pursue.map(c=>`<li><strong>${c.name||c}</strong>${c.priority?` <span style="color:var(--${c.priority==='HIGH'?'accent2':'muted'})">[${c.priority}]</span>`:''}${c.timeline?` · ${c.timeline}`:''} ${c.url?`<a href="${c.url}" target="_blank" rel="noopener">Enroll →</a>`:''}</li>`).join('')}</ul>` : ''}
+                    ${data.training_resources?.length ? `<p style="color:var(--accent);font-weight:700;font-size:0.85rem;margin-top:0.75rem;">📚 Training resources:</p><ul>${data.training_resources.map(r=>`<li><strong>${r.name||r}</strong>${r.type?` [${r.type}]`:''}${r.cost?` · ${r.cost}`:''}${r.duration?` · ${r.duration}`:''} ${r.url?`<a href="${r.url}" target="_blank" rel="noopener">Start →</a>`:''}</li>`).join('')}</ul>` : ''}
+                    ${data.roadmap?.length ? `<p style="color:var(--accent);font-weight:700;font-size:0.85rem;margin-top:0.75rem;">🗺️ Your personalised upskilling roadmap:</p><ol style="margin-left:1.2rem;">${data.roadmap.map(s=>`<li style="margin-bottom:0.4rem;">${stripMd(s)}</li>`).join('')}</ol>` : ''}
                 `;
             case 'salaryNegotiation':
                 return `
@@ -752,6 +765,12 @@
                     ${data.linkedin_dm ? `<p style="color:var(--purple);font-weight:700;margin-top:0.6rem;">💬 LinkedIn DM:</p><div class="pretext">${data.linkedin_dm}</div>` : ''}
                     ${data.cold_email ? `<p style="color:var(--gold);font-weight:700;margin-top:0.6rem;">📧 Cold Email:</p><div class="pretext">${data.cold_email}</div>` : ''}
                     ${data.follow_up ? `<p style="color:var(--green);font-weight:700;margin-top:0.6rem;">🔄 Follow-up Email:</p><div class="pretext">${data.follow_up}</div>` : ''}
+                `;
+            case 'introScripts':
+                return `
+                    ${data.min1 ? `<p style="color:var(--green);font-weight:700;margin-top:0.6rem;">⏱️ 1-Minute Introduction:</p><div class="pretext">${data.min1}</div>` : ''}
+                    ${data.min2 ? `<p style="color:var(--gold);font-weight:700;margin-top:0.6rem;">⏱️ 2-Minute Introduction:</p><div class="pretext">${data.min2}</div>` : ''}
+                    ${data.min3 ? `<p style="color:var(--accent);font-weight:700;margin-top:0.6rem;">⏱️ 3-Minute Introduction:</p><div class="pretext">${data.min3}</div>` : ''}
                 `;
             case 'careerPivot':
                 return `
@@ -780,7 +799,7 @@
                 return `
                     ${data.titles?.length ? `<p style="color:var(--accent);font-weight:700;margin-top:0.6rem;">💼 Matching Job Titles:</p><div class="occ-chips">${data.titles.map(t=>`<span class="occ-chip" onclick="searchJobsFor('${t}')">${t}</span>`).join('')}</div>` : ''}
                     ${data.companies?.length ? `<p style="color:var(--green);font-weight:700;margin-top:0.6rem;">🏢 Target Companies:</p><ul>${data.companies.slice(0,8).map(c=>`<li>${c}</li>`).join('')}</ul>` : ''}
-                    ${data.job_boards?.length ? `<p style="color:var(--gold);font-weight:700;margin-top:0.6rem;">🔗 Job Boards:</p><ul>${data.job_boards.map(b=>`<li>${b}</li>`).join('')}</ul>` : ''}
+                    ${data.job_boards?.length ? `<p style="color:var(--gold);font-weight:700;margin-top:0.6rem;">🔗 Job Boards:</p><ul>${data.job_boards.map(b=>`<li>${typeof b==='object'?(b.name||b.url||b.board||JSON.stringify(b)):b}</li>`).join('')}</ul>` : ''}
                     ${data.freelance_platforms?.length ? `<p style="color:var(--purple);font-weight:700;margin-top:0.6rem;">💻 Freelance Platforms:</p><ul>${data.freelance_platforms.map(p=>`<li>${p}</li>`).join('')}</ul>` : ''}
                 `;
             default:
@@ -858,9 +877,9 @@
                 ${nt.strengths?.length ? `<p style="color:var(--green);margin-top:0.75rem;font-weight:700;">Strengths confirmed:</p><ul>${nt.strengths.map(s=>`<li>${s}</li>`).join('')}</ul>` : ''}
                 ${nt.weaknesses?.length ? `<div class="flag-neg" style="margin-top:0.6rem;"><p style="color:#ff6060;font-weight:700;margin-bottom:0.4rem;">Weaknesses identified:</p><ul>${nt.weaknesses.map(w=>`<li>${w}</li>`).join('')}</ul></div>` : ''}
                 ${nt.hidden_issues?.length ? `<div class="flag-neg" style="margin-top:0.6rem;"><p style="color:#ff6060;font-weight:700;margin-bottom:0.4rem;">Hidden issues:</p><ul>${nt.hidden_issues.map(i=>`<li>${i}</li>`).join('')}</ul></div>` : ''}
-                ${score < 75 && data.top1_tips?.length ? `<p style="color:var(--gold);font-weight:700;margin-top:0.75rem;">What is needed to reach the top 1%:</p>${data.top1_tips.map(t=>`<div style="background:rgba(5,5,25,0.5);border-radius:8px;padding:0.65rem 0.85rem;margin-top:0.4rem;font-size:0.84rem;line-height:1.7;">${t}</div>`).join('')}` : ''}
+                ${score < 75 && data.top1_tips?.length ? `<p style="color:var(--gold);font-weight:700;margin-top:0.75rem;">What is needed to reach the top 1%:</p>${data.top1_tips.map(t=>`<div style="background:rgba(5,5,25,0.5);border-radius:8px;padding:0.65rem 0.85rem;margin-top:0.4rem;font-size:0.84rem;line-height:1.7;">${stripMd(t)}</div>`).join('')}` : ''}
             `;
-            html += buildToolSection({n:'00', title:'Resume Score', tagline:'Algorithmic ATS score across 8 weighted dimensions. No estimation — grounded in structured career data.'}, scoreHtml);
+            html += buildToolSection({n:'01', title:'Resume Score', tagline:'Algorithmic ATS score across 8 weighted dimensions. No estimation — grounded in structured career data.'}, scoreHtml);
 
             // Tools 01–16 from CARD_DEFS
             for (const def of CARD_DEFS) {
@@ -871,20 +890,20 @@
             const simOcc = data.similar_occupations || [];
             if (simOcc.length) {
                 const simHtml = `<p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.6rem;">Based on your skills and experience — roles you can pivot to or qualify for today. Click any to search live jobs.</p>
-                    <div class="occ-chips">${simOcc.map(o=>`<span class="occ-chip" onclick="searchJobsFor('${o.replace(/['"]/g,'')}')">${o}</span>`).join('')}</div>`;
-                html += buildToolSection({n:'17', title:'Similar Occupations', tagline:'Adjacent career paths identified using the ISCO-08 international occupational classification framework.'}, simHtml);
+                    <div class="occ-chips">${simOcc.map(o=>{const lbl=typeof o==='object'?(o.title||o.name||o.occupation||Object.values(o)[0]||''):String(o);const safe=lbl.replace(/['"]/g,'');return`<span class="occ-chip" onclick="searchJobsFor('${safe}')">${lbl}</span>`;}).join('')}</div>`;
+                html += buildToolSection({n:'18', title:'Similar Occupations', tagline:'Adjacent career paths identified using the ISCO-08 international occupational classification framework.'}, simHtml);
             }
 
             // Tool 18 — JD Template
             if (data.jd_template) {
-                html += buildToolSection({n:'18', title:'Job Description Template', tagline:'What a professional job description for this role should include — use this to align your resume keywords.'}, `<div class="pretext">${data.jd_template}</div>`);
+                html += buildToolSection({n:'19', title:'Job Description Template', tagline:'What a professional job description for this role should include — use this to align your resume keywords.'}, `<div class="pretext">${stripMd(data.jd_template)}</div>`);
             }
 
             // Tool 19 — Live Jobs
             const jobSection = `<p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.5rem;" id="jobs-meta">Searching Google Jobs (last 7 days)...</p>
                 <div id="live-jobs-container"><div style="color:var(--muted);">Loading job listings...</div></div>
                 <button class="btn btn-sm" onclick="refreshJobs()" style="margin-top:0.75rem;">Refresh</button>`;
-            html += buildToolSection({n:'19', title:'Live Job Openings', tagline:'Current openings matching your profile from Google Jobs, filtered by country and published within the last 7 days.'}, jobSection);
+            html += buildToolSection({n:'20', title:'Live Job Openings', tagline:'Current openings matching your profile from Google Jobs, filtered by country and published within the last 7 days.'}, jobSection);
 
             out.innerHTML = html;
             document.getElementById('career-result').style.display = 'block';
