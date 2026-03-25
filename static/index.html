@@ -361,10 +361,10 @@
             <input type="hidden" id="industry-input" value="">
             <div class="card" style="text-align:center;">
                 <button class="btn btn-career" onclick="analyzeCareer()" style="width:100%;font-size:1.1rem;padding:1.1rem;">
-                    ⚡ Analyze My Resume — 19 Career Intelligence Tools
+                    ⚡ Analyze My Resume — 20 Career Intelligence Tools
                 </button>
                 <p style="color:var(--muted);font-size:0.73rem;margin-top:0.5rem;">
-                    ATS Score · Skills Gap · Interview Prep · Cover Letter · Salary · Visa · Career Pivot + 12 more tools
+                    ATS Score · Skills Gap · Interview Prep · Cover Letter · Salary · Visa · Google Jobs + 12 more tools
                 </p>
             </div>
 
@@ -853,9 +853,27 @@
                 html += buildToolSection({n:'18', title:'Similar Occupations', tagline:'Adjacent career paths identified using the ISCO-08 international occupational classification framework.'}, simHtml);
             }
 
-            // Tool 18 — JD Template
+            // Tool 19 — JD Template
             if (data.jd_template) {
                 html += buildToolSection({n:'19', title:'Job Description Template', tagline:'What a professional job description for this role should include — use this to align your resume keywords.'}, `<div class="pretext">${stripMd(data.jd_template)}</div>`);
+            }
+
+            // Tool 20 — Live Job Search (Google Jobs)
+            const jobTitles = (cards.matchingJobs?.titles || []).slice(0, 8);
+            const jobCountry = document.getElementById('country-input').value.trim() || '';
+            if (jobTitles.length) {
+                const googleJobsHtml = `
+                    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.8rem;">Click any role to open live Google Jobs search filtered to your country. Results update in real time.</p>
+                    <div class="occ-chips">${jobTitles.map(t => {
+                        const q = encodeURIComponent(t + (jobCountry ? ' ' + jobCountry : ''));
+                        return `<a href="https://www.google.com/search?q=${q}+jobs&ibp=htl;jobs" target="_blank" rel="noopener" class="occ-chip" style="text-decoration:none;">🔍 ${t}</a>`;
+                    }).join('')}</div>
+                    <div style="margin-top:1rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+                        <a href="https://www.google.com/search?q=${encodeURIComponent((jobTitles[0]||'')+(jobCountry?' '+jobCountry:''))}+jobs&ibp=htl;jobs" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;border:none;padding:0.5rem 1.2rem;border-radius:8px;font-weight:700;font-size:0.85rem;cursor:pointer;text-decoration:none;">🔍 Open Google Jobs</a>
+                        <a href="https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent((jobTitles[0]||'')+(jobCountry?' '+jobCountry:''))}" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#0077b5,#005885);color:#fff;border:none;padding:0.5rem 1.2rem;border-radius:8px;font-weight:700;font-size:0.85rem;cursor:pointer;text-decoration:none;">💼 Open LinkedIn Jobs</a>
+                        <a href="https://www.indeed.com/jobs?q=${encodeURIComponent(jobTitles[0]||'')}${jobCountry?'&l='+encodeURIComponent(jobCountry):''}" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#2164f3,#003399);color:#fff;border:none;padding:0.5rem 1.2rem;border-radius:8px;font-weight:700;font-size:0.85rem;cursor:pointer;text-decoration:none;">🏢 Open Indeed</a>
+                    </div>`;
+                html += buildToolSection({n:'20', title:'Live Job Openings', tagline:'Real-time job search powered by Google Jobs — filtered to your role and country.'}, googleJobsHtml);
             }
 
             out.innerHTML = html;
@@ -871,10 +889,9 @@
     }
 
     function searchJobsFor(role) {
-        // Open LinkedIn Jobs search in new tab for the given role
         const country = document.getElementById('country-input').value.trim() || '';
-        const q = encodeURIComponent(role + (country ? ' ' + country : ''));
-        window.open(`https://www.linkedin.com/jobs/search/?keywords=${q}`, '_blank', 'noopener');
+        const q = encodeURIComponent(role + (country ? ' ' + country : '') + ' jobs');
+        window.open(`https://www.google.com/search?q=${q}&ibp=htl;jobs`, '_blank', 'noopener');
     }
 
     // ── DOWNLOAD ──
