@@ -1053,6 +1053,54 @@ Thank you. I am happy to take questions.
 [Pause. Smile. Let it land.]
 """)
 
+# ═══════════════════════════════════════════════════════════════════
+# SLIDE 15 — ARCHITECTURE DIAGRAM (full-page PNG image)
+# ═══════════════════════════════════════════════════════════════════
+s = prs.slides.add_slide(blank_layout)
+set_bg(s, DARK_BG)
+add_rect(s, 0, 0, 13.33, 0.08, AZURE_BLUE)
+
+add_textbox(s, "SYSTEM ARCHITECTURE — End-to-End", 0.5, 0.1, 12, 0.5,
+            font_size=20, bold=True, color=WHITE)
+add_textbox(s, "Alfalah Job Career Intelligent AI 2026 V3  ·  100% Microsoft Azure  ·  govrag-v3-func.azurewebsites.net",
+            0.5, 0.55, 12.3, 0.35, font_size=11, color=AZURE_BLUE, align=PP_ALIGN.LEFT)
+
+arch_img = r"g:\My Drive\Claude Projects 2026\shahzad-job-coach-ai\v3\architecture_diagram.png"
+import os
+if os.path.exists(arch_img):
+    s.shapes.add_picture(arch_img,
+                         Inches(0.15), Inches(1.0),
+                         Inches(13.0), Inches(6.3))
+
+add_notes(s, """SPEAKER SCRIPT — SLIDE 15 — ARCHITECTURE DIAGRAM (60 seconds)
+
+This diagram shows the complete end-to-end architecture of Alfalah AI.
+
+Starting at the top — users from 195 countries access the platform through
+any browser or as a Progressive Web App. No installation. No account.
+
+Their request hits Azure Static Web Apps — served from the nearest global CDN edge node.
+
+From there, Azure Functions v2 handles all six API routes —
+career analysis, chat, jobs, location, health check, and file upload.
+
+The Functions connect to five Azure services:
+Azure OpenAI for primary AI inference, Azure AI Search for semantic retrieval
+from our knowledge base, Content Safety for output moderation,
+Key Vault for secrets management, and Application Insights for monitoring.
+
+Below that is our AI fallback chain — 4 providers, 8 models —
+so the platform never goes dark regardless of any single provider outage.
+
+The RAG knowledge engine holds 32 career files, 513 KB, 163 ISCO-08 occupations,
+416 skills, 195 countries, and 16,544 lines of code and documentation.
+
+At the bottom right are the development tools that built this:
+Claude Sonnet 4.6, Visual Studio Code, GitHub Actions, Azure CLI, and PowerShell.
+
+Everything. In one diagram.
+""")
+
 # ── Save ────────────────────────────────────────────────────────────
 output_path = r"g:\My Drive\Claude Projects 2026\shahzad-job-coach-ai\v3\Alfalah_Job_Career_Intelligent_AI_2026_V3.pptx"
 prs.save(output_path)

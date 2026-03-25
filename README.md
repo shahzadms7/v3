@@ -166,7 +166,9 @@ AI Fallback Chain:
     → xAI Grok-4-latest
 ```
 
-Full system diagrams with Mermaid: see [ARCHITECTURE.md](./ARCHITECTURE.md)
+![Alfalah Job Career Intelligent AI 2026 V3 — System Architecture](./architecture_diagram.png)
+
+*Full architecture diagram — [architecture_diagram.png](./architecture_diagram.png)*
 
 ---
 
@@ -233,7 +235,7 @@ Full system diagrams with Mermaid: see [ARCHITECTURE.md](./ARCHITECTURE.md)
 | `global-salary-data.md` | — | Comprehensive salary data across geographies |
 | `industry-trends-2026-global.md` | — | Industry hiring forecasts and market demand signals |
 
-**Total: 35 files · 640 KB · 289 RAG-indexed chunks via Azure AI Search**
+**Total: 32 career files + 2 docs + 3 compliance = 37 files · 513 KB · 16,544 lines written (4,818 Python + 10,629 Markdown + 35 JSON)**
 
 ---
 
