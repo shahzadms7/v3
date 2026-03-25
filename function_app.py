@@ -734,7 +734,58 @@ def responsible_ai(req: func.HttpRequest) -> func.HttpResponse:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# /jobs endpoint removed — Serper is not part of the Azure-only architecture
+# ENDPOINT: /search-jobs — Live job listings (Remotive API · free · no key)
+# ══════════════════════════════════════════════════════════════════════════════
+@app.route("search-jobs", methods=["POST"])
+def search_jobs(req: func.HttpRequest) -> func.HttpResponse:
+    """Fetch real job listings from Remotive API — last 7 days, free, no API key."""
+    import httpx, logging
+    from datetime import datetime, timedelta, timezone
+    try:
+        body = req.get_json()
+        query   = (body.get("query") or "software engineer")[:80]
+        country = (body.get("country") or "")[:60]
+
+        url = f"https://remotive.com/api/remote-jobs?search={query}&limit=30"
+        resp = httpx.get(url, timeout=12.0, headers={"User-Agent": "AlfalahAI/3.0"})
+        if resp.status_code != 200:
+            return func.HttpResponse(json.dumps({"jobs": [], "source": "Remotive", "error": f"HTTP {resp.status_code}"}), mimetype="application/json")
+
+        cutoff = datetime.now(timezone.utc) - timedelta(days=7)
+        jobs_out = []
+        for j in resp.json().get("jobs", []):
+            pub_raw = j.get("publication_date", "")
+            try:
+                pub_dt = datetime.fromisoformat(pub_raw.replace("Z", "+00:00"))
+                if pub_dt.tzinfo is None:
+                    pub_dt = pub_dt.replace(tzinfo=timezone.utc)
+                if pub_dt < cutoff:
+                    continue
+                days_ago = (datetime.now(timezone.utc) - pub_dt).days
+                posted_label = "Today" if days_ago == 0 else f"{days_ago}d ago"
+            except Exception:
+                posted_label = "Recent"
+
+            jobs_out.append({
+                "title":    j.get("title", ""),
+                "company":  j.get("company_name", ""),
+                "location": j.get("candidate_required_location") or "Remote / Worldwide",
+                "type":     j.get("job_type", "Full-time"),
+                "salary":   j.get("salary", ""),
+                "url":      j.get("url", ""),
+                "posted":   posted_label,
+            })
+            if len(jobs_out) >= 8:
+                break
+
+        return func.HttpResponse(
+            json.dumps({"jobs": jobs_out, "source": "Remotive", "query": query, "total": len(jobs_out)}),
+            mimetype="application/json",
+            headers={"Access-Control-Allow-Origin": "*"}
+        )
+    except Exception as e:
+        logging.error(f"search-jobs error: {e}")
+        return func.HttpResponse(json.dumps({"jobs": [], "error": str(e)[:120]}), mimetype="application/json")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
