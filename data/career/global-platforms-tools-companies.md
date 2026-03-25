@@ -1,404 +1,397 @@
-# Global Platforms, Tools & Companies — Career Intelligence Database
-## Fortune 500 + Global Tech Giants + Industry Leaders by Region A-Z
-
-**Source:** Fortune 500 2025 | Forbes Global 2000 | Glassdoor | LinkedIn Top Companies | Crunchbase | WEF Largest Employers | ILO Global Enterprise Database
-
----
-
-## NORTH AMERICA — TOP EMPLOYERS
-
-### United States — Fortune 500 Top 100 (Career URLs)
-| # | Company | Sector | Careers URL | Key Hiring |
-|---|---------|--------|------------|-----------|
-| 1 | Walmart | Retail | careers.walmart.com | Operations, Tech, Logistics |
-| 2 | Amazon | Tech/Retail | amazon.jobs | Software, Ops, Logistics, Robotics |
-| 3 | Apple | Tech | jobs.apple.com | Hardware, Software, Design |
-| 4 | UnitedHealth Group | Healthcare | careers.unitedhealthgroup.com | Healthcare, Data, Tech |
-| 5 | Berkshire Hathaway | Finance/Holding | jobs.berkshirehathaway.com | Finance, Insurance |
-| 6 | CVS Health | Healthcare | jobs.cvshealth.com | Pharmacy, Healthcare, Retail |
-| 7 | Exxon Mobil | Energy | jobs.exxonmobil.com | Engineering, Geoscience |
-| 8 | Alphabet (Google) | Tech | careers.google.com | Software, AI, Data, Sales |
-| 9 | McKesson | Healthcare | careers.mckesson.com | Pharma, Logistics, Tech |
-| 10 | AT&T | Telecom | att.jobs | Telecom, Tech, Sales |
-| 11 | Cigna | Healthcare | careers.cigna.com | Insurance, Healthcare |
-| 12 | Microsoft | Tech | careers.microsoft.com | Software, AI, Cloud, Sales |
-| 13 | Chevron | Energy | chevron.com/careers | Engineering, Environment |
-| 14 | Ford Motor | Auto | jobs.ford.com | Engineering, EV, Manufacturing |
-| 15 | Costco | Retail | jobs.costco.com | Retail, Logistics |
-| 16 | General Motors | Auto | careers.gm.com | Engineering, EV, Software |
-| 17 | AbbVie | Pharma | careers.abbvie.com | Research, Clinical, Sales |
-| 18 | Meta (Facebook) | Tech | metacareers.com | Software, AI, Reality Labs |
-| 19 | Humana | Healthcare | careers.humana.com | Healthcare, Data |
-| 20 | JPMorgan Chase | Finance | careers.jpmorgan.com | Finance, Tech, Operations |
-| 21 | Comcast | Media/Telecom | jobs.comcast.com | Tech, Media, Engineering |
-| 22 | Goldman Sachs | Finance | goldmansachs.com/careers | Finance, Tech, Risk |
-| 23 | Elevance Health | Healthcare | elevancehealth.com/careers | Healthcare, Tech |
-| 24 | Home Depot | Retail | careers.homedepot.com | Retail, Supply Chain |
-| 25 | Pfizer | Pharma | pfizer.com/careers | Research, Clinical, Regulatory |
-| 26 | IBM | Tech | ibm.com/employment | AI, Cloud, Consulting |
-| 27 | Verizon | Telecom | verizon.com/about/careers | Telecom, Tech, Sales |
-| 28 | Johnson & Johnson | Healthcare | jobs.jnj.com | Medical, Pharma, Consumer |
-| 29 | Intel | Semiconductor | intel.com/jobs | Hardware, Software, Research |
-| 30 | Lockheed Martin | Defense/Aerospace | lockheedmartinjobs.com | Engineering, Software |
-| 31 | Boeing | Aerospace | boeing.com/careers | Engineering, Manufacturing |
-| 32 | Nvidia | Tech/AI | nvidia.com/careers | AI, Software, Hardware |
-| 33 | Netflix | Media | jobs.netflix.com | Tech, Content, Data |
-| 34 | Tesla | Auto/Energy | tesla.com/careers | Engineering, Manufacturing |
-| 35 | Salesforce | CRM/SaaS | salesforce.com/company/careers | Software, Sales, CX |
-
-### Canada — Top 100 Employers
-| Company | Sector | Careers |
-|---------|--------|---------|
-| Shopify | E-commerce | shopify.com/careers |
-| RBC (Royal Bank) | Finance | rbc.com/careers |
-| TD Bank | Finance | jobs.td.com |
-| Scotiabank | Finance | scotiabank.com/careers |
-| BMO Financial | Finance | bmo.com/careers |
-| CIBC | Finance | cibc.com/careers |
-| Bell Canada | Telecom | jobs.bell.ca |
-| Rogers Communications | Telecom | jobs.rogers.com |
-| Telus | Telecom | telus.com/careers |
-| Canadian Pacific Railway | Transportation | jobs.cpr.ca |
-| Enbridge | Energy | jobs.enbridge.com |
-| Suncor Energy | Energy | suncor.com/careers |
-| Air Canada | Aviation | aircanada.com/careers |
-| Loblaws | Retail | loblaw.ca/careers |
-| Magna International | Auto | magna.com/careers |
-| Open Text | Tech/SaaS | opentext.com/careers |
-| CGI Group | IT Services | cgi.com/careers |
-| Blackberry | Tech/Security | careers.blackberry.com |
-| Canadian Tire | Retail | corp.canadiantire.ca/careers |
-| Sun Life Financial | Insurance | sunlife.com/careers |
-| Manulife | Insurance | manulife.com/careers |
-| TELUS Health | HealthTech | telushealth.com |
-| Celestica | Electronics | celestica.com/careers |
-| Kinaxis | Supply Chain SaaS | kinaxis.com/careers |
-| Element AI (now ServiceNow Canada) | AI | servicenow.com/careers |
-| Cohere | AI/LLM | cohere.com/about#careers |
-| Layer6 AI (TD Bank) | AI/Finance | — |
-| AbCellera Biologics | Biotech | abcellera.com/careers |
-| Wattpad (Naver) | Media | wattpad.com/careers |
-| 1Password | Security | 1password.com/jobs |
+# Global Recruiters, Job Boards & Companies Master — 2026
+## Alfalah Job Career Intelligent AI 2026 V3
+### Source: SIA, Forbes, LinkedIn, Staffing Industry Analysts 2026
 
 ---
 
-## EUROPE — TOP EMPLOYERS
+## SECTION 1: TOP 30 GLOBAL STAFFING AGENCIES
 
-### United Kingdom
-| Company | Sector | Careers |
-|---------|--------|---------|
-| HSBC | Finance | hsbc.com/careers |
-| Barclays | Finance | barclays.com/careers |
-| Lloyds Banking | Finance | lloydsbankinggrouptalent.com |
-| Unilever | FMCG | unilever.com/careers |
-| BP | Energy | bp.com/careers |
-| Shell | Energy | shell.com/careers |
-| GlaxoSmithKline (GSK) | Pharma | jobs.gsk.com |
-| AstraZeneca | Pharma | astrazeneca.com/careers |
-| BT Group | Telecom | bt.com/careers |
-| Vodafone | Telecom | careers.vodafone.com |
-| Rolls-Royce | Aerospace/Engineering | jobs.rolls-royce.com |
-| BAE Systems | Defense | careers.baesystems.com |
-| Arm Holdings | Semiconductor | arm.com/careers |
-| Sage Group | SaaS/Accounting | sage.com/careers |
-| Ocado | E-commerce/Robotics | ocado.com/careers |
-| DeepMind (Google) | AI Research | deepmind.com/careers |
-| Revolut | FinTech | jobs.revolut.com |
-| Monzo | FinTech/Bank | monzo.com/careers |
-| Deliveroo | FoodTech | deliveroo.com/careers |
-| Darktrace | Cybersecurity | darktrace.com/careers |
-
-### Germany
-| Company | Sector | Careers |
-|---------|--------|---------|
-| Volkswagen | Auto | volkswagen.com/careers |
-| Daimler (Mercedes-Benz) | Auto | mercedes-benz.com/careers |
-| BMW | Auto | bmwgroup.com/careers |
-| SAP | Enterprise Software | jobs.sap.com |
-| Siemens | Engineering/Tech | siemens.com/global/en/company/jobs |
-| Bosch | Engineering | bosch.com/careers |
-| Deutsche Bank | Finance | careers.db.com |
-| Allianz | Insurance | allianz.com/en/careers |
-| Bayer | Pharma/Agri | career.bayer.com |
-| BASF | Chemical | basf.com/careers |
-| Infineon | Semiconductor | infineon.com/careers |
-| Adidas | Retail/Apparel | careers.adidas-group.com |
-| Zalando | E-commerce | jobs.zalando.com |
-| N26 | FinTech | n26.com/careers |
-
-### France
-| Company | Sector | Careers |
-|---------|--------|---------|
-| Total Energies | Energy | totalenergies.com/careers |
-| LVMH | Luxury | lvmh.com/careers |
-| BNP Paribas | Finance | jobs.bnpparibas.com |
-| Société Générale | Finance | careers.societegenerale.com |
-| AXA | Insurance | axa.com/careers |
-| Orange | Telecom | orange.com/careers |
-| Capgemini | IT Consulting | capgemini.com/careers |
-| Schneider Electric | Energy/IoT | careers.se.com |
-| Dassault Systèmes | CAD/PLM Software | careers.3ds.com |
-| Thales | Aerospace/Defense | thalesgroup.com/careers |
-| Airbus | Aerospace | careers.airbus.com |
-| Ubisoft | Gaming | ubisoft.com/careers |
-| BlaBlaCar | Travel/Tech | jobs.blablacar.com |
+| Agency | HQ | Revenue | Specialty | Countries | Website |
+|--------|----|---------|-----------|-----------|---------| 
+| Adecco Group | Zurich, CH | $20B | General staffing, HR solutions | 60+ | adecco.com |
+| Manpower Group | Milwaukee, US | $18B | Workforce solutions, RPO | 75+ | manpowergroup.com |
+| Randstad | Diemen, NL | $26B | General staffing, HR tech | 38 | randstad.com |
+| Hays | London, UK | $4B | Professional recruitment | 33 | hays.com |
+| Robert Half | Menlo Park, US | $6B | Finance, accounting, tech | 17 | roberthalf.com |
+| Michael Page | London, UK | $2B | Professional/exec recruitment | 37 | michaelpage.com |
+| PageGroup | London, UK | $2.5B | Multi-brand professional | 37 | pagegroup.com |
+| Korn Ferry | Los Angeles, US | $2.5B | Executive search, leadership | 50+ | kornferry.com |
+| Spencer Stuart | Chicago, US | $1B | C-suite executive search | 30+ | spencerstuart.com |
+| Egon Zehnder | Zurich, CH | $1B | Executive search, leadership | 40+ | egonzehnder.com |
+| Russell Reynolds | New York, US | $800M | C-suite/board search | 47 | russellreynolds.com |
+| Odgers Berndtson | London, UK | $500M | Executive search | 29 | odgersberndtson.com |
+| Boyden | New York, US | $350M | Executive search | 45+ | boyden.com |
+| Antal International | London, UK | $200M | Mid-senior management | 130+ | antal.com |
+| Harvey Nash | London, UK | $1.5B | Tech & digital talent | 15+ | harveynash.com |
+| Allegis Group | Hanover, US | $15B | IT staffing, engineering | 30+ | allegisgroup.com |
+| TEKsystems | Hanover, US | $4B | IT staffing | 20+ | teksystems.com |
+| Insight Global | Atlanta, US | $4B | IT, engineering, staffing | 10 | insightglobal.com |
+| Robert Walters | London, UK | $2B | Professional recruitment | 31 | robertwalters.com |
+| Kelly Services | Troy, US | $4B | Science, engineering, IT | 40+ | kellyservices.com |
+| Gi Group | Milan, IT | $3B | General staffing | 57 | gigroup.com |
+| SThree | London, UK | $1.5B | STEM recruitment | 15+ | sthree.com |
+| Modis (Akkodis) | Atlanta, US | $3B | Engineering, IT | 22+ | akkodis.com |
+| Experis | Milwaukee, US | $2.5B | IT professional staffing | 30+ | experis.com |
+| Pontoon Solutions | Budapest, HU | $1B | MSP/RPO global | 150+ | pontoon.com |
+| Witt/Kieffer | Oak Brook, US | $200M | Healthcare exec search | US/global | wittkieffer.com |
+| Kforce | Tampa, US | $1.5B | Finance, tech staffing | US | kforce.com |
+| CRG (Career Resource Group) | Charlotte, US | $500M | Finance, accounting | US | crgstaffing.com |
+| Hudson Global | Chicago, US | $500M | Professional recruitment | APAC focus | hudson.com |
+| Futurestep (Korn Ferry) | LA, US | $500M | Mid-level RPO | Global | kornferry.com |
 
 ---
 
-## MIDDLE EAST — TOP EMPLOYERS
+## SECTION 2: TOP GLOBAL JOB BOARDS (50+)
 
-### UAE / GCC
-| Company | Country | Sector | Careers |
-|---------|---------|--------|---------|
-| Saudi Aramco | Saudi Arabia | Energy | careers.aramco.com |
-| Emirates Group | UAE | Aviation | emiratesgroupcareers.com |
-| Abu Dhabi National Oil (ADNOC) | UAE | Energy | careers.adnoc.ae |
-| Dubai Airports | UAE | Aviation | careers.dubaiairports.ae |
-| Etisalat (e&) | UAE | Telecom | etisalat.ae/careers |
-| du Telecom | UAE | Telecom | du.ae/careers |
-| Majid Al Futtaim | UAE | Retail/Real Estate | maf.ae/careers |
-| Emaar Properties | UAE | Real Estate | emaar.com/careers |
-| Mashreq Bank | UAE | Finance | mashreq.com/careers |
-| First Abu Dhabi Bank (FAB) | UAE | Finance | bankfab.com/careers |
-| Noon (e-commerce) | UAE | Retail/Tech | jobs.noon.com |
-| Careem (Uber) | UAE | Tech | careem.com/careers |
-| Talabat | UAE | FoodTech | talabat.com/careers |
-| stc (Saudi Telecom) | Saudi Arabia | Telecom | stc.com.sa/careers |
-| Mobily | Saudi Arabia | Telecom | careers.mobily.com.sa |
-| Riyad Bank | Saudi Arabia | Finance | riyadbank.com/careers |
-| Qatar Airways | Qatar | Aviation | careers.qatarairways.com |
-| Qatar Petroleum (QatarEnergy) | Qatar | Energy | qatarenergy.qa/careers |
-| G42 | UAE | AI | g42.ai/careers |
-| Microsoft Arabia | UAE | Tech | careers.microsoft.com |
+### General / Multi-sector
+| Platform | Type | Countries | Monthly Users | Specialty | URL |
+|----------|------|-----------|---------------|-----------|-----|
+| LinkedIn | Professional network + jobs | 200+ | 1B+ | All levels, professional | linkedin.com/jobs |
+| Indeed | Aggregator | 60+ | 350M | All sectors, volume | indeed.com |
+| Glassdoor | Ratings + jobs | 30+ | 60M | Company research + jobs | glassdoor.com |
+| Monster | Job board | 40+ | 50M | General recruitment | monster.com |
+| ZipRecruiter | AI matching | US/UK/CA | 25M | SME hiring | ziprecruiter.com |
+| SimplyHired | Aggregator | 24 | 30M | General | simplyhired.com |
+| CareerBuilder | Job board | US/CA/EU | 40M | General, ATS | careerbuilder.com |
+| Jooble | Aggregator | 69 | 90M | All sectors | jooble.org |
+| Adzuna | Aggregator | 20 | 10M | All sectors | adzuna.com |
+| Trovit | Aggregator | 40+ | 20M | Jobs + classifieds | trovit.com |
 
----
+### Tech & IT
+| Platform | Type | Countries | Specialty | URL |
+|----------|------|-----------|-----------|-----|
+| Dice | Tech jobs | US | 3M | IT professionals | dice.com |
+| Stack Overflow Jobs | Dev community | Global | 100M devs | Software engineers | stackoverflow.com/jobs |
+| GitHub Jobs | Dev platform | Global | 100M devs | Developers | github.com |
+| AngelList / Wellfound | Startup jobs | Global | 8M | Startup tech roles | wellfound.com |
+| Hired | Tech talent | US/UK/CA | 10,000 companies | Tech professionals | hired.com |
+| Toptal | Elite freelance | Global | Top 3% talent | Senior tech/design/finance | toptal.com |
+| Arc.dev | Remote tech | Global | 2M devs | Remote developers | arc.dev |
+| Turing | AI-vetted remote | Global | 2M devs | Remote engineers | turing.com |
+| Gun.io | Tech freelance | US/Global | 50,000 devs | Freelance developers | gun.io |
+| Lemon.io | EU/US remote dev | EU/US | 10,000+ | Vetted developers | lemon.io |
 
-## ASIA — TOP EMPLOYERS
+### Remote / Digital Nomad
+| Platform | Type | Specialty | URL |
+|----------|------|-----------|-----|
+| Remotive | Remote jobs board | Tech, marketing, finance | remotive.com |
+| We Work Remotely | Remote jobs | All tech/creative sectors | weworkremotely.com |
+| Remote OK | Remote jobs | Tech, design, data | remoteok.com |
+| FlexJobs | Verified remote/flex | All sectors, vetted | flexjobs.com |
+| Working Nomads | Remote jobs | Tech, marketing | workingnomads.com |
+| NoDesk | Remote jobs | Design, dev, marketing | nodesk.co |
+| Pangian | Remote jobs | Global remote | pangian.com |
+| Remote.co | Remote jobs | All sectors | remote.co |
+| Jobspresso | Remote tech/creative | Tech, writing | jobspresso.co |
+| EuroRemote | European remote | EU-focused remote | euroremote.eu |
 
-### India
-| Company | Sector | Careers |
-|---------|--------|---------|
-| Tata Consultancy Services (TCS) | IT Services | careers.tcs.com |
-| Infosys | IT Services | infosys.com/careers |
-| Wipro | IT Services | careers.wipro.com |
-| HCLTech | IT Services | hcltech.com/careers |
-| Tech Mahindra | IT Services | careers.techmahindra.com |
-| Reliance Industries | Diversified | ril.com/careers |
-| HDFC Bank | Finance | hdfcbank.com/careers |
-| ICICI Bank | Finance | careers.icicibank.com |
-| Flipkart | E-commerce | flipkartcareers.com |
-| Paytm | FinTech | paytm.com/careers |
-| Ola | Mobility | ola.ola-electric.com/careers |
-| Zomato | FoodTech | zomato.com/careers |
-| Freshworks | SaaS | freshworks.com/company/careers |
-| Zoho | SaaS | zoho.com/careers |
-| InMobi | AdTech | inmobi.com/careers |
+### Regional — Europe
+| Platform | Region | Specialty | URL |
+|----------|--------|-----------|-----|
+| StepStone | Germany/EU | Professional, tech | stepstone.de |
+| XING Jobs | DACH | German-speaking region | xing.com |
+| Reed | UK | All sectors | reed.co.uk |
+| TotalJobs | UK | All sectors | totaljobs.com |
+| CV-Library | UK | All sectors | cv-library.co.uk |
+| Jobsite | UK | All sectors | jobsite.co.uk |
+| EuroJobs | EU | Pan-European | eurojobs.com |
+| EURES | EU | EU free movement | eures.ec.europa.eu |
+| InfoJobs | Spain/Italy | Southern Europe | infojobs.net |
+| Karriere.at | Austria | Austrian jobs | karriere.at |
+| Profesia.sk | Slovakia/CZ | Central Europe | profesia.sk |
+| Jobs.bg | Bulgaria | Bulgarian market | jobs.bg |
+| Pracuj.pl | Poland | Polish market | pracuj.pl |
+| Headhunter (hh.ru) | Russia/CIS | Russian-speaking | hh.ru |
+| Rabota.ua | Ukraine | Ukrainian market | rabota.ua |
 
-### China
-| Company | Sector | Careers |
-|---------|--------|---------|
-| Alibaba | E-commerce/Cloud | alibabagroup.com/careers |
-| Tencent | Tech/Gaming/Social | careers.tencent.com |
-| Huawei | Telecom/Tech | huawei.com/careers |
-| ByteDance (TikTok) | Media/AI | jobs.bytedance.com |
-| Baidu | AI/Search | ir.baidu.com/careers |
-| JD.com | E-commerce | jdcorporate.com/careers |
-| Meituan | Tech/Food | meituan.com/careers |
-| Xiaomi | Consumer Tech | mi.com/careers |
-| Didi | Mobility | didiglobal.com/careers |
-| Pinduoduo | E-commerce | pinduoduo.com/careers |
-| CATL | Battery/EV | catl.com/careers |
-| BYD | EV/Energy | byd.com/careers |
-| NIO | EV | nio.com/careers |
-| Lenovo | PC/Tech | lenovo.com/careers |
-| ICBC | Finance | icbc-ltd.com/careers |
+### Regional — Asia-Pacific
+| Platform | Region | Specialty | URL |
+|----------|--------|-----------|-----|
+| Seek | Australia/NZ | Australia largest | seek.com.au |
+| TradeMe Jobs | New Zealand | NZ jobs | trademe.co.nz |
+| Naukri.com | India | India largest (90M CVs) | naukri.com |
+| Shine.com | India | Professional India | shine.com |
+| JobStreet | SEA | Malaysia, SG, PH, ID | jobstreet.com |
+| JobsDB | HK, Thailand | HK + SEA | jobsdb.com |
+| Glints | SEA startups | Singapore, ID, VN | glints.com |
+| 51job | China | China general | 51job.com |
+| Zhaopin | China | China professional | zhaopin.com |
+| Boss Zhipin | China | China mobile-first | zhipin.com |
+| VietnamWorks | Vietnam | Vietnam professional | vietnamworks.com |
+| Kalibrr | Philippines | PH tech/professional | kalibrr.com |
+| BrighterMonday | East Africa | Kenya, Uganda, TZ | brightermonday.com |
+| Fuzu | Africa | Kenya, Uganda, Rwanda | fuzu.com |
+| Jobberman | West Africa | Nigeria, Ghana | jobberman.com |
 
-### Japan
-| Company | Sector | Careers |
-|---------|--------|---------|
-| Toyota | Auto | toyota.com/careers |
-| Sony | Consumer Tech | sony.com/careers |
-| SoftBank | Telecom/Investing | softbank.jp/careers |
-| Rakuten | E-commerce | global.rakuten.com/careers |
-| NTT Data | IT Services | careers.nttdata.com |
-| Hitachi | Engineering/IT | hitachi.com/recruit |
-| Panasonic | Electronics | panasonic.com/careers |
-| Honda | Auto | careers.honda.com |
-| Fujitsu | IT/Tech | fujitsu.com/careers |
-| Nintendo | Gaming | nintendo.com/careers |
-
-### Singapore
-| Company | Sector | Careers |
-|---------|--------|---------|
-| DBS Bank | Finance | dbs.com/careers |
-| OCBC Bank | Finance | careers.ocbc.com |
-| Singapore Airlines | Aviation | singaporeair.com/careers |
-| Singtel | Telecom | singtel.com/careers |
-| Sea Limited (Shopee/Garena) | Tech | careers.sea.com |
-| Grab | Super App | careers.grab.com |
-| Lazada | E-commerce | careers.lazada.com |
-| Razer | Gaming/Tech | razer.com/careers |
-| Bytedance Singapore | AI/Media | jobs.bytedance.com |
-| PropertyGuru | PropTech | propertyguru.com.sg/careers |
+### Regional — Middle East & Africa
+| Platform | Region | URL |
+|----------|--------|-----|
+| Bayt.com | MENA | bayt.com |
+| GulfTalent | GCC | gulftalent.com |
+| NaukriGulf | GCC | naukrigulf.com |
+| Wuzzuf | Egypt/MENA | wuzzuf.net |
+| Akhtaboot | Jordan/MENA | akhtaboot.com |
+| Tanqeeb | MENA | tanqeeb.com |
+| Rekrute | Morocco/Francophone Africa | rekrute.com |
+| Emploitic | Algeria | emploitic.com |
 
 ---
 
-## SOUTH ASIA — PAKISTAN
-| Company | Sector | Careers |
-|---------|--------|---------|
-| Systems Limited | IT Services | systemsltd.com/careers |
-| NetSol Technologies | FinTech/IT | netsoltech.com/careers |
-| TRG Pakistan | BPO/Tech | trgworld.com/careers |
-| Careem Pakistan | Mobility | careem.com/careers |
-| Daraz (Alibaba) | E-commerce | daraz.pk/careers |
-| Jazz (Veon) | Telecom | jazz.com.pk/careers |
-| Telenor Pakistan | Telecom | telenor.com.pk/careers |
-| Zong (China Mobile) | Telecom | zong.com.pk/careers |
-| HBL | Finance | hbl.com/careers |
-| MCB Bank | Finance | mcb.com.pk/careers |
-| K-Electric | Energy | ke.com.pk/careers |
-| PTCL | Telecom | ptcl.com.pk/careers |
-| Haier Pakistan | Electronics | haier.com/careers |
+## SECTION 3: REMOTE WORK PLATFORMS (20+)
+
+| Platform | Type | Talent Type | Model | URL |
+|----------|------|-------------|-------|-----|
+| Upwork | Freelance marketplace | All skills | Project/hourly | upwork.com |
+| Fiverr | Gig marketplace | Creative, tech, writing | Fixed-price gigs | fiverr.com |
+| Freelancer.com | Freelance marketplace | All skills | Bid-based | freelancer.com |
+| Contra | No-fee freelance | Tech, design, content | Project-based | contra.com |
+| Braintrust | Talent network | Tech, design | Token economy | usebraintrust.com |
+| Andela | Africa/global tech | Senior engineers | Full-time remote | andela.com |
+| Crossover | High-pay remote | Tech, management | Long-term contracts | crossover.com |
+| Deel | Global payroll/EOR | All skills | Compliance + payment | deel.com |
+| Remote.com | EOR + jobs | All skills | Global employment | remote.com |
+| Oyster HR | EOR platform | All skills | Global HR | oysterhr.com |
+| Papaya Global | Global payroll | All skills | Payroll automation | papayaglobal.com |
+| Atlas HXM | EOR | All skills | Global expansion | atlashxm.com |
+| Velocity Global | EOR | All skills | Global compliance | velocityglobal.com |
+| Multiplier | EOR + payroll | All skills | Asia-Pacific focus | multiplier.com |
+| Rippling | Global payroll/HR | All skills | US-originated | rippling.com |
+| 99designs | Design freelance | Designers | Contest + project | 99designs.com |
+| PeoplePerHour | UK freelance | All skills | Hourly/project | peopleperhour.com |
+| Guru.com | Freelance | All skills | WorkRoom model | guru.com |
+| Toptal | Elite network | Top 3% talent | Vetted long-term | toptal.com |
+| Lemon.io | Dev matching | European devs | Vetted remote | lemon.io |
 
 ---
 
-## AFRICA — TOP EMPLOYERS
+## SECTION 4: INDUSTRY-SPECIFIC PLATFORMS
 
-### Nigeria
-MTN Nigeria · Dangote Group · Access Bank · GTBank · UBA · Zenith Bank · Total Energies Nigeria · Nestle Nigeria · Unilever Nigeria · Airtel Nigeria · Lafarge Africa · Nigerian Breweries
-
-### Kenya / East Africa
-Safaricom (M-Pesa) · Kenya Power · Kenya Airways · Equity Group · KCB Bank · Nation Media · East African Breweries · Africa Internet Group (Jumia) · Andela (remote tech)
-
-### South Africa
-Standard Bank · Absa Group · FirstRand · Old Mutual · Naspers (Prosus) · Vodacom · MTN Group · Pick n Pay · Shoprite · Sanlam · Anglo American · Sasol
-
----
-
-## OCEANIA — AUSTRALIA & NEW ZEALAND
-
-### Australia
-BHP · Rio Tinto · Macquarie Group · Commonwealth Bank · ANZ · Westpac · NAB · Telstra · Wesfarmers · Woolworths Group · Qantas · Atlassian · Afterpay (Block) · Canva · Xero · REA Group · Domain Holdings · Seek · MYOB · WiseTech Global
-
-### New Zealand
-ANZ NZ · Fonterra · Air New Zealand · Meridian Energy · Contact Energy · Fisher & Paykel Healthcare · Xero · Spark NZ · Chorus · Z Energy · The Warehouse Group · Mainfreight · Pushpay Technologies
-
----
-
-## GLOBAL SOFTWARE & TOOLS A-Z — PLATFORM INTELLIGENCE
-
-### Cloud Platforms
-AWS (Amazon Web Services) · Microsoft Azure · Google Cloud Platform (GCP) · IBM Cloud · Oracle Cloud · Alibaba Cloud · Tencent Cloud · Huawei Cloud · Salesforce Cloud · SAP BTP · DigitalOcean · Linode (Akamai) · Vultr · Cloudflare
-
-### AI & ML Platforms
-OpenAI (GPT-4o) · Anthropic (Claude) · Google DeepMind (Gemini) · Meta AI (Llama) · xAI (Grok) · Mistral AI · Cohere · Inflection AI · AWS Bedrock · Azure OpenAI · Google Vertex AI · Hugging Face · Weights & Biases · MLflow · DataRobot · H2O.ai · Scale AI · Labelbox
-
-### Business Software (ERP/CRM/HRM)
-SAP S/4HANA · Oracle ERP · Microsoft Dynamics 365 · Workday · Salesforce (CRM) · ServiceNow · Zoho Suite · NetSuite · Epicor · Infor · Odoo · HubSpot · Zendesk · Monday.com · Asana · Jira · Confluence
-
-### DevOps & Engineering Tools
-Git/GitHub/GitLab/Bitbucket · Jenkins · CircleCI · GitHub Actions · ArgoCD · Terraform · Ansible · Puppet · Chef · Docker · Kubernetes · Helm · Prometheus · Grafana · Datadog · New Relic · PagerDuty · HashiCorp Vault · SonarQube · Snyk · Veracode
-
-### Data & Analytics Platforms
-Snowflake · Databricks · dbt · Apache Spark · Apache Kafka · Apache Airflow · Palantir · Tableau · Power BI · Looker (Google) · Mode · Metabase · Qlik · MicroStrategy · SAS · SPSS · R/RStudio · Jupyter · Alteryx · Talend · Informatica · AWS Glue · BigQuery · Redshift · Azure Synapse
-
-### Cybersecurity Tools
-CrowdStrike · Palo Alto Networks · Fortinet · Check Point · Splunk · IBM QRadar · Microsoft Sentinel · Darktrace · Tenable (Nessus) · Qualys · Rapid7 · SentinelOne · Carbon Black · Symantec (Broadcom) · FireEye (Mandiant/Google) · Okta · CyberArk · Ping Identity · Duo Security
-
-### Healthcare Tech
-Epic Systems · Cerner (Oracle Health) · Meditech · Allscripts · McKesson Technology · HealthStream · Veeva Systems · IQVIA · Flatiron Health · Health Catalyst · Philips Health · GE Healthcare Digital · Siemens Healthineers
-
-### FinTech Platforms
-Stripe · Square (Block) · PayPal · Adyen · Revolut · N26 · Wise (TransferWise) · Plaid · Marqeta · FIS · Fiserv · Temenos · Finastra · Backbase · Mambu · 10x Banking · Thought Machine · Brex · Chime · SoFi · Robinhood · Coinbase · Binance
-
-### HR Tech
-Workday HCM · SAP SuccessFactors · Oracle HCM · ADP · Ceridian (Dayforce) · BambooHR · Lever · Greenhouse · Workable · Jobvite · iCIMS · LinkedIn Talent · Indeed · Glassdoor · Rippling · Gusto · Lattice · 15Five · Glint (Microsoft) · Culture Amp
-
-### Marketing Tech (MarTech)
-Salesforce Marketing Cloud · Adobe Experience Cloud · HubSpot · Marketo (Adobe) · Pardot · Mailchimp (Intuit) · ActiveCampaign · Klaviyo · Braze · Iterable · Segment · mParticle · Google Analytics 4 · Mixpanel · Amplitude · Adjust · AppsFlyer · SEMrush · Ahrefs · Moz
-
-### Design & Creative Tools
-Adobe Creative Cloud (Photoshop, Illustrator, Premiere, After Effects) · Figma · Sketch · InVision · Canva · Framer · Webflow · Notion · Loom · Miro · Lucidchart · Whimsical · Procreate · Blender · Cinema 4D · Autodesk (AutoCAD, Maya, 3ds Max)
-
-### Communication & Collaboration
-Microsoft Teams · Slack · Zoom · Google Workspace · Notion · Confluence · SharePoint · Monday.com · Asana · ClickUp · Trello · Basecamp · Discord · Webex (Cisco) · RingCentral
-
-### Supply Chain & Logistics
-SAP SCM · Oracle SCM · Kinaxis · Blue Yonder · E2open · Infor SCM · Manhattan Associates · JDA Software · Flexe · project44 · FourKites · FreightTech: Convoy, Flexport, Transfix
-
-### Legal Tech
-Relativity · Clio · Thomson Reuters (Westlaw) · LexisNexis · iManage · NetDocuments · Litera · ContractPodAi · Ironclad · DocuSign · Adobe Sign · Kira Systems · Luminance
-
----
-
-## JOB BOARDS BY REGION — WHERE TO APPLY
-
-### Global
-LinkedIn (linkedin.com/jobs) · Indeed (indeed.com) · Glassdoor (glassdoor.com) · Monster · CareerBuilder · SimplyHired · ZipRecruiter · Dice (tech) · AngelList/Wellfound (startups)
-
-### Canada
-Job Bank Canada (jobbank.gc.ca) · Workopolis · Eluta · Jobillico · Alberta Job Bank · WCG Services · Canada Job Centre
-
-### USA
-USAJOBS (gov) · LinkedIn · Indeed · Dice · Stack Overflow Jobs · Hired · Otta · Levels.fyi · Blind
-
-### UK
-Reed.co.uk · Totaljobs · CV-Library · Guardian Jobs · Government Jobs (civilservicejobs.service.gov.uk) · Technojobs · CWJobs
-
-### UAE / GCC
-Bayt.com · Naukrigulf.com · GulfTalent.com · LinkedIn MENA · Dubizzle Jobs · StepStone MENA
-
-### India
-Naukri.com · LinkedIn India · Shine.com · TimesJobs · Freshersworld · Instahyre · Hirist (tech) · Apna
-
-### Australia
-Seek.com.au · CareerOne · JobsDB · Graduate Careers Australia · Australian Public Service Jobs (apsjobs.gov.au) · MYCAREER
-
-### Germany
-Stepstone.de · Xing (professional network) · Indeed.de · Monster.de · LinkedIn · Jobware
-
-### Pakistan
-Rozee.pk · Mustakbil.com · Brightspyre · LinkedIn Pakistan | Bolo.pk (blue-collar)
-
-### Africa
-Jobberman (Nigeria, Ghana) · BrighterMonday (East Africa) · Careers24 (South Africa) · Joblink (South Africa) · PNet
-
----
-
-## PROFESSIONAL CERTIFICATIONS — GLOBALLY RECOGNIZED A-Z
-
-### Cloud
-AWS Solutions Architect (Associate/Professional) · AWS DevOps Professional · Azure Administrator (AZ-104) · Azure Developer (AZ-204) · Azure Solutions Architect (AZ-305) · Azure AI Engineer (AI-102) · Azure AI Fundamentals (AI-900) · GCP Professional Cloud Architect · GCP Associate Cloud Engineer · GCP Professional Data Engineer
-
-### Cybersecurity
-CISSP (Certified Information Systems Security Professional) — (ISC)² · CISM (Certified Information Security Manager) — ISACA · CompTIA Security+ · CompTIA CySA+ · CEH (Certified Ethical Hacker) · OSCP (Offensive Security Certified Professional) · CISA (Certified Information Systems Auditor) · SSCP · CAP · CCSP · GIAC (GSEC, GPEN, GCIH)
-
-### Data & AI
-Google Professional ML Engineer · Microsoft Certified: Azure AI Engineer · AWS Certified ML Specialty · Databricks Certified ML Professional · TensorFlow Developer Certificate · IBM Data Science Professional · Coursera/Google Data Analytics Certificate · Meta Data Analyst Certificate
-
-### Finance & Accounting
-CFA (Chartered Financial Analyst) Level I/II/III · CPA (Certified Public Accountant) — US · ACCA (Association of Chartered Certified Accountants) — UK/Global · CA (Chartered Accountant) — Canada/UK · CMA (Certified Management Accountant) · FRM (Financial Risk Manager) · CFP (Certified Financial Planner) · CAIA · Series 7/63/65/66 (US broker)
-
-### Project Management
-PMP (Project Management Professional) · PRINCE2 Foundation/Practitioner · PMI-ACP (Agile Certified Practitioner) · Scrum Master (CSM, PSM, SAFe SM) · CAPM · ITIL 4 Foundation · P3O
-
-### HR
-SHRM-CP / SHRM-SCP · HRPA (Canada) · CIPD Level 3/5/7 (UK) · PHR / SPHR (US) · GPHR (Global) · HRBP Certification
+### Technology
+- GitHub Jobs | github.com | Open source devs
+- Stack Overflow Jobs | stackoverflow.com/jobs | Developers
+- Dice | dice.com | IT professionals USA
+- Hired | hired.com | Tech/data/design
+- AngelList/Wellfound | wellfound.com | Startup tech
 
 ### Healthcare
-RN (Registered Nurse) — country-specific · MD/MBBS (Medicine) · CMA (Certified Medical Assistant) · CNA (Certified Nursing Assistant) · CPHQ (Quality) · CHDA (Health Data Analytics) · CPC (Medical Coding) · RHIT/RHIA (Health Information)
+- Health eCareers | healthecareers.com | US healthcare
+- Medzilla | medzilla.com | Pharma/biotech
+- NurseRecruiter | nurserecruiter.com | Nursing USA
+- BMJ Careers | careers.bmj.com | Medical (UK)
+- Jobtome Healthcare | jobtome.com | Global healthcare
 
-### Trades (North America)
-Red Seal Certificate (Canada — interprovincial) · Journeyperson Electrician (309A/442A) · Plumber (306A) · Carpenter (403A) · HVAC-R (313A) · Welder (456A) · Industrial Mechanic (433A) · Millwright
+### Finance & Accounting
+- eFinancialCareers | efinancialcareers.com | Banking/finance global
+- AccountingJobsToday | accountingjobstoday.com | Accounting USA
+- CFA Institute Careers | cfainstitute.org | Investment management
+- Heidrick & Struggles | heidrick.com | Finance exec search
 
-### Supply Chain & Logistics
-CSCP (Certified Supply Chain Professional) · CPIM (Certified in Planning & Inventory Management) · CPSM (Certified Professional in Supply Management) · Six Sigma Black Belt · APICS · Lean Manufacturing · CLTD (Logistics)
+### Legal
+- LawCrossing | lawcrossing.com | Legal USA
+- BCG Attorney Search | bcgsearch.com | Law firms
+- Lex Mundi | lexmundi.com | International law
+- The Lawyer Jobs | jobs.thelawyer.com | UK legal
 
-### Marketing
-Google Analytics Certified · Google Ads (Search/Display/Video/Shopping) · Meta Blueprint Certified · HubSpot Content Marketing · Hootsuite Social Media · SEMrush SEO Toolkit · Salesforce Marketing Cloud Email Specialist
+### Creative & Design
+- Behance Jobs | behance.net | Design portfolio + jobs
+- Dribbble Jobs | dribbble.com/jobs | UI/UX designers
+- Creative Circle | creativecircle.com | Creative professionals USA
+- Working Not Working | workingnotworking.com | Premium creative talent
 
-### Legal (Global)
-LLB / JD (Law Degree) · Bar Admission (jurisdiction-specific) · Solicitor (England/Wales) · Barrister (England/Wales) · Notary Public · CIPP (Certified Information Privacy Professional) — IAPP · GDPR Practitioner
+### Engineering
+- EngineeringJobs | engineeringjobs.com | All engineering
+- iHire Engineering | ihireengineering.com | Engineering USA
+- Oil & Gas Job Board | oilandgasjobsearch.com | Energy sector
+- Rigzone | rigzone.com | Oil/gas/energy
 
-### ISO Standards Certifications
-ISO 9001 (Quality Management) · ISO 27001 (Information Security) · ISO 14001 (Environmental) · ISO 45001 (Occupational Health) · ISO 42001 (AI Management — new 2024)
+### Education
+- Times Higher Education Jobs | jobs.timeshighereducation.com | Academic
+- HigherEdJobs | higheredjobs.com | US higher education
+- TES Jobs | tes.com/jobs | K-12 teaching UK
+- Dave's ESL Cafe | eslcafe.com/jobs | English teaching abroad
+- TEFL.com | tefl.com | EFL teaching worldwide
+
+### Government & Non-profit
+- USAJobs | usajobs.gov | US federal government
+- Canadian Government Jobs | jobs-emplois.gc.ca | Canadian federal
+- UN Careers | careers.un.org | United Nations
+- Devex | devex.com | International development
+- Idealist | idealist.org | Non-profit global
+
+---
+
+## SECTION 5: FORTUNE 500 TOP EMPLOYERS BY COUNTRY
+
+### Canada — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Royal Bank of Canada (RBC) | Finance | rbc.com/careers |
+| TD Bank | Finance | jobs.td.com |
+| Shopify | Tech | shopify.com/careers |
+| Manulife | Insurance | manulife.com/careers |
+| Canadian Tire | Retail | canadiantire.ca/careers |
+
+### United States — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Amazon | Tech/Retail | amazon.jobs |
+| Microsoft | Technology | careers.microsoft.com |
+| Google/Alphabet | Technology | careers.google.com |
+| Apple | Technology | apple.com/careers |
+| JPMorgan Chase | Finance | careers.jpmorgan.com |
+
+### United Kingdom — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| HSBC | Finance | hsbc.com/careers |
+| NHS | Healthcare | jobs.nhs.uk |
+| Barclays | Finance | home.barclays/careers |
+| Unilever | FMCG | unilever.com/careers |
+| BT Group | Telecom | bt.com/careers |
+
+### Germany — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| SAP | Technology | jobs.sap.com |
+| Siemens | Engineering | siemens.com/careers |
+| BMW Group | Automotive | bmwgroup.com/careers |
+| Deutsche Bank | Finance | db.com/careers |
+| Bayer | Pharma | karriere.bayer.de |
+
+### Australia — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Commonwealth Bank | Finance | commbank.com.au/careers |
+| BHP | Mining | bhp.com/careers |
+| Telstra | Telecom | careers.telstra.com |
+| Westpac | Finance | westpac.com.au/careers |
+| Woolworths | Retail | wowcareers.com.au |
+
+### Singapore — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| DBS Bank | Finance | dbs.com/careers |
+| Singapore Airlines | Aviation | singaporeair.com/careers |
+| Grab | Tech/Transport | grab.com/sg/careers |
+| Sea Limited | Tech | careers.sea.com |
+| ST Engineering | Engineering | stengg.com/careers |
+
+### UAE — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Emirates Airlines | Aviation | emiratesgroupcareers.com |
+| ADNOC | Oil & Gas | adnoc.ae/careers |
+| Dubai Holding | Real Estate/Diversified | dubaiholding.ae/careers |
+| Etisalat (e&) | Telecom | etisalat.ae/careers |
+| ENOC | Energy | enoc.com/careers |
+
+### India — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Tata Consultancy Services | IT | careers.tcs.com |
+| Infosys | IT | infosys.com/careers |
+| Wipro | IT | wipro.com/careers |
+| HCL Technologies | IT | hcltech.com/careers |
+| HDFC Bank | Finance | hdfcbank.com/careers |
+
+### Japan — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Toyota | Automotive | toyota-careers.com |
+| Sony | Electronics | sony.com/en/SonyInfo/Jobs |
+| SoftBank | Tech/Telecom | softbank.jp/career |
+| Hitachi | Engineering | hitachi.com/recruit |
+| Fujitsu | IT | fujitsu.com/global/about/resources/careers |
+
+### South Korea — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Samsung Electronics | Electronics | samsung.com/global/business/careers |
+| LG Electronics | Electronics | lg.com/us/careers |
+| Hyundai | Automotive | hyundai.com/worldwide/en/careers |
+| SK Group | Energy/Telecom | skgroup.com/careers |
+| Kakao | Tech | kakaocorp.com/careers |
+
+### Brazil — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Petrobras | Oil & Gas | petrobras.com.br/trabalhe-conosco |
+| Itau Unibanco | Finance | itau.com.br/carreiras |
+| Ambev | Beverages | ambev.com.br/carreiras |
+| Vale | Mining | vale.com/careers |
+| Embraer | Aerospace | embraer.com/carreiras |
+
+### France — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| TotalEnergies | Energy | totalenergies.com/careers |
+| LVMH | Luxury | lvmh.com/talents |
+| L'Oreal | Beauty | careers.loreal.com |
+| Airbus | Aerospace | airbus.com/careers |
+| BNP Paribas | Finance | bnpparibas.com/careers |
+
+### Netherlands — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| ASML | Semiconductors | asml.com/careers |
+| Shell | Energy | shell.com/careers |
+| Philips | Healthcare tech | philips.com/careers |
+| ING Group | Finance | ing.com/careers |
+| Booking Holdings | Tech/Travel | careers.booking.com |
+
+### Sweden — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Ericsson | Telecom | ericsson.com/careers |
+| Volvo Group | Automotive | volvogroup.com/careers |
+| H&M Group | Retail | careers.hm.com |
+| Spotify | Tech | lifeatspotify.com |
+| Klarna | Fintech | klarna.com/careers |
+
+### Switzerland — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Nestle | FMCG | nestle.com/jobs |
+| Novartis | Pharma | novartis.com/careers |
+| Roche | Pharma/Diagnostics | roche.com/careers |
+| UBS | Finance | ubs.com/careers |
+| ABB | Engineering | abb.com/careers |
+
+### Ireland — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Google EMEA HQ | Technology | careers.google.com |
+| Meta EMEA HQ | Technology | metacareers.com |
+| Pfizer | Pharma | pfizer.com/about/careers |
+| CRH | Construction materials | crh.com/careers |
+| Kerry Group | Food/Pharma ingredients | kerrygroup.com/careers |
+
+### Saudi Arabia — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Saudi Aramco | Oil & Gas | careers.aramco.com |
+| SABIC | Petrochemicals | sabic.com/careers |
+| STC | Telecom | stc.com.sa/careers |
+| Al-Rajhi Bank | Finance | alrajhibank.com.sa/careers |
+| Neom | Mega-project | neom.com/careers |
+
+### South Africa — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| Anglo American | Mining | angloamerican.com/careers |
+| Standard Bank | Finance | standardbank.com/careers |
+| Naspers/Prosus | Tech | prosus.com/careers |
+| MTN Group | Telecom | mtn.com/careers |
+| Sasol | Energy/Chemicals | sasol.com/careers |
+
+### Nigeria — Top 5 Employers
+| Company | Industry | Career URL |
+|---------|----------|-----------|
+| MTN Nigeria | Telecom | mtn.ng/careers |
+| Access Bank | Finance | accessbankplc.com/careers |
+| Dangote Group | Conglomerate | dangote.com/careers |
+| Flutterwave | Fintech | flutterwave.com/careers |
+| NNPC | Oil & Gas | nnpcgroup.com/careers |
+
+---
+*Source: Forbes Global 2000, Fortune 500, LinkedIn Company Rankings 2026 | Alfalah AI*

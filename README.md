@@ -216,7 +216,7 @@ AI Fallback Chain:
 | `certifications-2026.md` | 300+ certs | All-industry certifications A-Z with official URLs |
 | `global-salary-data.md` | 195 countries | Salary ranges by role, level, and local currency |
 | `ats-scoring-guide.md` | 8 dimensions | ATS algorithm science, recruiter behavioral patterns |
-| `industry-trends-2026-global.md` | 15 industries | Hiring trends, in-demand roles, market outlook |
+| `industry-trends-2026-global.md` | 21 sections · 88 divisions (ISIC Rev.4) | Hiring trends, in-demand roles, market outlook, remote work potential, digital nomad visas, salary ranges |
 | `interview-preparation.md` | 436 roles | Role-specific Q&A, behavioral frameworks |
 | `negotiation-scripts-word-by-word.md` | 30+ scripts | Salary negotiation by role and seniority level |
 | `career-roadmap-templates.md` | 100+ roadmaps | 30-60-90 day plans by role |
