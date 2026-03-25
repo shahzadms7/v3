@@ -464,25 +464,37 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
         results = _search_azure(search_terms, top_k=7, doc_type="career")
 
         # ── STEP 4b: Similar occupations from ISCO-08 RAG (ZERO AI cost) ──
-        _META_SECTION_WORDS = {"how","use","database","summary","count","overview","introduction","about","note","structure","definitions","index","contents","appendix","format"}
+        _META_SECTION_WORDS = {
+            "how","use","database","summary","count","overview","introduction","about","note",
+            "structure","definitions","index","contents","appendix","format","classification",
+            "international","standard","platform","intelligence","career","occupations","isco",
+            "framework","system","methodology","version","edition","revision","update","guide",
+            "reference","resource","data","information","description","explanation","purpose",
+        }
         similar_query = f"similar occupation adjacent role {industry} {job_title_guess} related jobs career pivot"
-        similar_raw = _search_azure(similar_query, top_k=12, doc_type="career")
+        similar_raw = _search_azure(similar_query, top_k=15, doc_type="career")
         similar_occupations = []
         for r in similar_raw:
             src = r["chunk"]["source"]
             sec = r["chunk"]["section"].strip()
             if src not in ("occupations-master-isco08-all", "occupations-isco08-complete", "future-occupations-2026-2125"):
                 continue
-            # Filter out meta-section headers (all-caps, admin headers, short non-occupation names)
             sec_lower = sec.lower()
             words = set(re.findall(r'\b[a-z]+\b', sec_lower))
+            # Skip meta-headers, all-caps, too short, too long (>60 chars = likely a document title)
             if words & _META_SECTION_WORDS:
                 continue
-            if len(sec) < 5 or sec.isupper():
+            if len(sec) < 4 or len(sec) > 60 or sec.isupper():
+                continue
+            # Must look like an occupation: 1-6 words, no dashes or colons at start
+            word_count = len(sec.split())
+            if word_count < 1 or word_count > 7:
+                continue
+            if sec.startswith(('-', ':', '#', '*', '[')):
                 continue
             if sec not in similar_occupations:
                 similar_occupations.append(sec)
-        similar_occupations = similar_occupations[:6]
+        similar_occupations = similar_occupations[:8]
 
         # ── STEP 4c: JD template match (ZERO AI cost) ──
         jd_query = f"job description template {job_title_guess} {industry}"
