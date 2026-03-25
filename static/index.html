@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alfalah AI — Career Intelligence Platform</title>
-    <!-- Microsoft Authentication Library (MSAL.js) -->
-    <script src="https://alcdn.msauth.net/browser/2.39.0/js/msal-browser.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -312,21 +310,6 @@
         <span id="loc-isp"></span>
     </div>
 
-    <!-- Microsoft Sign-In Widget -->
-    <div id="ms-signin-widget" style="position:fixed;top:12px;left:16px;z-index:100;display:none;">
-        <button id="ms-btn" onclick="msSignIn()"
-            style="background:rgba(10,10,40,0.85);backdrop-filter:blur(12px);border:1px solid rgba(79,140,255,0.3);
-                   border-radius:20px;padding:0.35rem 0.9rem;color:#fff;font-size:0.78rem;font-weight:600;
-                   cursor:pointer;display:flex;align-items:center;gap:0.45rem;transition:all 0.3s;">
-            <svg width="16" height="16" viewBox="0 0 21 21" fill="none">
-                <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
-                <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
-                <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
-                <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
-            </svg>
-            <span id="ms-btn-label">Sign in with Microsoft</span>
-        </button>
-    </div>
 
     <!-- Scrolling Ticker -->
     <div class="ticker-wrap">
@@ -634,52 +617,6 @@
     const API = window.location.origin;
     let lastJobRole = '', lastJobCountry = '';
 
-    // ── Microsoft Sign-In (MSAL.js + Azure Entra ID) ──────────────────────────
-    // Set these values after registering your app at portal.azure.com
-    const MSAL_CLIENT_ID = window.__AZURE_CLIENT_ID__ || '';   // injected by backend or set here
-    const MSAL_TENANT_ID = window.__AZURE_TENANT_ID__ || 'common';
-
-    let _msalApp = null, _msAccount = null;
-
-    function _initMsal() {
-        if (!MSAL_CLIENT_ID || _msalApp) return;
-        try {
-            _msalApp = new msal.PublicClientApplication({
-                auth: { clientId: MSAL_CLIENT_ID, authority: `https://login.microsoftonline.com/${MSAL_TENANT_ID}`, redirectUri: window.location.origin },
-                cache: { cacheLocation: 'sessionStorage' }
-            });
-            document.getElementById('ms-signin-widget').style.display = 'block';
-            // Check if already signed in
-            const accounts = _msalApp.getAllAccounts();
-            if (accounts.length) { _msAccount = accounts[0]; _updateMsBtn(); }
-        } catch(e) { console.warn('MSAL init:', e); }
-    }
-
-    function _updateMsBtn() {
-        if (!_msAccount) return;
-        document.getElementById('ms-btn-label').textContent = _msAccount.name || _msAccount.username;
-        document.getElementById('ms-btn').onclick = msSignOut;
-    }
-
-    async function msSignIn() {
-        if (!_msalApp) return;
-        try {
-            const r = await _msalApp.loginPopup({ scopes: ['User.Read'] });
-            _msAccount = r.account;
-            _updateMsBtn();
-        } catch(e) { console.warn('MSAL sign-in:', e); }
-    }
-
-    function msSignOut() {
-        if (!_msalApp || !_msAccount) return;
-        _msalApp.logoutPopup({ account: _msAccount });
-        _msAccount = null;
-        document.getElementById('ms-btn-label').textContent = 'Sign in with Microsoft';
-        document.getElementById('ms-btn').onclick = msSignIn;
-    }
-
-    // Init MSAL on load (only if CLIENT_ID configured)
-    _initMsal();
     const MAX_WORDS = 7000;
 
     function wordCount(text) { return text.trim() ? text.trim().split(/\s+/).length : 0; }
