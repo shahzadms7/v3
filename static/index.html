@@ -28,20 +28,6 @@
         }
         @keyframes rainbow { 0%{background-position:0%} 100%{background-position:300%} }
 
-        /* ── Location + Weather Widget (top right) ── */
-        #loc-widget {
-            position: fixed; top: 12px; right: 16px; z-index: 100;
-            background: rgba(10,10,40,0.85); backdrop-filter: blur(12px);
-            border: 1px solid rgba(79,140,255,0.25); border-radius: 20px;
-            padding: 0.35rem 0.85rem; display: flex; align-items: center; gap: 0.5rem;
-            font-size: 0.78rem; color: var(--text); max-width: 380px;
-            box-shadow: 0 4px 20px rgba(79,140,255,0.15); transition: all 0.3s;
-        }
-        #loc-widget:hover { border-color: rgba(79,140,255,0.5); box-shadow: 0 4px 30px rgba(79,140,255,0.3); }
-        #loc-flag { font-size: 1.2rem; }
-        #loc-city { color: var(--text); font-weight: 600; }
-        #loc-weather { color: var(--gold); font-weight: 600; }
-        #loc-isp { color: var(--muted); font-size: 0.7rem; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         /* ── Ticker ── */
         .ticker-wrap {
@@ -302,13 +288,7 @@
 
     <div class="rainbow-bar"></div>
 
-    <!-- Location + Weather Widget -->
-    <div id="loc-widget">
-        <span id="loc-flag">🌍</span>
-        <span id="loc-city">Detecting location...</span>
-        <span id="loc-weather"></span>
-        <span id="loc-isp"></span>
-    </div>
+    <!-- Location detection runs silently in background — no widget shown -->
 
 
     <!-- Scrolling Ticker -->
@@ -333,13 +313,14 @@
 
     <header>
         <h1>Alfalah AI</h1>
-        <p class="subtitle">Career Intelligence Platform · 436 ISCO-08 Occupations · 3,000+ Job Types · 195 Countries<br>Powered by Microsoft Azure · Azure OpenAI · Azure AI Search · Azure Functions</p>
+        <p class="subtitle">Free AI-powered career intelligence for professionals worldwide.<br>No account required · No data stored · Powered entirely on Microsoft Azure.</p>
         <div class="badges">
-            <span class="badge live">Azure Powered</span>
-            <span class="badge">436 Occupations</span>
-            <span class="badge">Google Jobs Search</span>
-            <span class="badge">Top 1% Framework</span>
-            <span class="badge">195 Countries</span>
+            <span class="badge live">● Live</span>
+            <span class="badge" style="border-color:rgba(0,120,212,0.5);color:#0078d4;">⚡ Azure OpenAI</span>
+            <span class="badge" style="border-color:rgba(0,120,212,0.4);color:#50b5ff;">🔍 Azure AI Search</span>
+            <span class="badge" style="border-color:rgba(0,120,212,0.4);color:#7fba00;">⚙️ Azure Functions</span>
+            <span class="badge" style="border-color:rgba(255,107,107,0.4);color:#ff6b9d;">🛡️ Azure Content Safety</span>
+            <span class="badge" style="border-color:rgba(168,85,247,0.4);color:#a855f7;">📊 Application Insights</span>
             <span class="badge">No Account Required</span>
         </div>
     </header>
@@ -356,10 +337,8 @@
             <div class="card">
                 <h3>📄 Resume — Upload or Paste</h3>
                 <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.75rem">PDF · DOCX · TXT · Max 12 pages (~7,000 words) · Processed in memory only — never stored</p>
-                <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">
-                    <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:rgba(5,5,25,0.85);border:1px solid rgba(79,140,255,0.2);border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.83rem;">
-                    <button class="btn btn-sm" onclick="uploadResume()">Upload Resume</button>
-                </div>
+                <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" style="display:none;" onchange="uploadResume()">
+                <button class="btn btn-sm" onclick="document.getElementById('resume-file').click()" style="margin-bottom:0.5rem;">📎 Upload Resume (PDF / DOCX / TXT)</button>
                 <div id="resume-upload-status" style="display:none;font-size:0.8rem;padding:0.4rem 0.6rem;border-radius:6px;margin-bottom:0.5rem;"></div>
                 <textarea id="resume-input" rows="7" placeholder="Or paste your resume text here (from Word, PDF, or LinkedIn Profile)..."></textarea>
                 <div id="resume-word-count" style="font-size:0.75rem;color:var(--muted);text-align:right;margin-top:0.25rem;"></div>
@@ -368,28 +347,24 @@
             <!-- JD UPLOAD -->
             <div class="card">
                 <h3>💼 Job Description — Upload or Paste</h3>
-                <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.75rem">PDF · DOCX · TXT · Max 12 pages · Optional but significantly improves ATS scoring + skill matching</p>
-                <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">
-                    <input type="file" id="jd-file" accept=".pdf,.docx,.txt,.md" style="flex:1;background:rgba(5,5,25,0.85);border:1px solid rgba(79,140,255,0.2);border-radius:8px;padding:0.5rem;color:var(--text);font-size:0.83rem;">
-                    <button class="btn btn-sm" onclick="uploadJD()">Upload JD</button>
-                </div>
+                <p style="color:var(--muted);font-size:0.82rem;margin-bottom:0.75rem">PDF · DOCX · TXT · Optional but significantly improves ATS scoring and skill matching</p>
+                <input type="file" id="jd-file" accept=".pdf,.docx,.txt,.md" style="display:none;" onchange="uploadJD()">
+                <button class="btn btn-sm" onclick="document.getElementById('jd-file').click()" style="margin-bottom:0.5rem;">📎 Upload Job Description (PDF / DOCX / TXT)</button>
                 <div id="jd-upload-status" style="display:none;font-size:0.8rem;padding:0.4rem 0.6rem;border-radius:6px;margin-bottom:0.5rem;"></div>
                 <textarea id="job-input" rows="4" placeholder="Or paste the job description here..."></textarea>
                 <div id="jd-word-count" style="font-size:0.75rem;color:var(--muted);text-align:right;margin-top:0.25rem;"></div>
             </div>
 
-            <!-- CONTEXT + ANALYZE -->
-            <div class="card">
-                <h3>Context</h3>
-                <div class="two-col" style="margin-bottom:0.75rem;">
-                    <input type="text" id="country-input" placeholder="Your country (e.g., Canada, UAE, India)">
-                    <input type="text" id="industry-input" placeholder="Industry (e.g., IT, Healthcare, Finance)">
-                </div>
-                <button class="btn btn-career" onclick="analyzeCareer()" style="width:100%;font-size:1.05rem;padding:1rem;">
-                    ⚡ Analyze — Run All 17 Engines + Similar Roles + Live Jobs
+            <!-- ANALYZE (no context inputs — country auto-detected, industry inferred from resume) -->
+            <!-- Hidden inputs keep the analyzeCareer() function working -->
+            <input type="hidden" id="country-input" value="">
+            <input type="hidden" id="industry-input" value="">
+            <div class="card" style="text-align:center;">
+                <button class="btn btn-career" onclick="analyzeCareer()" style="width:100%;font-size:1.1rem;padding:1.1rem;">
+                    ⚡ Analyze My Resume — 20 Career Intelligence Tools
                 </button>
-                <p style="color:var(--muted);font-size:0.73rem;text-align:center;margin-top:0.5rem;">
-                    ATS Score · Recruiter POV · Skills Gap · Similar Occupations · Cover Letter · Interview Prep · Salary · Visa · Live Jobs + 9 more engines
+                <p style="color:var(--muted);font-size:0.73rem;margin-top:0.5rem;">
+                    ATS Score · Skills Gap · Interview Prep · Cover Letter · Salary · Visa · Live Jobs + 13 more tools
                 </p>
             </div>
 
@@ -582,32 +557,16 @@
         return '⛈️';
     }
 
+    // Silent location detection — fills hidden country input only
     async function detectLocation() {
         try {
-            const res = await fetch('https://ip-api.com/json/?fields=status,country,countryCode,city,isp,lat,lon');
+            const res = await fetch('https://ip-api.com/json/?fields=status,country,countryCode');
             const loc = await res.json();
             if (loc.status === 'success') {
-                document.getElementById('loc-flag').textContent = countryFlag(loc.countryCode);
-                document.getElementById('loc-city').textContent = `${loc.city}, ${loc.country}`;
-                document.getElementById('loc-isp').textContent = loc.isp ? `· ${loc.isp.substring(0,25)}` : '';
-                // Auto-fill country
                 const ci = document.getElementById('country-input');
-                if (!ci.value) ci.value = loc.country;
-                // Weather from Open-Meteo (free, no key)
-                try {
-                    const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current_weather=true`);
-                    const wData = await wRes.json();
-                    const cw = wData.current_weather;
-                    if (cw) {
-                        const emoji = weatherEmoji(cw.weathercode);
-                        const temp = Math.round(cw.temperature);
-                        document.getElementById('loc-weather').textContent = ` ${emoji} ${temp}°C`;
-                    }
-                } catch(e) {}
+                if (ci && !ci.value) ci.value = loc.country;
             }
-        } catch(e) {
-            document.getElementById('loc-city').textContent = 'Location unavailable';
-        }
+        } catch(e) {}
     }
     detectLocation();
 
@@ -638,7 +597,7 @@
     async function doUpload(fileId, taId, statusId) {
         const fi = document.getElementById(fileId);
         const status = document.getElementById(statusId);
-        if (!fi.files.length) { alert('Please select a file first'); return; }
+        if (!fi.files.length) return;
         const file = fi.files[0];
         if (file.size > 5 * 1024 * 1024) { alert('File exceeds the 5 MB limit. Please upload a standard resume document.'); return; }
         const allowed = ['application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document','text/plain','text/markdown'];
