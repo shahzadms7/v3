@@ -76,6 +76,127 @@ def _search(query, top_k=5, doc_type=None):
     return [{"chunk": _chunks[i], "score": s} for i, s in scores[:top_k]]
 
 
+# ── Azure AI Search ───────────────────────────────────────────────────────────
+_az_search_indexed = False
+
+def _ensure_azure_search_index():
+    """Create index and upload all RAG chunks into Azure AI Search (runs once)."""
+    global _az_search_indexed
+    if _az_search_indexed:
+        return
+    _load_rag()
+    endpoint = os.environ.get("AZURE_SEARCH_ENDPOINT", "").rstrip("/")
+    key = os.environ.get("AZURE_SEARCH_KEY", "")
+    if not endpoint or not key:
+        return
+    import httpx, hashlib, logging
+    idx = os.environ.get("AZURE_SEARCH_INDEX", "career-knowledge")
+    api_ver = "2024-07-01"
+    hdrs = {"api-key": key, "Content-Type": "application/json"}
+
+    # Create or update index schema
+    index_def = {
+        "name": idx,
+        "fields": [
+            {"name": "id",       "type": "Edm.String", "key": True, "searchable": False},
+            {"name": "content",  "type": "Edm.String", "searchable": True, "analyzer": "en.microsoft"},
+            {"name": "source",   "type": "Edm.String", "searchable": True, "filterable": True},
+            {"name": "section",  "type": "Edm.String", "searchable": True},
+            {"name": "doc_type", "type": "Edm.String", "filterable": True},
+        ]
+    }
+    try:
+        httpx.put(f"{endpoint}/indexes/{idx}?api-version={api_ver}", headers=hdrs, json=index_def, timeout=30.0)
+    except Exception as e:
+        logging.warning(f"[AzSearch] Index create: {e}")
+        return
+
+    # Upload chunks in batches of 100
+    batch = []
+    for chunk in (_chunks or []):
+        doc_id = hashlib.md5(f"{chunk['source']}-{chunk['idx']}".encode()).hexdigest()
+        batch.append({
+            "@search.action": "mergeOrUpload",
+            "id":       doc_id,
+            "content":  chunk["content"][:4000],
+            "source":   chunk["source"],
+            "section":  chunk["section"][:200],
+            "doc_type": chunk["type"],
+        })
+        if len(batch) >= 100:
+            try:
+                httpx.post(f"{endpoint}/indexes/{idx}/docs/index?api-version={api_ver}", headers=hdrs, json={"value": batch}, timeout=30.0)
+            except Exception:
+                pass
+            batch = []
+    if batch:
+        try:
+            httpx.post(f"{endpoint}/indexes/{idx}/docs/index?api-version={api_ver}", headers=hdrs, json={"value": batch}, timeout=30.0)
+        except Exception:
+            pass
+    _az_search_indexed = True
+    logging.info(f"[AzSearch] Indexed {len(_chunks or [])} chunks → {idx}")
+
+
+def _search_azure(query, top_k=7, doc_type=None):
+    """Search via Azure AI Search; gracefully falls back to local search if unconfigured."""
+    endpoint = os.environ.get("AZURE_SEARCH_ENDPOINT", "").rstrip("/")
+    key      = os.environ.get("AZURE_SEARCH_KEY", "")
+    if not endpoint or not key:
+        return _search(query, top_k=top_k, doc_type=doc_type)
+
+    import httpx, logging
+    _ensure_azure_search_index()
+    idx     = os.environ.get("AZURE_SEARCH_INDEX", "career-knowledge")
+    api_ver = "2024-07-01"
+    hdrs    = {"api-key": key, "Content-Type": "application/json"}
+    body    = {"search": query, "top": top_k, "queryType": "simple"}
+    if doc_type:
+        body["filter"] = f"doc_type eq '{doc_type}'"
+    try:
+        r = httpx.post(f"{endpoint}/indexes/{idx}/docs/search?api-version={api_ver}", headers=hdrs, json=body, timeout=10.0)
+        if r.status_code == 200:
+            return [
+                {"chunk": {"content": h.get("content",""), "source": h.get("source",""),
+                           "section": h.get("section",""), "type": h.get("doc_type","career"), "idx": 0},
+                 "score": round(h.get("@search.score", 1.0), 4), "via": "azure_search"}
+                for h in r.json().get("value", [])
+            ]
+    except Exception as e:
+        logging.warning(f"[AzSearch] Search fallback: {e}")
+    return _search(query, top_k=top_k, doc_type=doc_type)
+
+
+# ── Azure Content Safety ──────────────────────────────────────────────────────
+def _check_content_safety(text):
+    """
+    Screen text via Azure Content Safety.
+    Returns (is_safe: bool, reason: str).
+    Fails open — if service is unavailable, returns (True, 'unavailable').
+    """
+    endpoint = os.environ.get("AZURE_CONTENT_SAFETY_ENDPOINT", "").rstrip("/")
+    key      = os.environ.get("AZURE_CONTENT_SAFETY_KEY", "")
+    if not endpoint or not key:
+        return True, "not_configured"
+    import httpx, logging
+    try:
+        r = httpx.post(
+            f"{endpoint}/contentsafety/text:analyze?api-version=2024-09-01",
+            headers={"Ocp-Apim-Subscription-Key": key, "Content-Type": "application/json"},
+            json={"text": text[:5000], "categories": ["Hate","Violence","SelfHarm","Sexual"],
+                  "outputType": "FourSeverityLevels"},
+            timeout=5.0
+        )
+        if r.status_code == 200:
+            for cat in r.json().get("categoriesAnalysis", []):
+                if cat.get("severity", 0) >= 4:
+                    return False, f"Content moderated by Azure Content Safety: {cat['category']}"
+        return True, "safe"
+    except Exception as e:
+        logging.warning(f"[ContentSafety] {e}")
+        return True, "unavailable"
+
+
 def _call_ai(system, user):
     import logging
     import warnings
@@ -314,6 +435,11 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
         if not resume:
             return func.HttpResponse(json.dumps({"error": "Resume required"}), status_code=400, mimetype="application/json")
 
+        # ── STEP 0: Azure Content Safety screening ──
+        safe, safety_reason = _check_content_safety(resume)
+        if not safe:
+            return func.HttpResponse(json.dumps({"error": safety_reason}), status_code=422, mimetype="application/json")
+
         # ── STEP 1: Parse resume (ZERO AI cost) ──
         from app.core.career_engine import parse_resume, naked_truth_score, ats_score
         parsed = parse_resume(resume)
@@ -324,14 +450,14 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
         # ── STEP 3: ATS match against job description (ZERO AI cost) ──
         ats = ats_score(resume, job_desc) if job_desc else {"ats_score": None}
 
-        # ── STEP 4: RAG search for career intelligence (ZERO AI cost) ──
+        # ── STEP 4: RAG search via Azure AI Search (with local fallback) ──
         job_title_guess = parsed.get("job_title", "") or ""
         search_terms = f"resume {industry} {country} career certification salary skills {job_title_guess}"
-        results = _search(search_terms, top_k=7, doc_type="career")
+        results = _search_azure(search_terms, top_k=7, doc_type="career")
 
         # ── STEP 4b: Similar occupations from ISCO-08 RAG (ZERO AI cost) ──
         similar_query = f"similar occupation adjacent role {industry} {job_title_guess} related jobs career pivot"
-        similar_raw = _search(similar_query, top_k=8, doc_type="career")
+        similar_raw = _search_azure(similar_query, top_k=8, doc_type="career")
         similar_occupations = []
         for r in similar_raw:
             src = r["chunk"]["source"]
@@ -342,7 +468,7 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
 
         # ── STEP 4c: JD template match (ZERO AI cost) ──
         jd_query = f"job description template {job_title_guess} {industry}"
-        jd_raw = _search(jd_query, top_k=3, doc_type="career")
+        jd_raw = _search_azure(jd_query, top_k=3, doc_type="career")
         jd_template = ""
         for r in jd_raw:
             if r["chunk"]["source"] in ("job-description-templates-100", "occupations-master-isco08-all"):
@@ -350,7 +476,7 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
                 break
 
         # ── STEP 4d: Top-1% framework tips (ZERO AI cost) ──
-        top1_raw = _search(f"top 1% resume stand out recruiter {industry}", top_k=3, doc_type="career")
+        top1_raw = _search_azure(f"top 1% resume stand out recruiter {industry}", top_k=3, doc_type="career")
         top1_tips = [r["chunk"]["content"][:300] for r in top1_raw if r["chunk"]["source"] == "top-1-percent-framework"][:2]
         career_intel = [{"source": r["chunk"]["source"], "section": r["chunk"]["section"],
                          "relevance": r["score"], "preview": r["chunk"]["content"][:200]}
@@ -452,7 +578,7 @@ def decision(req: func.HttpRequest) -> func.HttpResponse:
 
         # Add career intelligence from RAG
         search_q = f"{body.get('industry','')} {body.get('country','')} career salary certification visa"
-        rag_results = _search(search_q, top_k=5, doc_type="career")
+        rag_results = _search_azure(search_q, top_k=5, doc_type="career")
         result["career_intelligence"] = [
             {"source": r["chunk"]["source"], "section": r["chunk"]["section"],
              "relevance": r["score"], "preview": r["chunk"]["content"][:300]}
@@ -494,6 +620,11 @@ def upload(req: func.HttpRequest) -> func.HttpResponse:
 
         if not file_data:
             return func.HttpResponse(json.dumps({"error": "No file uploaded"}), status_code=400, mimetype="application/json")
+
+        # ── SECURITY: Azure Content Safety on filename ──
+        safe, _ = _check_content_safety(file_name)
+        if not safe:
+            return func.HttpResponse(json.dumps({"error": "File rejected by content moderation."}), status_code=422, mimetype="application/json")
 
         # ── SECURITY: File size limit (5MB = ~20 pages) ──
         MAX_FILE_SIZE = 5 * 1024 * 1024
