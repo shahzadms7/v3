@@ -464,13 +464,23 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
         results = _search_azure(search_terms, top_k=7, doc_type="career")
 
         # ── STEP 4b: Similar occupations from ISCO-08 RAG (ZERO AI cost) ──
+        _META_SECTION_WORDS = {"how","use","database","summary","count","overview","introduction","about","note","structure","definitions","index","contents","appendix","format"}
         similar_query = f"similar occupation adjacent role {industry} {job_title_guess} related jobs career pivot"
-        similar_raw = _search_azure(similar_query, top_k=8, doc_type="career")
+        similar_raw = _search_azure(similar_query, top_k=12, doc_type="career")
         similar_occupations = []
         for r in similar_raw:
             src = r["chunk"]["source"]
-            sec = r["chunk"]["section"]
-            if src in ("occupations-master-isco08-all", "occupations-isco08-complete", "future-occupations-2026-2125") and sec not in similar_occupations:
+            sec = r["chunk"]["section"].strip()
+            if src not in ("occupations-master-isco08-all", "occupations-isco08-complete", "future-occupations-2026-2125"):
+                continue
+            # Filter out meta-section headers (all-caps, admin headers, short non-occupation names)
+            sec_lower = sec.lower()
+            words = set(re.findall(r'\b[a-z]+\b', sec_lower))
+            if words & _META_SECTION_WORDS:
+                continue
+            if len(sec) < 5 or sec.isupper():
+                continue
+            if sec not in similar_occupations:
                 similar_occupations.append(sec)
         similar_occupations = similar_occupations[:6]
 
@@ -490,149 +500,44 @@ def career(req: func.HttpRequest) -> func.HttpResponse:
                          "relevance": r["score"], "preview": r["chunk"]["content"][:200]}
                         for r in results]
 
-        # ── STEP 5: ALL 17 AI CARDS — One call, full power ──
+        # ── STEP 5: DUAL AI CALLS — split for reliability with gpt-4o-mini ──
         ctx = "\n\n".join([
             f"[Source {i+1}: {r['chunk']['source']} | {r['chunk']['section']}]\n{r['chunk']['content'][:400]}"
             for i, r in enumerate(results)
         ])
         score = truth.get("composite_score", 0)
-        system = f"""You are GovRAG Career — the world's most powerful career intelligence engine. Top 1% standard. Brutal honesty. Evidence-based. Deeply practical.
+        resume_snippet = resume[:2500]
+        jd_snippet = job_desc[:1200] if job_desc else "Not provided"
+        ctx_short = ctx[:2000]
 
-COUNTRY: {country or 'Global'} | INDUSTRY: {industry or 'General'}
-RESUME SCORE: {score}/100 | VERDICT: {truth.get('verdict','')}
-STRENGTHS: {truth.get('strengths',[])}
-WEAKNESSES: {truth.get('weaknesses',[])}
-HIDDEN ISSUES: {truth.get('hidden_issues',[])}
+        # ── CALL A: 13 narrative cards (lighter, faster) ──
+        sys_a = f"""You are GovRAG Career — elite career intelligence engine. Country: {country or 'Global'} | Industry: {industry or 'General'} | Resume Score: {score}/100
+RAG DATA:\n{ctx_short}
+Return ONLY valid JSON with these 13 keys. No markdown. No explanation:
+{{"recruiterPov":{{"first_impression":"brutal 6-sec hiring manager verdict","top_third":["5 specific items recruiter sees in top 1/3","","","",""],"buried":["3 buried achievements","",""],"red_flags":["3 concrete red flags","",""],"quick_wins":["5 high-impact fixes","","","",""]}},"coverLetter":"3-paragraph letter: hook+company-specific opening / 3 quantified wins matching JD / confident close with specific CTA","resumeRewrite":"Diagnosis of 3 issues. Then rewritten bullets: action verb + number (%, $, time, team). Top 3 results on page 1 first half. ATS keywords included.","linkedinSummary":"First-person About: bold hook + 3 skills with evidence + seeking statement. 150-220 words. Keyword-optimised.","introScripts":{{"min1":"Word-for-word 1-min phone screen: name+role+2 results+why here","min2":"Word-for-word 2-min HM round: background+3 numbers+why role+question","min3":"Word-for-word 3-min panel: career arc+project+skills+cultural fit+close"}},"thankYouEmail":"Subject + full body: thank+specific reference+2 qualifications+concern addressed+next steps. 150-200 words.","salaryNegotiation":{{"table":[{{"level":"Entry (0-2 yrs)","range":"{country or 'Canada'} currency specific range"}},{{"level":"Mid (3-5 yrs)","range":"range"}},{{"level":"Senior (6-9 yrs)","range":"range"}},{{"level":"Lead/Principal","range":"range"}},{{"level":"Director/VP","range":"range"}}],"script":"anchor-high negotiation script","counter_script":"counter-offer + non-monetary alternatives"}},"actionPlan":{{"day30":["5 specific first-30-day actions","","","",""],"day60":["5 day-31-60 milestones","","","",""],"day90":["5 day-61-90 results to demonstrate","","","",""]}},"coldOutreach":{{"linkedin_request":"<300 char specific connection note","linkedin_dm":"full DM: compliment+value+ask","cold_email":"Subject: X\\n\\nFull body","follow_up":"1-week follow-up adds new value"}},"careerPivot":{{"pivot_score":"Easy/Moderate/Challenging","reason":"specific skills overlap % and demand","adjacent_roles":[{{"title":"role 1","transferable":["skill"],"gaps":["gap"],"time_to_qualify":"X months"}},{{"title":"role 2","transferable":["skill"],"gaps":["gap"],"time_to_qualify":"X months"}},{{"title":"role 3","transferable":["skill"],"gaps":["gap"],"time_to_qualify":"X months"}}],"plan_90_day":["Week 1-2: action","Month 1: milestone","Month 2: cert or project","Month 3: apply+network"]}},"countryLaws":{{"notice_period":"{country} specific notice with citation","termination_rights":"severance+wrongful dismissal statutory mins","non_compete":"enforceability in {country}","resume_compliance":["5 country-specific resume rules","","","",""],"tax_forms":["relevant tax forms",""],"worker_rights":["5 specific rights with legal ref","","","",""]}},"visaPathways":{{"scenario":"in_country or outside_country","in_country":["3 local licensing/permit requirements","",""],"outside_country":[{{"type":"visa name","description":"who qualifies","url":"https://official-gov-url","processing_time":"X weeks"}},{{"type":"visa 2","description":"details","url":"https://official-url","processing_time":"X weeks"}}],"digital_nomad":"availability + link","working_holiday":"availability + age/nationality"}},"matchingJobs":{{"titles":["6 exact LinkedIn search titles","","","","",""],"companies":["8 companies hiring in {country}","","","","","","",""],"job_boards":["LinkedIn — linkedin.com/jobs","Indeed — indeed.com","Glassdoor — glassdoor.com","country-specific board with URL"],"recruiters_by_country":[{{"country":"{country or 'Canada'}","firms":["Hays","Robert Half","Michael Page","local firm"]}}],"freelance_platforms":["Upwork — upwork.com","Toptal — toptal.com","Fiverr Pro — fiverr.com"]}}}}"""
 
-CAREER INTELLIGENCE FROM RAG (use this data to ground all recommendations):
-{ctx}
+        ai_a = _call_ai(sys_a, f"Resume:\n{resume_snippet}\n\nJob Description:\n{jd_snippet}\n\nGenerate the JSON now.")
+        cards_a = _parse_json(ai_a["text"])
 
-JOB DESCRIPTION PROVIDED: {'YES — match every skill, tool, keyword, and requirement listed' if job_desc else 'NO — infer from industry and role context'}
+        # ── CALL B: 3 deep-detail cards (skillsGap + interviewPrep×5 + starStories×3) ──
+        sys_b = f"""You are GovRAG Career — elite career intelligence engine. Country: {country or 'Global'} | Industry: {industry or 'General'}
+RAG DATA:\n{ctx_short}
+JD PROVIDED: {'YES' if job_desc else 'NO'}
 
-RULES:
-- interviewPrep.qa must contain EXACTLY 5 questions with full STAR-method answers
-- starStories must contain EXACTLY 3 complete STAR stories with specific metrics
-- skillsGap must list EVERY hard skill, soft skill, tool, platform, ATS keyword — be exhaustive
-- All certifications must include official URLs (e.g. aws.training, coursera.org, microsoft.com/learn)
-- training_resources must include free and paid options with direct enrollment URLs
-- emerging_trends must name specific technologies, frameworks, methodologies relevant NOW in 2026
-- Cover letter must be 3 full paragraphs — hook + 3 quantified wins + confident close
-- Salary ranges must be in local currency of {country or 'Canada'} with specific dollar amounts
-- Job boards must include actual URLs (linkedin.com/jobs, indeed.com, glassdoor.com, etc.)
+Return ONLY valid JSON with exactly these 3 keys. MANDATORY COUNTS — do NOT skip any:
+- skillsGap: list EVERY skill, keyword, tool, cert, training resource, emerging trend
+- interviewPrep.qa: MUST have EXACTLY 5 complete Q&A objects — not 1, not 3, EXACTLY 5
+- starStories: MUST have EXACTLY 3 complete story objects — not 1, not 2, EXACTLY 3
 
-Return ONLY a valid JSON object with ALL 17 keys. No markdown. No explanation. ONLY JSON:
-{{
-  "recruiterPov": {{
-    "first_impression": "Brutal 6-second hiring manager verdict — what role they assume you are and why",
-    "top_third": ["specific element recruiter sees in top 1/3 of page","...5 items minimum"],
-    "buried": ["specific achievement buried too deep","...3 items minimum"],
-    "red_flags": ["concrete red flag with explanation","...3 items minimum"],
-    "quick_wins": ["specific fix with expected impact","...5 items minimum"]
-  }},
-  "coverLetter": "Full 3-paragraph cover letter. Para 1: specific hook referencing company/role + your top result. Para 2: 3 quantified achievements matching job requirements. Para 3: why this company specifically + confident call to action.",
-  "resumeRewrite": "Diagnosis of top 3 issues. Then rewritten bullet points: every bullet starts with strong action verb + number (%, $, time saved, team size, revenue). Top 3 results moved to first half of page 1. Include ATS keywords from job description.",
-  "skillsGap": {{
-    "matched_hard": ["specific technical skill confirmed in resume","..."],
-    "missing_hard": ["CRITICAL MISSING: specific technical skill required but absent","..."],
-    "soft_matched": ["specific soft skill demonstrated with evidence","..."],
-    "soft_missing": ["specific soft skill gap with impact on application","..."],
-    "ats_keywords_matched": ["exact keyword from JD found in resume","..."],
-    "ats_keywords_missing": ["MISSING ATS KEYWORD: exact term from JD not in resume","..."],
-    "tools_platforms": ["specific tool/platform/technology this role requires","...8 items minimum"],
-    "certs_to_pursue": [
-      {{"name":"exact certification name","url":"https://official-enrollment-url","priority":"HIGH","timeline":"2-3 months","cost":"Free/Paid","provider":"AWS/Google/Microsoft/etc"}},
-      "...3-5 certs minimum"
-    ],
-    "training_resources": [
-      {{"name":"specific course or program name","url":"https://direct-url","type":"Online/Bootcamp/University","priority":"HIGH","duration":"4 weeks","cost":"Free/$49/etc"}},
-      "...4-6 resources minimum"
-    ],
-    "emerging_trends": ["specific 2026 trend directly relevant to this role with actionable advice","...4-5 trends"],
-    "roadmap": ["Week 1-2: specific action","Month 1: specific milestone","Month 2-3: specific goal","Month 4-6: target outcome"]
-  }},
-  "interviewPrep": {{
-    "qa": [
-      {{"q":"Behavioural question 1","a":"Full STAR answer with specific situation, task, action, and quantified result"}},
-      {{"q":"Technical question relevant to role","a":"Detailed technical answer demonstrating depth"}},
-      {{"q":"Situational question","a":"Full STAR answer with metrics"}},
-      {{"q":"Leadership or collaboration question","a":"Full STAR answer with team size and outcome"}},
-      {{"q":"Weakness or challenge question","a":"Honest answer showing self-awareness and growth with result"}}
-    ],
-    "questions_to_ask": ["Strategic question about role scope","Question about team and culture","Question about success metrics in first 90 days","Question about growth path","Question about company direction"]
-  }},
-  "starStories": [
-    {{"title":"Problem-solving story with biggest impact","s":"specific situation with context and stakes","t":"your specific task and responsibility","a":"step-by-step actions YOU took","r":"quantified result: X% improvement / $X saved / X weeks faster"}},
-    {{"title":"Leadership or collaboration story","s":"specific situation","t":"specific task","a":"specific actions","r":"quantified result with team size and timeline"}},
-    {{"title":"Learning or adaptation story","s":"specific challenge or change","t":"what you needed to achieve","a":"how you learned and adapted","r":"measurable outcome"}}
-  ],
-  "linkedinSummary": "First-person LinkedIn About section. Bold opening hook (who you are + top result). 3 core competencies with evidence. Current seeking statement with target role. 150-220 words. Optimised for recruiter search keywords.",
-  "introScripts": {{
-    "min1": "Full word-for-word 1-minute script for phone screens: name + role + top 2 results + why here. Natural, conversational tone.",
-    "min2": "Full word-for-word 2-minute script for hiring manager rounds: background + 3 achievements with numbers + why this role + question back to them.",
-    "min3": "Full word-for-word 3-minute script for panel interviews: career arc + major project + skills alignment + cultural fit + forward-looking close."
-  }},
-  "thankYouEmail": "Subject line + full email body. Thank interviewer by name. Reference specific topic from interview. Reinforce 2 strongest qualifications with evidence. Address any concern raised. Confirm interest and next steps. Professional, warm, 150-200 words.",
-  "salaryNegotiation": {{
-    "table": [
-      {{"level":"Entry (0-2 yrs)","range":"specific local currency amount e.g. CAD $55,000–$65,000"}},
-      {{"level":"Mid (3-5 yrs)","range":"specific local currency range"}},
-      {{"level":"Senior (6-9 yrs)","range":"specific local currency range"}},
-      {{"level":"Lead/Principal","range":"specific local currency range"}},
-      {{"level":"Director/VP","range":"specific local currency range"}}
-    ],
-    "script": "Word-for-word negotiation script when receiving an offer. Anchor high, cite market data, be specific.",
-    "counter_script": "Word-for-word counter-offer script if they push back. Non-monetary alternatives to ask for."
-  }},
-  "actionPlan": {{
-    "day30": ["Specific daily/weekly action with expected outcome","...5 items"],
-    "day60": ["Specific milestone to hit by day 60","...5 items"],
-    "day90": ["Specific result to demonstrate by day 90","...5 items"]
-  }},
-  "coldOutreach": {{
-    "linkedin_request": "Connection note under 300 chars — specific, personal, no generic phrases",
-    "linkedin_dm": "Full DM after connecting — specific compliment + specific value proposition + specific ask",
-    "cold_email": "Subject: [specific subject line]\n\nFull cold email body — hook + credibility + value + specific CTA",
-    "follow_up": "1-week follow-up if no response — brief, adds new value, easy to reply to"
-  }},
-  "careerPivot": {{
-    "pivot_score": "Easy/Moderate/Challenging",
-    "reason": "Specific explanation citing skills overlap percentage and market demand",
-    "adjacent_roles": [
-      {{"title":"Specific adjacent role title","transferable":["specific skill that transfers directly"],"gaps":["specific gap to address"],"time_to_qualify":"X months with specific plan"}},
-      {{"title":"Second adjacent role","transferable":["skill1","skill2"],"gaps":["gap1"],"time_to_qualify":"X months"}},
-      {{"title":"Third adjacent role","transferable":["skill1"],"gaps":["gap1","gap2"],"time_to_qualify":"X months"}}
-    ],
-    "plan_90_day": ["Week 1-2: specific action","Month 1: specific milestone","Month 2: specific certification or project","Month 3: specific application and network goal"]
-  }},
-  "countryLaws": {{
-    "notice_period": "Specific notice period requirement in {country or 'Canada'} with legal citation",
-    "termination_rights": "Specific termination rights — severance, wrongful dismissal, statutory minimums",
-    "non_compete": "Non-compete enforceability in {country or 'Canada'} — what is and isn't enforceable",
-    "resume_compliance": ["Specific resume rule for {country or 'Canada'} (e.g. no photo, no DOB)","..."],
-    "tax_forms": ["Specific tax form relevant to employment in {country or 'Canada'}","..."],
-    "worker_rights": ["Specific worker right with legal reference","...5 items"]
-  }},
-  "visaPathways": {{
-    "scenario": "in_country or outside_country based on applicant location vs job location",
-    "in_country": ["Specific local licensing or permit requirement","..."],
-    "outside_country": [
-      {{"type":"Specific visa program name","description":"Who qualifies, how long, employer sponsored?","url":"https://official-government-url","processing_time":"X weeks/months"}},
-      "...3-4 visa options minimum"
-    ],
-    "digital_nomad": "Availability in {country or 'Canada'} — program name, requirements, link",
-    "working_holiday": "Availability and age/nationality requirements"
-  }},
-  "matchingJobs": {{
-    "titles": ["Exact job title to search on LinkedIn","...6 titles"],
-    "companies": ["Specific company hiring for this role in {country or 'Canada'}","...8 companies"],
-    "job_boards": ["LinkedIn Jobs — linkedin.com/jobs","Indeed — indeed.com","Glassdoor — glassdoor.com","...3-4 country-specific boards with URLs"],
-    "recruiters_by_country": [{{"country":"{country or 'Canada'}","firms":["Hays","Robert Half","Michael Page","...3 local recruitment firms"]}}],
-    "freelance_platforms": ["Upwork — upwork.com","Toptal — toptal.com","..."]
-  }}
-}}"""
+{{"skillsGap":{{"matched_hard":["every hard skill confirmed in resume"],"missing_hard":["every critical missing hard skill"],"soft_matched":["every soft skill demonstrated"],"soft_missing":["every soft skill gap"],"ats_keywords_matched":["every ATS keyword from JD found in resume"],"ats_keywords_missing":["every ATS keyword from JD NOT in resume"],"tools_platforms":["every tool/platform/technology this role needs — minimum 8"],"certs_to_pursue":[{{"name":"cert name","url":"https://official-url","priority":"HIGH","timeline":"months","cost":"Free/Paid","provider":"org"}},{{"name":"cert 2","url":"https://url","priority":"MED","timeline":"months","cost":"Free/Paid","provider":"org"}},{{"name":"cert 3","url":"https://url","priority":"MED","timeline":"months","cost":"Free/Paid","provider":"org"}}],"training_resources":[{{"name":"course name","url":"https://url","type":"Online","priority":"HIGH","duration":"weeks","cost":"Free/$X"}},{{"name":"course 2","url":"https://url","type":"Online","priority":"MED","duration":"weeks","cost":"Free/$X"}},{{"name":"course 3","url":"https://url","type":"Bootcamp","priority":"HIGH","duration":"months","cost":"$X"}},{{"name":"course 4","url":"https://url","type":"University","priority":"MED","duration":"months","cost":"$X"}}],"emerging_trends":["2026 trend 1 with actionable advice","2026 trend 2","2026 trend 3","2026 trend 4","2026 trend 5"],"roadmap":["Week 1-2: action","Month 1: milestone","Month 2-3: certification goal","Month 4-6: target outcome"]}},"interviewPrep":{{"qa":[{{"q":"Tell me about a time you faced a major technical challenge. [BEHAVIOURAL]","a":"Full STAR: specific situation + task + step-by-step actions + quantified result (%, $, time)"}},{{"q":"[TECHNICAL QUESTION specific to {industry} role]","a":"Detailed technical answer demonstrating depth and current best practices"}},{{"q":"[SITUATIONAL: How would you handle X scenario in this role?]","a":"Full STAR answer with metrics and outcome"}},{{"q":"Describe a time you led a team or influenced without authority. [LEADERSHIP]","a":"Full STAR: team size, what you did, measurable outcome"}},{{"q":"What is your greatest weakness, and what have you done about it? [SELF-AWARENESS]","a":"Honest specific weakness + concrete improvement steps + measurable result of growth"}}],"questions_to_ask":["Strategic question about role scope and team structure","Question about 90-day success metrics","Question about team culture and collaboration style","Question about growth and promotion path","Question about biggest challenge facing team in next 6 months"]}},"starStories":[{{"title":"Biggest impact: [specific achievement from resume]","s":"Specific situation — context, stakes, problem","t":"Your specific task and responsibility in this situation","a":"Step-by-step actions YOU personally took with tools/methods used","r":"Quantified result: X% improvement / $X saved or earned / X weeks faster / team of X"}},{{"title":"Leadership/collaboration story","s":"Situation with team dynamic or stakeholder challenge","t":"What you needed to achieve with/through others","a":"How you led, influenced, or collaborated — specific steps","r":"Outcome with numbers: team size, timeline hit, metric improved"}},{{"title":"Learning/growth story","s":"Situation where you faced something new or failed initially","t":"What you needed to figure out or overcome","a":"How you learned, adapted, or recovered — specific methods","r":"Measurable outcome showing growth: certification earned, process improved, goal achieved"}}]}}"""
 
-        ai = _call_ai(system, f"Resume (first 3000 chars):\n{resume[:3000]}\n\nJob Description:\n{job_desc[:1500] if job_desc else 'Not provided'}\n\nReturn the JSON now.")
-        cards = _parse_json(ai["text"])
+        ai_b = _call_ai(sys_b, f"Resume:\n{resume_snippet}\n\nJob Description:\n{jd_snippet}\n\nGenerate the JSON with EXACTLY 5 QAs and EXACTLY 3 STAR stories now.")
+        cards_b = _parse_json(ai_b["text"])
+
+        # ── Merge both calls into unified cards dict ──
+        cards = {**cards_a, **cards_b}
+        ai_provider = ai_a["provider"]
+        ai_model = ai_a["model"]
 
         return func.HttpResponse(json.dumps({
             "naked_truth": truth,
@@ -642,14 +547,14 @@ Return ONLY a valid JSON object with ALL 17 keys. No markdown. No explanation. O
             "jd_template": jd_template,
             "top1_tips": top1_tips,
             "career_intelligence": career_intel,
-            "ai_provider": ai["provider"],
-            "ai_model": ai["model"],
+            "ai_provider": ai_provider,
+            "ai_model": ai_model,
             "metrics": {
                 "latency_ms": int((time.time()-start)*1000),
-                "method": "99% Algorithmic/RAG + 1% AI formatting",
+                "method": "99% Algorithmic/RAG + 1% AI formatting — dual-call architecture",
                 "resume_score": score,
-                "provider": ai["provider"],
-                "model": ai["model"],
+                "provider": ai_provider,
+                "model": ai_model,
                 "rag_chunks_used": len(results),
                 "similar_roles_found": len(similar_occupations),
             },
