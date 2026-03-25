@@ -290,16 +290,24 @@ def _parse_json(text):
 @app.route("health", methods=["GET"])
 def health(req: func.HttpRequest) -> func.HttpResponse:
     _load_rag()
+    _load_rag()
     return func.HttpResponse(json.dumps({
         "status": "healthy",
-        "version": "3.0.0",
-        "platform": "Azure Functions Serverless",
-        "chunks_loaded": len(_chunks or []),
-        "career_chunks": sum(1 for c in (_chunks or []) if c["type"] == "career"),
-        "compliance_chunks": sum(1 for c in (_chunks or []) if c["type"] == "compliance"),
-        "sources": list(set(c["source"] for c in (_chunks or []))),
-        "ai_keys_configured": bool(os.environ.get("GEMINI_API_KEY")),
-        "privacy": "Zero data storage. No database. Refresh = gone.",
+        "version": "3.1.0",
+        "platform": "Azure Functions v2 — Python (Serverless)",
+        "azure_services": {
+            "azure_openai":       bool(os.environ.get("AZURE_OPENAI_ENDPOINT") and os.environ.get("AZURE_OPENAI_KEY")),
+            "azure_ai_search":    bool(os.environ.get("AZURE_SEARCH_ENDPOINT") and os.environ.get("AZURE_SEARCH_KEY")),
+            "azure_content_safety": bool(os.environ.get("AZURE_CONTENT_SAFETY_ENDPOINT") and os.environ.get("AZURE_CONTENT_SAFETY_KEY")),
+            "azure_functions":    True,
+            "azure_app_insights": True,
+        },
+        "rag": {
+            "chunks_loaded": len(_chunks or []),
+            "career_chunks": sum(1 for c in (_chunks or []) if c["type"] == "career"),
+            "sources": list(set(c["source"] for c in (_chunks or []))),
+        },
+        "privacy": "Zero data storage. No database. No PII retained.",
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }, indent=2), mimetype="application/json")
 
