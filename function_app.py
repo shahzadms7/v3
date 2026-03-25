@@ -904,3 +904,11 @@ def home(req: func.HttpRequest) -> func.HttpResponse:
 @app.route("", methods=["GET"])
 def root(req: func.HttpRequest) -> func.HttpResponse:
     return _serve_html()
+
+@app.route("index.html", methods=["GET"])
+def index_html(req: func.HttpRequest) -> func.HttpResponse:
+    return _serve_html()
+
+@app.route("index", methods=["GET"])
+def index(req: func.HttpRequest) -> func.HttpResponse:
+    return _serve_html()
