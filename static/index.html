@@ -293,46 +293,43 @@
     <!-- Scrolling Ticker -->
     <div class="ticker-wrap">
         <div class="ticker">
-            <span class="hi">Alfalah AI — الفلاح — Come to Success</span>
+            <span class="hi">Alfalah AI — الفلاح</span>
             <span class="gr">436 ISCO-08 Occupations</span><span>3,000+ ESCO Job Types</span>
-            <span class="go">123,000 Global Job Titles</span><span>195 Countries</span>
-            <span class="hi">17 AI Career Engines</span><span class="gr">99% RAG · 1% AI</span>
-            <span>Google Jobs Search (Last 7 Days)</span><span class="go">Top 1% Framework</span>
-            <span>Skills A-Z: 900+</span><span class="hi">Future Jobs 2026–2125</span>
-            <span class="gr">Fortune 500 · All Global Companies</span><span>Free Forever · No Login · Zero Storage</span>
-            <span class="go">8 Billion Humans Served</span><span class="hi">Microsoft Azure Cloud</span>
+            <span class="go">123,000 Global Job Titles</span><span>195 Countries Supported</span>
+            <span class="hi">17 Career Intelligence Modules</span><span class="gr">Azure OpenAI Powered</span>
+            <span>Live Google Jobs Search</span><span class="go">Top 1% Hiring Framework</span>
+            <span>900+ Skills A-Z</span><span class="hi">Future Occupations 2026–2125</span>
+            <span class="gr">Fortune 500 Career Intelligence</span><span>No Account Required · No Data Stored</span>
+            <span class="go">Global Industry Coverage</span><span class="hi">Microsoft Azure Cloud</span>
             <span class="gr">436 ISCO-08 Occupations</span><span>3,000+ ESCO Job Types</span>
-            <span class="go">123,000 Global Job Titles</span><span>195 Countries</span>
-            <span class="hi">17 AI Career Engines</span><span class="gr">99% RAG · 1% AI</span>
-            <span>Google Jobs Search (Last 7 Days)</span><span class="go">Top 1% Framework</span>
-            <span>Skills A-Z: 900+</span><span class="hi">Future Jobs 2026–2125</span>
-            <span class="gr">Fortune 500 · All Global Companies</span><span>Free Forever · No Login · Zero Storage</span>
+            <span class="go">123,000 Global Job Titles</span><span>195 Countries Supported</span>
+            <span class="hi">17 Career Intelligence Modules</span><span class="gr">Azure OpenAI Powered</span>
+            <span>Live Google Jobs Search</span><span class="go">Top 1% Hiring Framework</span>
+            <span>900+ Skills A-Z</span><span class="hi">Future Occupations 2026–2125</span>
+            <span class="gr">Fortune 500 Career Intelligence</span><span>No Account Required · No Data Stored</span>
         </div>
     </div>
 
     <header>
         <h1>Alfalah AI</h1>
-        <p class="subtitle">Career Intelligence Engine · 436 ISCO-08 Occupations · 3,000+ Job Types · 195 Countries · 8 Billion Humans<br>99% RAG Knowledge · 1% AI Polish · Built on Microsoft Azure · Free Forever</p>
+        <p class="subtitle">Career Intelligence Platform · 436 ISCO-08 Occupations · 3,000+ Job Types · 195 Countries<br>Powered by Microsoft Azure · Azure OpenAI · Azure AI Search · Azure Functions</p>
         <div class="badges">
-            <span class="badge live">LIVE on Azure</span>
-            <span class="badge">99% RAG Engine</span>
+            <span class="badge live">Azure Powered</span>
             <span class="badge">436 Occupations</span>
             <span class="badge">Google Jobs Search</span>
             <span class="badge">Top 1% Framework</span>
             <span class="badge">195 Countries</span>
-            <span class="badge">Zero Storage</span>
-            <span class="badge">Microsoft Hackathon 2026</span>
+            <span class="badge">No Account Required</span>
         </div>
     </header>
 
     <div class="container">
         <div class="privacy">
-            <strong>Your Privacy:</strong> Nothing stored. No database. No login. No cookies. Refresh = gone forever. Zero bias. Zero discrimination. All 8 billion humans.
+            <strong>Privacy by Design:</strong> No account required. No resume stored. No data collected. All analysis runs in memory and is discarded when you close the page.
         </div>
 
         <div class="tabs">
             <div class="tab active" onclick="switchTab('career', this)">Career Intelligence</div>
-            <div class="tab" onclick="switchTab('audit', this)">Audit Dashboard</div>
         </div>
 
         <!-- ═══ TAB 1: CAREER INTELLIGENCE ═══ -->
@@ -447,29 +444,13 @@
             </div>
         </div>
 
-        <!-- ═══ TAB 2: AUDIT DASHBOARD ═══ -->
-        <div class="tab-content" id="tab-audit">
-            <div class="card">
-                <h3>System Health</h3>
-                <div id="health-data">Loading...</div>
-            </div>
-            <div class="card">
-                <h3>Occupation & Skills Database</h3>
-                <div id="occ-data">Loading...</div>
-            </div>
-            <div class="card">
-                <h3>Responsible AI Card</h3>
-                <div id="rai-data">Loading...</div>
-            </div>
-        </div>
     </div>
 
     <footer>
-        <p>Built with ❤️ on Azure for the <a href="https://github.com/shahzadms7/v3" target="_blank">Microsoft Innovation Challenge 2026</a></p>
-        <p>Shahzad Muhammad · Mississauga, Ontario, Canada · Serving all 8 billion humans on Earth</p>
-        <p style="margin-top:0.5rem;">Powered by Azure Functions · Gemini AI · Grok AI · 99% RAG Knowledge · Zero Data Storage</p>
-        <p style="margin-top:0.5rem;color:rgba(136,136,170,0.6);font-size:0.72rem;">
-            No bias · No racism · No religion · No politics · Pure career science · Free forever · الفلاح
+        <p><strong>Alfalah AI</strong> — Career Intelligence Platform</p>
+        <p style="margin-top:0.4rem;">Built on Microsoft Azure · Azure OpenAI · Azure AI Search · Azure Functions · Azure Static Web Apps</p>
+        <p style="margin-top:0.4rem;color:rgba(136,136,170,0.7);font-size:0.8rem;">
+            &copy; 2026 Alfalah AI · Mississauga, Ontario, Canada · <a href="https://github.com/shahzadms7/v3" target="_blank" style="color:inherit;">GitHub</a>
         </p>
     </footer>
 
@@ -683,7 +664,6 @@
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
         document.getElementById('tab-' + name).classList.add('active');
-        if (name === 'audit') loadAudit();
     }
 
     async function doUpload(fileId, taId, statusId) {
@@ -1007,41 +987,6 @@
         URL.revokeObjectURL(a.href);
     }
 
-    // ── AUDIT ──
-    async function loadAudit() {
-        try {
-            const [h, occ, rai] = await Promise.all([
-                fetch(API + '/health').then(r=>r.json()),
-                fetch(API + '/occupations').then(r=>r.json()),
-                fetch(API + '/responsible-ai').then(r=>r.json()),
-            ]);
-            document.getElementById('health-data').innerHTML = `
-                <div class="metrics">
-                    <div class="metric green"><div class="value">${h.chunks_loaded}</div><div class="label">RAG Chunks</div></div>
-                    <div class="metric"><div class="value">${h.career_chunks}</div><div class="label">Career Chunks</div></div>
-                    <div class="metric gold"><div class="value">${h.sources?.length || 0}</div><div class="label">Data Files</div></div>
-                    <div class="metric green"><div class="value">${h.status}</div><div class="label">Status</div></div>
-                </div>
-                <p style="color:var(--muted);font-size:0.8rem;margin-top:0.75rem;">Sources: ${(h.sources||[]).join(' · ')}</p>
-            `;
-            document.getElementById('occ-data').innerHTML = `
-                <div class="metrics">
-                    <div class="metric green"><div class="value">${(occ.isco_08_unit_groups||0).toLocaleString()}</div><div class="label">ISCO-08 Groups</div></div>
-                    <div class="metric gold"><div class="value">${(occ.esco_occupations||0).toLocaleString()}</div><div class="label">ESCO Occupations</div></div>
-                    <div class="metric purple"><div class="value">${(occ.global_unique_job_titles||0).toLocaleString()}</div><div class="label">Global Job Titles</div></div>
-                    <div class="metric"><div class="value">${(occ.onet_us_occupations||0).toLocaleString()}</div><div class="label">O*NET (US)</div></div>
-                </div>
-                <p style="color:var(--muted);font-size:0.8rem;margin-top:0.75rem;">Framework: ${occ.framework||''}</p>
-                <p style="color:var(--green);font-size:0.8rem;margin-top:0.25rem;">${occ.coverage||''}</p>
-            `;
-            const rai2 = rai.responsible_ai_card || rai;
-            document.getElementById('rai-data').innerHTML = Object.entries(rai2).map(([k,v]) =>
-                `<div style="margin:0.5rem 0;font-size:0.87rem;"><strong style="color:var(--accent);text-transform:capitalize;">${k.replace(/_/g,' ')}:</strong> ${v}</div>`
-            ).join('');
-        } catch(e) {
-            document.getElementById('health-data').innerHTML = 'Error: ' + e.message;
-        }
-    }
     </script>
 </body>
 </html>
