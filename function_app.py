@@ -931,3 +931,15 @@ def index_html(req: func.HttpRequest) -> func.HttpResponse:
 @app.route("index", methods=["GET"])
 def index(req: func.HttpRequest) -> func.HttpResponse:
     return _serve_html()
+
+# Catch-all: serve app for root with any unrecognised path suffix
+# This handles browsers requesting / which the Azure runtime otherwise intercepts
+@app.route("{*catch_all}", methods=["GET"])
+def catch_all(req: func.HttpRequest) -> func.HttpResponse:
+    path = req.route_params.get("catch_all", "").strip("/")
+    # Known API paths — should never reach here but guard anyway
+    _api_paths = {"career","upload","jobs","location","health","query","simplify","decision","chat"}
+    if path in _api_paths:
+        return func.HttpResponse("Not Found", status_code=404)
+    # Root or unknown paths → serve the app
+    return _serve_html()
