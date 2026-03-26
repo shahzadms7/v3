@@ -19,6 +19,8 @@ PRIVACY: Zero data stored. Everything in-memory only.
 
 import time
 import hashlib
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -29,6 +31,7 @@ from ..core.rag_engine import rag_engine
 from ..core.ai_provider import ai_provider, AIProvider
 from ..core.safety_engine import safety_engine
 from ..core.audit_logger import audit_logger
+from ..core.career_modules import generate_module, MODULES
 
 # ── Create FastAPI app ────────────────────────────────────────────────────────
 app = FastAPI(

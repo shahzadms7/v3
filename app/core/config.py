@@ -28,20 +28,17 @@ class Settings(BaseSettings):
     APP_DESCRIPTION: str = "Governed RAG for compliance + career intelligence | 8 billion humans"
     ENVIRONMENT: str = "development"
 
-    # ── AI Provider Keys (FREE tier) ──────────────────────────────────────────
-    # Gemini (Google AI Studio) — Primary + Backup
-    GEMINI_API_KEY: str = ""
-    GEMINI_API_KEY_2: str = ""
-    # Grok (xAI) — Final fallback
-    GROK_API_KEY: str = ""
-    # Azure OpenAI — Production option (trial credits)
-    AZURE_OPENAI_ENDPOINT: str = ""
-    AZURE_OPENAI_KEY: str = ""
+    # ── AI Provider (100% Microsoft Azure Stack) ────────────────────────────────
+    # Alfalah AI 2026: Exclusive Azure OpenAI deployment for Hackathon
+    AZURE_OPENAI_ENDPOINT: str = os.getenv("AZURE_OPENAI_ENDPOINT", "")
+    AZURE_OPENAI_KEY: str = os.getenv("AZURE_OPENAI_KEY", "")
+    AZURE_OPENAI_DEPLOYMENT: str = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini")
+    AZURE_OPENAI_API_VERSION: str = "2024-12-01-preview"
 
-    # ── AI Model Settings ─────────────────────────────────────────────────────
-    AI_TEMPERATURE: float = 0.3      # Low = more precise, less creative (good for compliance)
-    AI_MAX_TOKENS: int = 4096        # Max response length
-    AI_TIMEOUT_SECONDS: int = 55     # Per-call timeout
+    # ── AI Model Settings (Optimized for Speed + Accuracy) ─────────────────────
+    AI_TEMPERATURE: float = 0.3      # Low = precise, deterministic, reproducible
+    AI_MAX_TOKENS: int = 1500        # REDUCED from 4096 for fast responses (<30s total)
+    AI_TIMEOUT_SECONDS: int = 28     # REDUCED from 55 → faster fallback + module batching
 
     # ── Azure AI Search ───────────────────────────────────────────────────────
     AZURE_SEARCH_ENDPOINT: str = ""
@@ -68,9 +65,9 @@ class Settings(BaseSettings):
     SAFETY_MAX_RESUME_LENGTH: int = 8000
     SAFETY_MAX_JOB_DESC_LENGTH: int = 4000
 
-    # ── Rate Limiting ─────────────────────────────────────────────────────────
-    RATE_LIMIT_PER_HOUR: int = 50    # Requests per IP per hour
-    RATE_LIMIT_ENABLED: bool = True
+    # ── Rate Limiting (Optimized for 17 Parallel Career Modules) ──────────────
+    RATE_LIMIT_PER_HOUR: int = 300   # INCREASED from 50 → supports parallel execution
+    RATE_LIMIT_ENABLED: bool = True  # 300 reqs/hour = 5 reqs/min = concurrent-friendly
 
     # ── Data Paths ────────────────────────────────────────────────────────────
     DATA_DIR: Path = PROJECT_ROOT / "data"
