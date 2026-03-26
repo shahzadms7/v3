@@ -82,6 +82,7 @@ def _search(query, top_k=5, doc_type=None):
 _az_search_indexed = False
 
 def _ensure_azure_search_index():
+    """Create index and upload all RAG chunks into Azure AI Search (runs once)."""
     global _az_search_indexed
     if _az_search_indexed:
         return
@@ -90,11 +91,12 @@ def _ensure_azure_search_index():
     key = os.environ.get("AZURE_SEARCH_KEY", "")
     if not endpoint or not key:
         return
-    import hashlib, logging
+    import httpx, hashlib, logging
     idx = os.environ.get("AZURE_SEARCH_INDEX", "career-knowledge")
     api_ver = "2024-07-01"
     hdrs = {"api-key": key, "Content-Type": "application/json"}
 
+    # Create or update index schema
     index_def = {
         "name": idx,
         "fields": [
@@ -111,6 +113,7 @@ def _ensure_azure_search_index():
         logging.warning(f"[AzSearch] Index create: {e}")
         return
 
+    # Upload chunks in batches of 100
     batch = []
     for chunk in (_chunks or []):
         doc_id = hashlib.md5(f"{chunk['source']}-{chunk['idx']}".encode()).hexdigest()
@@ -138,12 +141,13 @@ def _ensure_azure_search_index():
 
 
 def _search_azure(query, top_k=7, doc_type=None):
+    """Search via Azure AI Search; gracefully falls back to local search if unconfigured."""
     endpoint = os.environ.get("AZURE_SEARCH_ENDPOINT", "").rstrip("/")
     key      = os.environ.get("AZURE_SEARCH_KEY", "")
     if not endpoint or not key:
         return _search(query, top_k=top_k, doc_type=doc_type)
 
-    import logging
+    import httpx, logging
     _ensure_azure_search_index()
     idx     = os.environ.get("AZURE_SEARCH_INDEX", "career-knowledge")
     api_ver = "2024-07-01"
@@ -165,12 +169,17 @@ def _search_azure(query, top_k=7, doc_type=None):
     return _search(query, top_k=top_k, doc_type=doc_type)
 
 
+# ── Azure Content Safety ──────────────────────────────────────────────────────
 def _check_content_safety(text):
+    """
+    Screen text via Azure Content Safety.
+    Returns (is_safe: bool, reason: str).
+    """
     endpoint = os.environ.get("AZURE_CONTENT_SAFETY_ENDPOINT", "").rstrip("/")
     key      = os.environ.get("AZURE_CONTENT_SAFETY_KEY", "")
     if not endpoint or not key:
         return True, "not_configured"
-    import logging
+    import httpx, logging
     try:
         r = httpx.post(
             f"{endpoint}/contentsafety/text:analyze?api-version=2024-09-01",
@@ -188,16 +197,43 @@ def _check_content_safety(text):
         logging.warning(f"[ContentSafety] {e}")
         return True, "unavailable"
 
-# ── ASYNC AI CALLER (SPEED OPTIMIZED) ─────────────────────────────────────────
+def _call_ai(system, user):
+    """Synchronous 100% Azure OpenAI call (used by /query and /simplify)."""
+    import logging
+    az_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "").rstrip("/")
+    az_key      = os.environ.get("AZURE_OPENAI_KEY", "")
+    az_deploy   = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini")
+    if not az_endpoint or not az_key:
+        logging.error("[GovRAG] AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_KEY not set")
+        return {"text": "Azure OpenAI not configured.", "provider": "none", "model": "none"}
+    try:
+        import httpx
+        url = f"{az_endpoint}/openai/deployments/{az_deploy}/chat/completions?api-version=2024-08-01-preview"
+        resp = httpx.post(url,
+            headers={"api-key": az_key, "Content-Type": "application/json"},
+            json={"messages": [
+                {"role": "system", "content": system},
+                {"role": "user",   "content": user}
+            ], "temperature": 0.3, "max_tokens": 8192},
+            timeout=55.0)
+        if resp.status_code == 200:
+            text = resp.json()["choices"][0]["message"]["content"]
+            return {"text": text, "provider": "Azure OpenAI", "model": az_deploy}
+        err = f"HTTP {resp.status_code} — {resp.text[:200]}"
+        logging.error(f"[GovRAG] Azure OpenAI error: {err}")
+        return {"text": f"Azure OpenAI unavailable: {err}", "provider": "none", "model": "none"}
+    except Exception as e:
+        logging.error(f"[GovRAG] Azure OpenAI exception: {str(e)}")
+        return {"text": f"Azure OpenAI error: {str(e)[:150]}", "provider": "none", "model": "none"}
+
 async def _call_ai_async(system, user):
-    """Asynchronous call to Azure OpenAI — drastically reduces execution time."""
+    """NEW Asynchronous call to Azure OpenAI — drastically reduces execution time for /career."""
     import logging
     az_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "").rstrip("/")
     az_key      = os.environ.get("AZURE_OPENAI_KEY", "")
     az_deploy   = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini")
     
     if not az_endpoint or not az_key:
-        logging.error("[GovRAG] AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_KEY not set")
         return {"text": "Azure OpenAI not configured.", "provider": "none", "model": "none"}
         
     url = f"{az_endpoint}/openai/deployments/{az_deploy}/chat/completions?api-version=2024-08-01-preview"
@@ -214,26 +250,15 @@ async def _call_ai_async(system, user):
     try:
         async with httpx.AsyncClient(timeout=45.0) as client:
             resp = await client.post(url, headers=headers, json=payload)
-            
             if resp.status_code == 200:
                 text = resp.json()["choices"][0]["message"]["content"]
                 return {"text": text, "provider": "Azure OpenAI", "model": az_deploy}
-                
-            err = f"HTTP {resp.status_code} — {resp.text[:200]}"
-            logging.error(f"[GovRAG] Azure OpenAI error: {err}")
-            return {"text": f"Azure OpenAI unavailable: {err}", "provider": "none", "model": "none"}
-            
+            return {"text": f"Azure OpenAI unavailable: HTTP {resp.status_code}", "provider": "none", "model": "none"}
     except Exception as e:
-        logging.error(f"[GovRAG] Azure OpenAI async exception: {str(e)}")
         return {"text": f"Azure OpenAI error: {str(e)[:150]}", "provider": "none", "model": "none"}
-
-# Keep the sync version for endpoints not yet converted to async
-def _call_ai(system, user):
-    return asyncio.run(_call_ai_async(system, user))
 
 def _parse_json(text):
     try: return json.loads(text)
     except: pass
     m = re.search(r'
 http://googleusercontent.com/immersive_entry_chip/0
-This will trigger your GitHub Actions pipeline and automatically deploy the fix to your Azure Function!
