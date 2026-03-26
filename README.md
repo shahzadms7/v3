@@ -15,7 +15,7 @@
 *Free AI-powered career intelligence for every professional on Earth —
 regardless of nationality, income, language, or circumstance.*
 
-[Live Platform](https://shahzad-job-coach-ai.vercel.app) · [API Health](https://govrag-v3-func.azurewebsites.net/api/health) · [Architecture](./ARCHITECTURE.md) · [Responsible AI](./docs/RESPONSIBLE_AI_IMPACT_ASSESSMENT.md) · [GitHub](https://github.com/shahzadms7/v3)
+[Architecture](./ARCHITECTURE.md) · [Responsible AI](./docs/RESPONSIBLE_AI_IMPACT_ASSESSMENT.md) · [Tools Breakdown](./TOOLS_BREAKDOWN.md) · [GitHub](https://github.com/shahzadms7/v3)
 
 </div>
 
@@ -31,14 +31,13 @@ Alfalah AI (الفلاح — Arabic for "success" and "flourishing") is a fully 
 
 ---
 
-## Live Deployments — 100% Microsoft Azure Stack
+## 🚀 Live Deployments — 100% Microsoft Azure Stack
 
 | Environment | URL | Status |
 |-------------|-----|--------|
-| Frontend (Azure Static Web Apps) | https://govrag-v3-static.azurestaticapps.net | ✅ Live |
-| Backend API (Azure Functions) | https://govrag-v3-func.azurewebsites.net | ✅ Live |
-| API Health Check | https://govrag-v3-func.azurewebsites.net/api/health | ✅ Live |
-| Source Code | https://github.com/shahzadms7/v3 | 📂 Public |
+| **Frontend** (React • Next.js) | https://govrag-v3-static.azurestaticapps.net | ✅ Live |
+| **Backend API** (6 endpoints) | https://govrag-v3-func.azurewebsites.net/api/career | ✅ Live |
+| **Source Code** | https://github.com/shahzadms7/v3 | 📂 Public |
 
 ---
 
@@ -533,9 +532,9 @@ v3/
 
 | | |
 |-|-|
-| **Builder** | Shahzad Muhammad |
+| **Builders** | Shahzad Muhammad & Zara Irfan |
 | **Location** | Mississauga, Ontario, Canada |
-| **Mission** | Free AI tools for underserved professionals globally |
+| **Mission** | Free AI career intelligence for underserved professionals globally |
 | **Brand** | Alfalah AI — "Come to Success" |
 
 ---
@@ -557,7 +556,7 @@ v3/
 
 *Free for 8 Billion People · Built on Microsoft Azure · Responsible AI by Design*
 
-[shahzad-job-coach-ai.vercel.app](https://shahzad-job-coach-ai.vercel.app) · [github.com/shahzadms7/v3](https://github.com/shahzadms7/v3) · [API](https://govrag-v3-func.azurewebsites.net/api/health)
+[github.com/shahzadms7/v3](https://github.com/shahzadms7/v3) · [govrag-v3-static.azurestaticapps.net](https://govrag-v3-static.azurestaticapps.net)
 
 *Alfalah AI · © 2026 · Mississauga, Ontario, Canada · "الفلاح" — Come to Success*
 
