@@ -280,6 +280,12 @@
         footer a { color: var(--accent); text-decoration: none; }
 
         /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .footer-grid { grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+        }
+        @media (max-width: 600px) {
+            .footer-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+        }
         @media (max-width: 768px) {
             header h1 { font-size: 2rem; }
             .two-col { grid-template-columns: 1fr; }
@@ -428,7 +434,7 @@
         </p>
 
         <!-- Tech Stack Grid -->
-        <div style="max-width:1100px;margin:0 auto 1.4rem;display:grid;grid-template-columns:repeat(5,1fr);gap:0.9rem;text-align:left;">
+        <div class="footer-grid" style="width:100%;margin:0 auto 1.4rem;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0.75rem;text-align:left;">
 
             <!-- Azure Cloud -->
             <div style="background:rgba(0,120,212,0.1);border:1px solid rgba(0,120,212,0.3);border-radius:12px;padding:0.9rem;">
@@ -437,13 +443,13 @@
                     <span style="color:#4db3ff;font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Microsoft Azure</span>
                 </div>
                 <ul style="list-style:none;padding:0;margin:0;font-size:0.72rem;color:var(--muted);line-height:2;">
-                    <li>Azure OpenAI · gpt-4o-mini · eastus</li>
-                    <li>Azure AI Search · 289 RAG chunks</li>
-                    <li>Azure Functions v2 · Python worker</li>
-                    <li>Azure Static Web Apps · CDN</li>
-                    <li>Azure Content Safety · v1.0</li>
-                    <li>Application Insights · monitoring</li>
-                    <li>Azure Key Vault · secrets</li>
+                    <li><img src="https://cdn.simpleicons.org/microsoftazure/0078D4" width="11" height="11" style="vertical-align:middle;margin-right:3px;" alt="">Azure OpenAI · gpt-4o-mini</li>
+                    <li><img src="https://cdn.simpleicons.org/microsoftazure/0078D4" width="11" height="11" style="vertical-align:middle;margin-right:3px;" alt="">Azure AI Search · 289 chunks</li>
+                    <li><img src="https://cdn.simpleicons.org/microsoftazure/0078D4" width="11" height="11" style="vertical-align:middle;margin-right:3px;" alt="">Azure Functions v2 · Python</li>
+                    <li><img src="https://cdn.simpleicons.org/microsoftazure/0078D4" width="11" height="11" style="vertical-align:middle;margin-right:3px;" alt="">Azure Static Web Apps · CDN</li>
+                    <li><img src="https://cdn.simpleicons.org/microsoftazure/0078D4" width="11" height="11" style="vertical-align:middle;margin-right:3px;" alt="">Azure Content Safety · v1.0</li>
+                    <li><img src="https://cdn.simpleicons.org/microsoftazure/0078D4" width="11" height="11" style="vertical-align:middle;margin-right:3px;" alt="">App Insights · monitoring</li>
+                    <li><img src="https://cdn.simpleicons.org/microsoftazure/0078D4" width="11" height="11" style="vertical-align:middle;margin-right:3px;" alt="">Azure Key Vault · secrets</li>
                 </ul>
             </div>
 
