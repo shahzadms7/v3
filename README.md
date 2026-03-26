@@ -216,12 +216,12 @@ AI Fallback Chain:
 | `certifications-2026.md` | 300+ certs | All-industry certifications A-Z with official URLs |
 | `global-salary-data.md` | 195 countries | Salary ranges by role, level, and local currency |
 | `ats-scoring-guide.md` | 8 dimensions | ATS algorithm science, recruiter behavioral patterns |
-| `industry-trends-2026-global.md` | 21 sections · 88 divisions (ISIC Rev.4) | Hiring trends, in-demand roles, market outlook, remote work potential, digital nomad visas, salary ranges |
+| `industry-trends-2026-global.md` | 23 industries | Hiring trends, in-demand roles, market outlook, remote work potential, digital nomad visas, salary ranges |
 | `interview-preparation.md` | 436 roles | Role-specific Q&A, behavioral frameworks |
 | `negotiation-scripts-word-by-word.md` | 30+ scripts | Salary negotiation by role and seniority level |
 | `career-roadmap-templates.md` | 100+ roadmaps | 30-60-90 day plans by role |
 | `cold-outreach-templates.md` | 50+ templates | LinkedIn DM, cold email by industry |
-| `job-description-templates-100.md` | 100+ JDs | Templates for every major occupation |
+| `job-description-templates-100.md` | 27 templates | Templates for every major occupation by role level |
 | `career-guide-youth-5-to-18.md` | — | Accessibility: youth career guidance |
 | `career-guide-seniors-55-plus.md` | — | Accessibility: 55+ workforce re-entry guidance |
 | `career-guide-accessibility-disability.md` | — | Accessibility: disability-inclusive career guidance |
@@ -235,7 +235,11 @@ AI Fallback Chain:
 | `global-salary-data.md` | — | Comprehensive salary data across geographies |
 | `industry-trends-2026-global.md` | — | Industry hiring forecasts and market demand signals |
 
-**Total: 32 career files + 2 docs + 3 compliance = 37 files · 513 KB · 16,544 lines written (4,818 Python + 10,629 Markdown + 35 JSON)**
+**Total: 32 career files · 23 industries · 436 occupations · 27 job description templates · 900+ skills · 3,000+ ESCO job types**
+
+**Code & Infrastructure:** 6,553 lines of Python code · 22 Python source files · 100% Azure cloud · Zero on-premises infrastructure
+
+**Documentation:** 39 markdown files · Responsible AI framework · Full source code on GitHub
 
 ---
 

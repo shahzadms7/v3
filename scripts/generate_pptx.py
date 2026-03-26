@@ -227,7 +227,7 @@ add_textbox(s, "One Platform. Every Human. Every Country. Free Forever.",
 add_rect(s, 0.4, 1.5, 3.5, 4.5, RGBColor(0x0D, 0x1B, 0x3E))
 add_textbox(s, "INPUT", 0.4, 1.5, 3.5, 0.45,
             font_size=13, bold=True, color=AZURE_BLUE, align=PP_ALIGN.CENTER)
-inputs = ["📄 Resume (PDF/DOCX/TXT)", "📋 Job Description", "🌍 Your Country (195)", "🏭 Your Industry (15)"]
+inputs = ["📄 Resume (PDF/DOCX/TXT)", "📋 Job Description", "🌍 Your Country (195)", "🏭 Your Industry (23)"]
 add_bullet_box(s, inputs, 0.55, 2.0, 3.2, 3.5, font_size=13, color=LIGHT_GRAY, bullet="→")
 
 # Arrow
@@ -261,7 +261,7 @@ So what does Alfalah AI actually do?
 A user — anywhere in the world — uploads their resume.
 They can paste text, upload a PDF, a Word document — whatever they have.
 
-They select their country from 195 options. Their industry from 15 categories.
+They select their country from 195 options. Their industry from 23 categories.
 Optionally they paste a job description they want to target.
 
 Our Azure-powered engine takes that input and in under 30 seconds —
@@ -630,7 +630,7 @@ principles = [
     ("RELIABILITY",   AZURE_BLUE, "4-provider, 8-model fallback chain.\nPlatform never goes dark. 99.9%+ uptime guaranteed."),
     ("PRIVACY",       PURPLE,     "Zero data storage by architecture — not just policy.\nNo resume. No PII. No session data. Ever."),
     ("SECURITY",      ORANGE,     "Azure Key Vault · RBAC · Content Safety · TLS 1.3\nInput sanitization · Rate limiting · 50KB body guard."),
-    ("INCLUSIVENESS", GOLD,       "195 countries · 15 industries · Accessibility guides\nfor youth (5-18), seniors (55+), and people with disabilities."),
+    ("INCLUSIVENESS", GOLD,       "195 countries · 23 industries · Accessibility guides\nfor youth (5-18), seniors (55+), and people with disabilities."),
     ("TRANSPARENCY",  RGBColor(0xEF,0x44,0x44), "ATS scoring dimensions disclosed to users.\nRAG sources cited. Full methodology published in /docs/."),
 ]
 
