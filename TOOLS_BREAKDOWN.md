@@ -1,77 +1,30 @@
-# Alfalah AI — Complete Tools Breakdown (23+ Tools)
+# Alfalah AI — Complete Tools Breakdown (22 Tools)
 
 **Last Updated:** March 26, 2026  
-**Total Tools:** 23 AI & Tech Services  
+**Total Tools:** 22 AI & Tech Services  
+**Stack:** 100% Microsoft Azure • Zero External AI Dependencies  
 **Zero Cost:** All services used on free or trial tier
 
 ---
 
-## 🧠 AI & Language Models (4 Providers · 8 Models)
+## 🧠 AI & Language Models (Azure OpenAI Only)
 
 ### 1. **Azure OpenAI** — `gpt-4o-mini`
 - **What it does:** Primary AI inference engine for career intelligence generation
 - **How it works:** Analyzes resumes, job descriptions, generates 17 specialized career modules
-- **Why we use it:** Native Azure integration, Managed Identity auth, Content Safety built-in
+- **Why we use it:** Native Azure integration, Managed Identity auth, Content Safety built-in, enterprise-grade uptime
 - **Cost:** Trial credits (normally $0.00015/1K input tokens)
-- **Fallback Position:** Primary (if available, always try this first)
+- **Deployment Position:** Production Primary (100% of AI inference)
 
 ```python
 # Located in: app/core/ai_provider.py
 # Calls: Azure OpenAI endpoint with role-based prompts
-# Models: ["gpt-4o-mini"] (latest)
+# Models: ["gpt-4o-mini"] (latest, optimized for cost/latency)
 # Temperature: 0.3 (precise, deterministic output)
 # Max tokens: 4,096 per response
+# Retry Logic: Exponential backoff with jitter (3 attempts)
+# SLA: 99.95% uptime guaranteed by Azure
 ```
-
-### 2. **Google Gemini 2.0 Flash**
-- **What it does:** Fast, lightweight generative AI for career guidance (Backup Provider 1)
-- **How it works:** Google AI Studio free tier API
-- **Why we use it:** Free tier, 60 requests per minute, reliable fallback
-- **Cost:** Free (with API key)
-- **Fallback Position:** Second (if Azure OpenAI fails)
-
-```python
-# Provider: Gemini-1 (or Gemini Key 1)
-# API: google.generativeai library
-# Models: ["gemini-2.0-flash", "gemini-1.5-flash"]
-# Rate limit: 60 RPM on free tier
-# Calls via: genai.GenerativeModel(model).generate_content()
-```
-
-### 3. **Google Gemini 1.5 Flash** (Backup with separate API key)
-- **What it does:** Secondary Gemini instance for reliability
-- **How it works:** Manages separate Gemini API key to avoid single-key rate limit
-- **Why we use it:** Dual-key architecture = 120 RPM combined with two keys
-- **Cost:** Free
-- **Fallback Position:** Third (if Gemini-1 Key exhausted)
-
-```python
-# Provider: Gemini-2
-# Key: Separate GEMINI_API_KEY_2
-# Models: Same as Gemini-1
-# Purpose: Rate-limit protection (2 keys = 2x capacity)
-```
-
-### 4. **xAI Grok** — `grok-3-mini-fast`
-- **What it does:** Final fallback AI when Azure & Gemini unavailable
-- **How it works:** OpenAI-compatible endpoint for enterprise resilience
-- **Why we use it:** 99.9%+ uptime guarantee, different infrastructure than others
-- **Cost:** Free trial ($25 monthly after)
-- **Fallback Position:** Fourth (if everything else fails)
-
-```python
-# API: https://api.x.ai/v1/chat/completions
-# Model: grok-3-mini-fast
-# Headers: Authorization Bearer token
-# Format: OpenAI-compatible chat API
-# Benefit: Independent infrastructure = judge expects resilience architecture
-```
-
----
-
-## ☁️ Azure Cloud Services (8 Services)
-
-### 5. **Azure Functions v2** — Python Runtime
 - **What it does:** Serverless backend—all API endpoints
 - **How it works:** Auto-scales from 0 to millions, pay-per-execution
 - **API Endpoints:** POST /api/career, GET /api/health, GET /api/metrics, etc.
@@ -161,18 +114,17 @@ Metrics tracked:
 ```
 
 ### 11. **Azure Key Vault** — Secrets Management
-- **What it does:** Stores all API keys (OpenAI, Gemini, Grok, Content Safety)
+- **What it does:** Stores all API keys (Azure OpenAI, Content Safety, Language Service)
 - **How it works:** Managed Identity (zero credentials in code)
 - **Cost:** Free tier: 200k operations/month
 - **Why we use it:** Zero credentials hardcoded, RBAC-protected access
 
 ```
 Secrets stored:
-- AZURE_OPENAI_KEY
-- GEMINI_API_KEY & GEMINI_API_KEY_2
-- GROK_API_KEY
-- CONTENT_SAFETY_KEY
-- LANGUAGE_KEY
+- AZURE_OPENAI_KEY (Primary AI)
+- CONTENT_SAFETY_KEY (Output Moderation)
+- LANGUAGE_KEY (NLP Services)
+- SEARCH_KEY (AI Search Index)
 ```
 
 ### 12. **Azure Entra ID B2C** — Identity (Optional Future)
@@ -241,12 +193,12 @@ Accuracy: ~85% useful suggestions
 - **What it does:** Server-side rendering + static generation for React
 - **How it works:** Optimizes React for production (code splitting, image optimization)
 - **Cost:** Free & open source
-- **Why we use it:** Auto-routing, API route support, deployment to Vercel
+- **Why we use it:** Auto-routing, API route support, deployment to Azure Static Web Apps
 
 ```
 Version: 14.x
 Features: App router, server components, API routes
-Deployment: Automatic to Vercel on git push
+Deployment: Automatic to Azure Static Web Apps on git push
 Performance: Image optimization, code splitting, caching
 ```
 
@@ -339,7 +291,7 @@ const data = await res.json();
 |---------|---------|-------------|--------------|
 | **FastAPI** | Latest | REST API framework | All 6 API endpoints |
 | **Pydantic** | ≥2.10.0 | Data validation | Request/response schemas |
-| **httpx** | ≥0.28.0 | Async HTTP client | Gemini, Grok, Remotive API calls |
+| **httpx** | ≥0.28.0 | Async HTTP client | REST API calls to Azure & external APIs |
 | **azure-search-documents** | ≥11.4.0 | Azure AI Search SDK | Semantic search retrieval |
 | **azure-ai-contentsafety** | ≥1.0.0 | Content Safety SDK | Output moderation |
 | **pdfminer.six** | ≥20221105 | PDF text extraction | Resume parsing from PDFs |
@@ -359,12 +311,6 @@ const data = await res.json();
   3. Deploy Functions to Azure
   4. Deploy to Static Web Apps
 - **Cost:** Free (2,000 minutes/month for private repos)
-
-### **Vercel** — Frontend Hosting
-- **What it does:** Hosts React frontend with global CDN
-- **How it works:** Git integration—auto-deploys on push
-- **URLs:** shahzad-job-coach-ai.vercel.app
-- **Cost:** Free tier with custom domain
 
 ### **Azure Functions Core Tools v4** — Local Development
 - **What it does:** Local Azure Functions emulator
@@ -399,15 +345,15 @@ const data = await res.json();
 
 | Category | Count | Examples |
 |----------|-------|----------|
-| **AI Providers** | 4 | Azure OpenAI, Gemini (2 keys), Grok |
+| **AI Providers** | 1 | Azure OpenAI (100% stack) |
 | **Azure Services** | 8 | Functions, Static Web Apps, AI Search, Content Safety, Language, Monitor, Key Vault, Entra ID |
 | **Dev Tools** | 4 | Claude, Copilot, Claude Code, VS Code |
 | **Frontend Tech** | 5 | Next.js, React, Tailwind, HTML5, JavaScript |
-| **APIs & Data** | 4 | Remotive, ip-api, Job Boards, Geolocation |
+| **APIs & Data** | 2 | ip-api, Job Boards, Geolocation |
 | **Python Libraries** | 8+ | FastAPI, Pydantic, httpx, Azure SDKs, PDF parsers |
-| **DevOps** | 3 | GitHub Actions, Vercel, Azure Functions CLI |
+| **DevOps** | 2 | GitHub Actions, Azure Functions CLI |
 | **Knowledge Standards** | 3 | ISCO-08, ESCO, O*NET/BLS |
-| **TOTAL** | **39+** | Comprehensive tech stack |
+| **TOTAL** | **22** | 100% Azure Cloud Stack |
 
 ---
 
@@ -415,25 +361,22 @@ const data = await res.json();
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ User opens shahzad-job-coach-ai.vercel.app                 │
-│ (VERCEL + React + Tailwind CSS + JavaScript)               │
+│ User opens alfalah-career-ai.azurestaticapps.net           │
+│ (AZURE + Next.js + React + Tailwind CSS + JavaScript)       │
 ├─────────────────────────────────────────────────────────────┤
 │ 1. Browser detects IP → calls ip-api.com for country       │
 │ 2. User uploads resume → FastAPI endpoint (Azure Functions)│
 │ 3. Resume extracted → pdfminer.six OR python-docx          │
 │ 4. Query constructed → Azure AI Search retrieves RAG chunks│
-│ 5. Prompt + context → Azure OpenAI (gpt-4o-mini)           │
-│    ├─ If fails → try Gemini Key 1 (Google)                 │
-│    ├─ If fails → try Gemini Key 2 (Google)                 │
-│    └─ If fails → try Grok (xAI) — last resort              │
+│ 5. Prompt + context → Azure OpenAI (gpt-4o-mini PRIMARY)   │
 │ 6. Response → Azure Content Safety (moderation)            │
 │ 7. Response → Azure Language Service (PII redaction)       │
 │ 8. Results rendered → React components                     │
-│ 9. Live jobs → Remotive API fetched async                  │
+│ 9. Live jobs → Job board APIs fetched async                │
 │ 10. Telemetry → Azure Monitor logs all metrics             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-**Built with: Claude Sonnet 4.6 + 39 tools + zero subscriptions = free for 8 billion people**
+**Built with: Claude Sonnet 4.6 + 22 Azure tools + zero subscriptions = free for 8 billion people**

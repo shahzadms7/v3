@@ -31,15 +31,14 @@ Alfalah AI (الفلاح — Arabic for "success" and "flourishing") is a fully 
 
 ---
 
-## Live Deployments
+## Live Deployments — 100% Microsoft Azure Stack
 
 | Environment | URL | Status |
 |-------------|-----|--------|
-| Production (V2) | https://shahzad-job-coach-ai.vercel.app | Live |
-| V3 Azure Static Web Apps | https://govrag-v3-static.azurestaticapps.net | Live |
-| V3 Azure Functions API | https://govrag-v3-func.azurewebsites.net | Live |
-| API Health Check | https://govrag-v3-func.azurewebsites.net/api/health | Live |
-| Source Code | https://github.com/shahzadms7/v3 | Public |
+| Frontend (Azure Static Web Apps) | https://govrag-v3-static.azurestaticapps.net | ✅ Live |
+| Backend API (Azure Functions) | https://govrag-v3-func.azurewebsites.net | ✅ Live |
+| API Health Check | https://govrag-v3-func.azurewebsites.net/api/health | ✅ Live |
+| Source Code | https://github.com/shahzadms7/v3 | 📂 Public |
 
 ---
 
@@ -47,16 +46,13 @@ Alfalah AI (الفلاح — Arabic for "success" and "flourishing") is a fully 
 
 **All tools used in this platform with detailed breakdown of what each does and how:**
 
-### AI Providers (4 Total — Multi-chain Fallback)
+### AI Provider (100% Microsoft Azure)
 
 | Tool | Models | Purpose | Cost | Status |
 |------|--------|---------|------|--------|
-| **Azure OpenAI** | gpt-4o-mini | Primary AI inference for all 17 career modules | Trial credits | ✅ Primary |
-| **Google Gemini** | gemini-2.0-flash, gemini-1.5-flash | Backup Provider 1 — fast, reliable | Free tier | ✅ Backup 1 |
-| **Google Gemini (Key 2)** | Same as above | Backup Provider 2 — prevents rate-limit | Free tier | ✅ Backup 2 |
-| **xAI Grok** | grok-3-mini-fast | Final fallback — independent infrastructure | Free trial | ✅ Backup 3 |
+| **Azure OpenAI** | gpt-4o-mini | Primary AI inference for all 17 career intelligence modules | Azure credits | ✅ Production |
 
-**Fallback Chain:** Azure OpenAI → Gemini Key 1 → Gemini Key 2 → Grok (99.9%+ uptime)
+**Architecture:** Azure OpenAI (gpt-4o-mini) native integration with Managed Identity authentication, no credentials in code
 
 ### Azure Cloud Services (8 Services — 100% Cloud Native)
 
@@ -96,10 +92,8 @@ Alfalah AI (الفلاح — Arabic for "success" and "flourishing") is a fully 
 
 | API | What It Does | How Used | Cost |
 |-----|-------------|----------|------|
-| **Remotive API** | Live job listings (last 7 days) | Tool 20 — Real job postings by role/country | Free (no auth) |
-| **ip-api.com** | Geolocation from IP | Auto-detect user's country on splash screen | Free tier: 45 RPM |
-| **Google Jobs** | Job board reference | Knowledge base job board URLs by region | Reference only |
-| **LinkedIn/Indeed** | Job board reference | Top job boards per country listed in data | Reference only |
+| **Remotive API** | Live job listings (last 7 days) | Real job postings from last 7 days | Free (no auth) |
+| **ip-api.com** | Geolocation from IP | Auto-detect user's country on entry | Free tier: 45 RPM |
 
 ### Python Libraries (8+ Packages)
 
@@ -107,7 +101,7 @@ Alfalah AI (الفلاح — Arabic for "success" and "flourishing") is a fully 
 |---------|---------|------------|
 | **FastAPI** | Latest | REST API framework for all endpoints |
 | **Pydantic** | ≥2.10.0 | Data validation on requests/responses |
-| **httpx** | ≥0.28.0 | Async HTTP client for Gemini, Grok, Remotive API |
+| **httpx** | ≥0.28.0 | Async HTTP client for REST APIs |
 | **azure-search-documents** | ≥11.4.0 | Azure AI Search SDK for semantic retrieval |
 | **azure-ai-contentsafety** | ≥1.0.0 | Azure Content Safety SDK for output moderation |
 | **pdfminer.six** | ≥20221105 | PDF text extraction from resumes |
@@ -119,7 +113,7 @@ Alfalah AI (الفلاح — Arabic for "success" and "flourishing") is a fully 
 | Tool | Purpose | Cost |
 |------|---------|------|
 | **GitHub Actions** | CI/CD — auto-deploy on git push | Free (2,000 min/mo) |
-| **Vercel** | Frontend hosting with global CDN | Free tier with custom domain |
+
 | **Azure Functions CLI** | Local development & deployment | Free (local only) |
 
 ### Knowledge Base Standards (3 International Standards)
@@ -186,7 +180,7 @@ Every service running in **Canada East** region · Resource Group: `rg-v3` · Su
 |---------|---------|------|-----------------|
 | `azure-search-documents` | ≥ 11.4.0 | Azure AI Search client — index and query operations | Official Microsoft SDK; supports semantic ranking and hybrid search in one call |
 | `azure-ai-contentsafety` | ≥ 1.0.0 | Azure Content Safety client — output moderation | Direct SDK integration with Key Vault Managed Identity — no token management |
-| `httpx` | ≥ 0.28.0 | Async HTTP client — Gemini API, Grok API, Serper API calls | Full async/await support with connection pooling; replaces `requests` for non-blocking IO |
+| `httpx` | ≥ 0.28.0 | Async HTTP client — REST API calls | Full async/await support with connection pooling; replaces `requests` for non-blocking IO |
 | `pdfminer.six` | ≥ 20221105 | PDF text extraction — layout-aware parsing | Preserves resume formatting context better than basic PDF readers |
 | `pymupdf` | ≥ 1.24.0 | PDF rendering fallback — handles complex PDF structures | Handles password-protected and scanned PDFs that pdfminer cannot parse |
 | `python-docx` | ≥ 1.1.0 | DOCX file parsing — Microsoft Word resume extraction | Native DOCX structure traversal including tables and styled text |
@@ -266,9 +260,9 @@ Azure Functions v2 — Python Serverless (govrag-v3-func.azurewebsites.net)
 
 AI Fallback Chain:
   Azure OpenAI GPT-4o-mini
-    → Gemini 2.0 Flash (KEY1 · 4 models)
-    → Gemini 2.0 Flash (KEY2 · 4 models)
-    → xAI Grok-4-latest
+    → Azure OpenAI (gpt-4o-mini)
+    → All responses validated before user sees them
+    → 100% Microsoft Azure dependencies
 ```
 
 ![Alfalah Job Career Intelligent AI 2026 V3 — System Architecture](./architecture_diagram.png)
@@ -370,7 +364,7 @@ Alfalah AI was designed from the ground up to meet **Microsoft's Responsible AI 
 | Principle | Implementation |
 |-----------|---------------|
 | **Fairness** | Analysis based solely on skills, experience, and role requirements. No demographic inference, no bias by nationality, age, or gender. |
-| **Reliability** | 4-provider, 8-model AI fallback chain. Azure OpenAI → Gemini → Grok. Platform remains operational through any single-provider outage. |
+| **Reliability** | 100% Azure stack integration. Azure OpenAI deployed in Canada East region. Platform resilience through redundancy and auto-scaling. |
 | **Privacy** | Zero data storage by architecture. No resume, no PII, no session data retained anywhere. Analysis runs entirely in memory. |
 | **Security** | Azure Key Vault for secrets. RBAC least-privilege access. Azure Content Safety v1.0 on every output. TLS 1.3 end-to-end. |
 | **Inclusiveness** | 195 countries. Accessibility guides for youth (5–18), seniors (55+), and professionals with disabilities. Works on low-bandwidth connections. |
@@ -468,10 +462,8 @@ AZURE_SEARCH_ENDPOINT=https://[your-search].search.windows.net
 AZURE_SEARCH_KEY=                          # Managed by Azure Key Vault in production
 AZURE_SEARCH_INDEX=career-knowledge-base
 
-# AI Fallback Chain
-GEMINI_API_KEY=                            # Google AI Studio KEY1
-GEMINI_API_KEY_2=                          # Google AI Studio KEY2
-GROK_API_KEY=                              # xAI Grok-4
+# Azure AI Configuration
+AZURE_OPENAI_KEY=                           # Azure OpenAI Service Key
 
 # Live Job Search
 SERPER_API_KEY=                            # Serper.dev Google Jobs API
@@ -530,7 +522,7 @@ v3/
 | Version | Status | Key Deliverables |
 |---------|--------|-----------------|
 | V1 | Complete | 12 AI career modules · Resume analysis · ATS scoring · Deployed |
-| V2 | Complete | 17 modules · Full RAG engine · 195 countries · Gemini + Grok fallback · PWA |
+| V2 | Complete | 17 modules · Full RAG engine · 195 countries · Azure stack · PWA |
 | V3 | Active | 100% Azure ecosystem · Python Functions · AI Search 289 chunks · Key Vault · GRC |
 | V4 | Planned | React Native mobile · Cosmos DB analytics · 40-language rollout · Voice input |
 | V5 | Planned | alfalah.app domain · Azure Marketplace · Enterprise API tier · 1M users |
