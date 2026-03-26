@@ -7,7 +7,7 @@
 [![Python](https://img.shields.io/badge/Python_3.12-Backend_&_AI-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Claude](https://img.shields.io/badge/Claude_Sonnet_4.6-Built_This-D97757?style=for-the-badge&logo=anthropic&logoColor=white)](https://anthropic.com)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/features/actions)
-[![Free Forever](https://img.shields.io/badge/Free-No_Login_·_No_Cost-22C55E?style=for-the-badge)](https://shahzad-job-coach-ai.vercel.app)
+[![Free Forever](https://img.shields.io/badge/Free-No_Login_·_No_Cost-22C55E?style=for-the-badge)](https://govrag-v3-static.azurestaticapps.net)
 [![195 Countries](https://img.shields.io/badge/Coverage-195_Countries-8B5CF6?style=for-the-badge&logo=earth&logoColor=white)](https://shahzad-job-coach-ai.vercel.app)
 
 **"الفلاح" — Come to Success**

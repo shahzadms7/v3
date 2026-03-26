@@ -26,3 +26,7 @@ Thumbs.db
 
 # Data (large files — download separately)
 # data/career/MASTER_CAREER_REFERENCE.md
+
+# Working documents (not for repo)
+*.xlsx
+*.pdf
