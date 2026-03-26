@@ -30,3 +30,13 @@ Thumbs.db
 # Working documents (not for repo)
 *.xlsx
 *.pdf
+*.pptx
+
+# Local reference files (development only)
+.deploy
+functions/
+mobile/
+tests/
+data/indexes/
+scripts/generate_architecture_pdf.py
+scripts/build_master_files.py
