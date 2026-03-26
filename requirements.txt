@@ -1,32 +1,36 @@
-# GovRAG V3 — Python Dependencies (LIGHTWEIGHT — no heavy ML packages)
-# Created: March 21, 2026 | Microsoft Hackathon
-# 100% Python | Zero cost | Fast startup on Azure
+GovRAG V3 — Python Dependencies (LIGHTWEIGHT — no heavy ML packages)
 
-# --- Azure Functions ---
+Created: March 21, 2026 | Microsoft Hackathon
+
+100% Python | Zero cost | Fast startup on Azure
+
+--- Azure Functions ---
+
 azure-functions
 
-# --- Web Framework (local dev) ---
+--- Web Framework (local dev) ---
+
 fastapi>=0.115.0
 uvicorn>=0.32.0
 
-# --- HTTP Client (Azure OpenAI calls) ---
+--- HTTP Client (Azure OpenAI calls) ---
+
 httpx>=0.28.0
 
-# --- Document Processing ---
+--- Document Processing ---
+
 pymupdf>=1.24.0
 pdfminer.six>=20221105
 python-docx>=1.1.0
 
-# --- Azure AI Services & Auth ---
+--- Azure AI Services ---
+
 azure-search-documents>=11.4.0
 azure-ai-contentsafety>=1.0.0
-azure-identity>=1.16.0
 
-# --- Utilities ---
+--- Utilities ---
+
 python-dotenv>=1.0.1
 pydantic>=2.10.0
 pydantic-settings>=2.0.0
 python-multipart>=0.0.17
-
-# --- Asynchronous Support ---
-aiohttp

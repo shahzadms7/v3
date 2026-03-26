@@ -9,8 +9,6 @@ import json
 import re
 import time
 import os
-import asyncio
-import httpx
 from pathlib import Path
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -174,6 +172,7 @@ def _check_content_safety(text):
     """
     Screen text via Azure Content Safety.
     Returns (is_safe: bool, reason: str).
+    Fails open — if service is unavailable, returns (True, 'unavailable').
     """
     endpoint = os.environ.get("AZURE_CONTENT_SAFETY_ENDPOINT", "").rstrip("/")
     key      = os.environ.get("AZURE_CONTENT_SAFETY_KEY", "")
@@ -197,8 +196,9 @@ def _check_content_safety(text):
         logging.warning(f"[ContentSafety] {e}")
         return True, "unavailable"
 
+
 def _call_ai(system, user):
-    """Synchronous 100% Azure OpenAI call (used by /query and /simplify)."""
+    """100% Azure OpenAI — gpt-4o-mini via Azure OpenAI Service (eastus)."""
     import logging
     az_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "").rstrip("/")
     az_key      = os.environ.get("AZURE_OPENAI_KEY", "")
@@ -226,39 +226,8 @@ def _call_ai(system, user):
         logging.error(f"[GovRAG] Azure OpenAI exception: {str(e)}")
         return {"text": f"Azure OpenAI error: {str(e)[:150]}", "provider": "none", "model": "none"}
 
-async def _call_ai_async(system, user):
-    """NEW Asynchronous call to Azure OpenAI — drastically reduces execution time for /career."""
-    import logging
-    az_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "").rstrip("/")
-    az_key      = os.environ.get("AZURE_OPENAI_KEY", "")
-    az_deploy   = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini")
-    
-    if not az_endpoint or not az_key:
-        return {"text": "Azure OpenAI not configured.", "provider": "none", "model": "none"}
-        
-    url = f"{az_endpoint}/openai/deployments/{az_deploy}/chat/completions?api-version=2024-08-01-preview"
-    headers = {"api-key": az_key, "Content-Type": "application/json"}
-    payload = {
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user",   "content": user}
-        ], 
-        "temperature": 0.3, 
-        "max_tokens": 8192
-    }
-    
-    try:
-        async with httpx.AsyncClient(timeout=45.0) as client:
-            resp = await client.post(url, headers=headers, json=payload)
-            if resp.status_code == 200:
-                text = resp.json()["choices"][0]["message"]["content"]
-                return {"text": text, "provider": "Azure OpenAI", "model": az_deploy}
-            return {"text": f"Azure OpenAI unavailable: HTTP {resp.status_code}", "provider": "none", "model": "none"}
-    except Exception as e:
-        return {"text": f"Azure OpenAI error: {str(e)[:150]}", "provider": "none", "model": "none"}
 
 def _parse_json(text):
     try: return json.loads(text)
     except: pass
     m = re.search(r'
-http://googleusercontent.com/immersive_entry_chip/0
