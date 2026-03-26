@@ -16,6 +16,7 @@ venv/
 # IDE
 .vscode/
 .idea/
+.roorules
 
 # OS
 .DS_Store
