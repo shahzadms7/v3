@@ -455,45 +455,40 @@ add_rect(s, 0, 0, 13.33, 0.08, GREEN)
 
 add_textbox(s, "TECHNOLOGY STACK — A TO Z", 0.5, 0.15, 12, 0.6,
             font_size=26, bold=True, color=WHITE)
-add_textbox(s, "Every tool, platform, language, and service used to build Alfalah AI",
+add_textbox(s, "39+ AI & Tech Services — Every tool documented in TOOLS_BREAKDOWN.md",
             0.5, 0.72, 12, 0.4, font_size=14, italic=True, color=GREEN)
 
 categories = [
-    ("AZURE CLOUD (100%)", AZURE_BLUE, [
-        "Static Web Apps · Functions v2 · OpenAI Service",
-        "AI Search · Key Vault · Content Safety",
-        "Entra ID B2C · Cosmos DB · Monitor / App Insights",
+    ("AI PROVIDERS (4 Tools)", PURPLE, [
+        "Azure OpenAI (gpt-4o-mini) — Primary",
+        "Google Gemini 2.0 Flash — Backup 1",
+        "Google Gemini 1.5 Flash — Backup 2",
+        "xAI Grok (grok-3-mini-fast) — Fallback",
     ]),
-    ("AI & MACHINE LEARNING", PURPLE, [
-        "GPT-4o-mini (Azure OpenAI) — Primary",
-        "Gemini 2.0 Flash / 1.5 Flash (Google AI Studio)",
-        "xAI Grok-4-latest — Final fallback",
-        "Custom RAG Engine — 99% structured data",
+    ("AZURE CLOUD (8 Services)", AZURE_BLUE, [
+        "Functions v2 · Static Web Apps · AI Search",
+        "Content Safety · Language Service",
+        "Monitor · Key Vault · Entra ID B2C",
     ]),
-    ("LANGUAGES & RUNTIMES", GREEN, [
-        "Python 3.11+ — Azure Functions backend",
-        "JavaScript ES2022 / TypeScript 5.x — Frontend",
-        "HTML5 · CSS3 · Tailwind CSS 3.x",
-        "Bash / PowerShell — Deployment scripts",
-    ]),
-    ("DEV TOOLS & IDE", ORANGE, [
-        "Visual Studio Code — Primary IDE",
-        "Claude Code (Anthropic) — AI pair programmer",
+    ("DEV TOOLS (4 Tools)", ORANGE, [
+        "Claude Sonnet 4.6 — Pair programmer",
+        "Claude Code — Terminal automation",
         "GitHub Copilot — Code completion",
-        "Azure Functions Core Tools v4",
-        "Postman — API testing",
+        "VS Code — IDE",
     ]),
-    ("FRAMEWORKS & STANDARDS", GOLD, [
-        "Next.js 14 · React 18 · Tailwind CSS",
-        "Progressive Web App (W3C Standard)",
-        "ISCO-08 (ILO) · ESCO · O*NET · NOC · SOC",
-        "Microsoft Responsible AI Standard v2",
+    ("FRONTEND (5 Frameworks)", GREEN, [
+        "Next.js 14 · React 18 · TypeScript",
+        "Tailwind CSS · HTML5 · JavaScript ES2022",
     ]),
-    ("DATA & KNOWLEDGE BASE", RGBColor(0xEF, 0x44, 0x44), [
-        "28 structured Markdown knowledge files",
-        "436 ISCO-08 occupations · 195 country packages",
-        "900+ skills A-Z · Future occupations 2026–2125",
-        "Serper.dev (Google Jobs) · ipapi.co (Geo)",
+    ("APIS & SERVICES (4 Tools)", GOLD, [
+        "Remotive API — Live 7-day jobs",
+        "ip-api.com — Geolocation",
+        "Azure Language Service — NLP",
+        "GitHub Actions — CI/CD",
+    ]),
+    ("PYTHON LIBRARIES (8+)", RGBColor(0xEF, 0x44, 0x44), [
+        "FastAPI · Pydantic · httpx",
+        "Azure SDKs · PDF/DOCX parsers",
     ]),
 ]
 
@@ -509,39 +504,117 @@ for i, (title, color, items) in enumerate(categories):
     add_bullet_box(s, items, x+0.1, y+0.48, 3.9, 2.05,
                    font_size=11, color=LIGHT_GRAY, bullet="·")
 
-add_notes(s, """SPEAKER SCRIPT — SLIDE 6 (60 seconds)
+add_textbox(s, "📄 Full breakdown: TOOLS_BREAKDOWN.md (39+ tools documented with code examples)",
+            0.5, 6.55, 12.3, 0.5,
+            font_size=12, bold=True, color=GOLD, align=PP_ALIGN.CENTER)
 
-This slide shows our complete technology stack from A to Z.
+add_notes(s, """SPEAKER SCRIPT — SLIDE 6 (90 seconds)
 
-In the top-left, Azure Cloud. We use nine Azure services — Static Web Apps,
-Functions, OpenAI, AI Search, Key Vault, Content Safety, Entra ID, Cosmos DB, and Monitor.
-One cloud. One bill. Full integration. This is why we built on Azure.
+This slide shows our complete technology stack — 39+ AI and technology services.
 
-AI and Machine Learning — we use four providers and eight models,
-with our custom RAG engine delivering 99% of the intelligence from structured data.
+We did not just use Azure. We used 4 different AI providers. Why?
+Because production reliability means never going dark.
 
-Python 3.11 on the backend, Next.js and React on the frontend,
-Tailwind for the galaxy gradient UI that users love.
+Primary: Azure OpenAI running gpt-4o-mini — native Azure integration.
+If Azure has a momentary issue: Gemini 2.0 Flash takes over.
+If Gemini hits rate limits: Gemini 1.5 Flash (separate key) is ready.
+If Google is completely down: xAI Grok, running on different infrastructure, keeps us up.
 
-Our development environment is Visual Studio Code, with Claude Code as our AI pair programmer,
-and GitHub Copilot for completion. This project was built at the intersection of
-human creativity and AI assistance.
+That is enterprise-grade resilience. That is how mission-critical systems work.
 
-And our knowledge base is grounded in internationally recognized standards —
-ISCO-08, ESCO, O*NET — the same frameworks used by the ILO, EU, and US Department of Labor.
+On cloud infrastructure: 8 Azure services working together.
+Functions v2 for the backend, Static Web Apps for global CDN delivery,
+AI Search for semantic retrieval, Content Safety for output validation.
+
+On frontend: Next.js 14 running React 18 with Tailwind CSS.
+That is the modern web stack that powers Netflix, Airtable, TikTok.
+
+Development: This entire platform was built by Claude Sonnet 4.6,
+with GitHub Copilot for assistance, all in VS Code.
+
+39+ tools. One mission: free career guidance for 8 billion humans.
+
+See the complete breakdown with code examples: TOOLS_BREAKDOWN.md on GitHub
 """)
 
 # ═══════════════════════════════════════════════════════════════════
-# SLIDE 7 — RAG ENGINE & KNOWLEDGE BASE
+# SLIDE 7 — AI TOOLS DEEP DIVE (NEW)
 # ═══════════════════════════════════════════════════════════════════
 s = prs.slides.add_slide(blank_layout)
 set_bg(s, DARK_BG)
 add_rect(s, 0, 0, 13.33, 0.08, PURPLE)
 
-add_textbox(s, "RAG KNOWLEDGE ENGINE", 0.5, 0.15, 12, 0.6,
+add_textbox(s, "23+ AI TOOLS — COMPLETE BREAKDOWN", 0.5, 0.15, 12, 0.6,
             font_size=26, bold=True, color=WHITE)
-add_textbox(s, "99% Structured Career Science · 1% Azure OpenAI Formatting · Zero Hallucination",
+add_textbox(s, "Every AI provider, service, and framework documented with code examples",
             0.5, 0.72, 12, 0.4, font_size=14, italic=True, color=PURPLE)
+
+tool_categories = [
+    ("🧠 AI PROVIDERS\n(4 Tools)", PURPLE, [
+        "1. Azure OpenAI — gpt-4o-mini (Primary)",
+        "2. Google Gemini — 2.0 Flash (Backup 1)",
+        "3. Google Gemini — 1.5 Flash (Backup 2)",
+        "4. xAI Grok — grok-3-mini-fast (Final)",
+    ]),
+    ("☁️ AZURE SERVICES\n(8 Tools)", AZURE_BLUE, [
+        "5. Functions v2 — Serverless backend",
+        "6. Static Web Apps — Global CDN",
+        "7. AI Search — Semantic retrieval",
+        "8. Content Safety — Output moderation",
+        "9. Language Service — PII/sentiment/skills",
+        "10. Monitor/Insights — Telemetry",
+        "11. Key Vault — Secrets management",
+        "12. Entra ID B2C — Identity (optional)",
+    ]),
+    ("🛠️ DEVELOPMENT\n(4 Tools)", ORANGE, [
+        "13. Claude Sonnet — Built platform",
+        "14. Claude Code — Automation",
+        "15. GitHub Copilot — Completion",
+        "16. VS Code — IDE",
+    ]),
+]
+
+for i, (title, color, items) in enumerate(tool_categories):
+    x = 0.3 + i * 4.3
+    add_rect(s, x, 1.25, 4.1, 5.1, RGBColor(0x0D, 0x1B, 0x3E))
+    add_rect(s, x, 1.25, 4.1, 0.5, color)
+    add_textbox(s, title, x+0.1, 1.28, 3.9, 0.45,
+                font_size=12, bold=True, color=WHITE)
+    add_bullet_box(s, items, x+0.1, 1.8, 3.9, 4.4,
+                   font_size=10, color=LIGHT_GRAY, bullet="▸")
+
+add_textbox(s, "Click to expand each category ↓  Full breakdown: github.com/shahzadms7/v3/TOOLS_BREAKDOWN.md",
+            0.5, 6.55, 12.3, 0.5,
+            font_size=12, color=GOLD, align=PP_ALIGN.CENTER)
+
+add_notes(s, """SPEAKER SCRIPT — SLIDE 7 (75 seconds)
+
+Let me break down the 23+ AI tools we use — each playing a specific role.
+
+FIRST — AI Providers. We have 4 completely independent AI providers, not just 3.
+
+Primary: Azure OpenAI gpt-4o-mini — because we are hosting on Microsoft Azure.
+Fallback 1: Google Gemini 2.0 Flash — fast, reliable, free tier.
+Fallback 2: Gemini 1.5 Flash with a SEPARATE API key — this doubles our rate limit.
+Fallback 3: xAI Grok — runs on completely different infrastructure than Google or Microsoft.
+
+Why 4 providers? Because the judges are evaluating a production system.
+In production, you NEVER have a single point of failure for your AI layer.
+If one provider is down, the platform keeps working. That is enterprise architecture.
+
+SECOND — 8 Azure Services you see here all working together:
+Functions for the backend, Static Web Apps for global CDN,
+AI Search for retrieval, Content Safety for validation.
+
+THIRD — Development tools. Claude built this entire platform.
+GitHub Copilot assisted. All in VS Code. That is how modern AI-assisted development works.
+
+23 AI tools. Each one selected not for hype, but for reliability and cost.
+All free tier. All production-grade.
+""")
+
+# ═══════════════════════════════════════════════════════════════════
+# SLIDE 8 — RAG ENGINE & KNOWLEDGE BASE
 
 add_textbox(s, "What makes Alfalah AI different from every other AI career tool:",
             0.5, 1.2, 12, 0.4, font_size=15, bold=True, color=ORANGE)
@@ -614,7 +687,7 @@ That is what we mean when we say: Zero hallucination.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
-# SLIDE 8 — RESPONSIBLE AI
+# SLIDE 9 — RESPONSIBLE AI (Updated numbering - was Slide 8)
 # ═══════════════════════════════════════════════════════════════════
 s = prs.slides.add_slide(blank_layout)
 set_bg(s, DARK_BG)
@@ -675,7 +748,7 @@ No black box.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
-# SLIDE 9 — LIVE DEMO GUIDE
+# SLIDE 10 — LIVE DEMO GUIDE (Updated numbering - was Slide 9)
 # ═══════════════════════════════════════════════════════════════════
 s = prs.slides.add_slide(blank_layout)
 set_bg(s, DARK_BG)
@@ -737,7 +810,7 @@ pulled in the last 7 days, filtered for this country and role.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
-# SLIDE 10 — GLOBAL IMPACT
+# SLIDE 11 — GLOBAL IMPACT (Updated numbering - was Slide 10)
 # ═══════════════════════════════════════════════════════════════════
 s = prs.slides.add_slide(blank_layout)
 set_bg(s, DARK_BG)
@@ -796,7 +869,7 @@ That is who this platform serves. That is why it had to be free.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
-# SLIDE 11 — WHY MICROSOFT AZURE
+# SLIDE 12 — WHY MICROSOFT AZURE (Updated numbering - was Slide 11)
 # ═══════════════════════════════════════════════════════════════════
 s = prs.slides.add_slide(blank_layout)
 set_bg(s, DARK_BG)
@@ -854,7 +927,7 @@ That is what this competition is designed to reward.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
-# SLIDE 12 — ROADMAP
+# SLIDE 13 — ROADMAP (Updated numbering - was Slide 12)
 # ═══════════════════════════════════════════════════════════════════
 s = prs.slides.add_slide(blank_layout)
 set_bg(s, DARK_BG)
@@ -925,7 +998,7 @@ and a target of 1 million users served.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
-# SLIDE 13 — THE ASK / CALL TO ACTION
+# SLIDE 14 — THE ASK / CALL TO ACTION (Updated numbering - was Slide 13)
 # ═══════════════════════════════════════════════════════════════════
 s = prs.slides.add_slide(blank_layout)
 set_bg(s, DARK_BG)
@@ -987,7 +1060,7 @@ That is what we built. That is what we give back.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
-# SLIDE 14 — CLOSING / THANK YOU
+# SLIDE 15 — CLOSING / THANK YOU (Updated numbering - was Slide 14)
 # ═══════════════════════════════════════════════════════════════════
 s = prs.slides.add_slide(blank_layout)
 set_bg(s, DARK_BG)
@@ -1054,7 +1127,7 @@ Thank you. I am happy to take questions.
 """)
 
 # ═══════════════════════════════════════════════════════════════════
-# SLIDE 15 — ARCHITECTURE DIAGRAM (full-page PNG image)
+# SLIDE 16 — ARCHITECTURE DIAGRAM (full-page PNG image - Updated numbering was Slide 15)
 # ═══════════════════════════════════════════════════════════════════
 s = prs.slides.add_slide(blank_layout)
 set_bg(s, DARK_BG)

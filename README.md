@@ -43,7 +43,112 @@ Alfalah AI (الفلاح — Arabic for "success" and "flourishing") is a fully 
 
 ---
 
-## Technology Stack — Complete Reference
+## 🧠 Complete Tools & Services Breakdown (23+ AI & Tech Tools)
+
+**All tools used in this platform with detailed breakdown of what each does and how:**
+
+### AI Providers (4 Total — Multi-chain Fallback)
+
+| Tool | Models | Purpose | Cost | Status |
+|------|--------|---------|------|--------|
+| **Azure OpenAI** | gpt-4o-mini | Primary AI inference for all 17 career modules | Trial credits | ✅ Primary |
+| **Google Gemini** | gemini-2.0-flash, gemini-1.5-flash | Backup Provider 1 — fast, reliable | Free tier | ✅ Backup 1 |
+| **Google Gemini (Key 2)** | Same as above | Backup Provider 2 — prevents rate-limit | Free tier | ✅ Backup 2 |
+| **xAI Grok** | grok-3-mini-fast | Final fallback — independent infrastructure | Free trial | ✅ Backup 3 |
+
+**Fallback Chain:** Azure OpenAI → Gemini Key 1 → Gemini Key 2 → Grok (99.9%+ uptime)
+
+### Azure Cloud Services (8 Services — 100% Cloud Native)
+
+| Service | Config | What It Does | Why This Tool |
+|---------|--------|-------------|----------------|
+| **Azure Functions v2** | Python 3.12 runtime | Serverless backend API (6 endpoints) | Auto-scales 0→millions, pay-per-execution |
+| **Azure Static Web Apps** | Free tier + global CDN | Frontend hosting React app across 60+ regions | Low-latency for 195 countries |
+| **Azure AI Search** | Standard S1 · 289 chunks indexed | Vector + semantic search for RAG retrieval | Hybrid BM25 + vector embeddings |
+| **Azure Content Safety v1.0** | Free tier | Scans every AI output for harmful content | Responsible AI requirement |
+| **Azure Language Service** | Free tier · PII detection | Extract skills, redact sensitive data | NLP for resume analysis |
+| **Application Insights** | Standard monitoring | Real-time telemetry, error tracking, performance | Production observability |
+| **Azure Key Vault** | RBAC-protected | Stores all API keys securely | Zero credentials in code |
+| **Azure Entra ID B2C** | OAuth2/OIDC | Identity management (optional V4 feature) | Enterprise authentication |
+
+**See detailed breakdown:** [TOOLS_BREAKDOWN.md](./TOOLS_BREAKDOWN.md) — 39+ tools documented
+
+### AI Development Tools (4 Tools)
+
+| Tool | Role | Used For | Cost |
+|------|------|----------|------|
+| **Claude Sonnet 4.6** | AI Pair Programmer | **Built entire platform** — 31 dev sessions | Anthropic API |
+| **GitHub Copilot** | Code Completion | Inline suggestions during development | $10/mo |
+| **Claude Code** | Terminal Agent | File operations, git commands, automation | Free (via API) |
+| **VS Code** | Primary IDE | Python, JavaScript, Markdown editing | Free & open source |
+
+### Frontend & Web Technologies (5 Frameworks)
+
+| Tech | Version | Purpose | Cost |
+|------|---------|---------|------|
+| **Next.js** | 14.x | React framework with server-side rendering | Free & open source |
+| **React** | 18.x | UI component library and state management | Free & open source |
+| **Tailwind CSS** | 3.x | Utility-first CSS for galaxy gradient design | Free & open source |
+| **HTML5 & JavaScript** | ES2022 | Semantic markup & modern interactivity | Browser-native |
+| **TypeScript** | 5.x | Type-safe JavaScript for React components | Free & open source |
+
+### External APIs & Job Search (4 Integrations)
+
+| API | What It Does | How Used | Cost |
+|-----|-------------|----------|------|
+| **Remotive API** | Live job listings (last 7 days) | Tool 20 — Real job postings by role/country | Free (no auth) |
+| **ip-api.com** | Geolocation from IP | Auto-detect user's country on splash screen | Free tier: 45 RPM |
+| **Google Jobs** | Job board reference | Knowledge base job board URLs by region | Reference only |
+| **LinkedIn/Indeed** | Job board reference | Top job boards per country listed in data | Reference only |
+
+### Python Libraries (8+ Packages)
+
+| Library | Version | What It Does |
+|---------|---------|------------|
+| **FastAPI** | Latest | REST API framework for all endpoints |
+| **Pydantic** | ≥2.10.0 | Data validation on requests/responses |
+| **httpx** | ≥0.28.0 | Async HTTP client for Gemini, Grok, Remotive API |
+| **azure-search-documents** | ≥11.4.0 | Azure AI Search SDK for semantic retrieval |
+| **azure-ai-contentsafety** | ≥1.0.0 | Azure Content Safety SDK for output moderation |
+| **pdfminer.six** | ≥20221105 | PDF text extraction from resumes |
+| **pymupdf** | ≥1.24.0 | PDF rendering for complex documents |
+| **python-docx** | ≥1.1.0 | DOCX parser for Word resume files |
+
+### DevOps & Deployment (3 Tools)
+
+| Tool | Purpose | Cost |
+|------|---------|------|
+| **GitHub Actions** | CI/CD — auto-deploy on git push | Free (2,000 min/mo) |
+| **Vercel** | Frontend hosting with global CDN | Free tier with custom domain |
+| **Azure Functions CLI** | Local development & deployment | Free (local only) |
+
+### Knowledge Base Standards (3 International Standards)
+
+| Standard | Records | Authority | Coverage |
+|----------|---------|-----------|----------|
+| **ISCO-08** | 436 unit groups | International Labour Organization | All 10 occupational major groups |
+| **ESCO** | 3,000+ occupations | European Commission | EU + aligned countries |
+| **O*NET & BLS** | 1,016 occupations | US Department of Labor | US salary, trends, outlook |
+
+---
+
+### 🎯 Complete Metrics
+
+**Total: 39+ AI & Tech Services**
+- 4 AI Providers (8 models total)
+- 8 Azure Services (100% cloud)
+- 4 Dev Tools (Claude + GitHub + VS Code)
+- 5 Frontend Frameworks
+- 4 Job Search APIs
+- 8+ Python Libraries
+- 3 DevOps Tools
+- 3 Knowledge Standards
+
+**See full breakdown with code examples:** [TOOLS_BREAKDOWN.md](./TOOLS_BREAKDOWN.md)
+
+---
+
+| Source Code | https://github.com/shahzadms7/v3 | Public |
 
 ### [![Azure](https://img.shields.io/badge/Microsoft_Azure-0078D4?style=flat-square&logo=microsoftazure&logoColor=white)](https://azure.microsoft.com) Azure Cloud Services
 
